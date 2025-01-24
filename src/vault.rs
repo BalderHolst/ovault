@@ -1,4 +1,4 @@
-use pyo3::{pyclass, pymethods, PyResult};
+use pyo3::{exceptions::PyValueError, pyclass, pymethods, IntoPyObject, PyAny, PyResult, Python};
 use std::{
     collections::{HashMap, HashSet},
     fs, io,
@@ -7,43 +7,12 @@ use std::{
 
 use crate::lexer::{Lexer, Token};
 
-fn remove_extension(path: &PathBuf) -> PathBuf {
-    path.parent().unwrap().join(path.file_stem().unwrap())
-}
-
-fn normalize_path_to_string_keep_ext(path: &PathBuf) -> String {
-    let extension = path.extension();
-    let mut path = path.clone();
-    path.set_extension("");
-    let path = normalize_path_to_string(&path);
-    match extension {
-        Some(ext) => path + "." + ext.to_str().unwrap(),
-        None => path,
-    }
-}
-
-fn normalize_path_to_string(path: &PathBuf) -> String {
-    let components = path.components();
-    components
-        .map(|s| normalize_string(s.as_os_str().to_str().unwrap().to_string()))
-        .collect::<Vec<String>>()
-        .join("/")
-}
-
-fn normalize_path(path: &PathBuf) -> PathBuf {
-    PathBuf::from(normalize_path_to_string_keep_ext(path))
-}
-
-fn normalize_name(mut name: String) -> String {
+fn normalize(mut name: String) -> String {
+    // TODO: Actually handle multiple files with the same name
     if name.contains('/') {
-        eprintln!("WARNING: Normalizing name with '/': `{name}`. Only using filename.");
         name = name.split_once('/').unwrap().1.to_string();
     }
-    return normalize_string(name);
-}
 
-// TODO: Use references
-fn normalize_string(name: String) -> String {
     name.chars()
         .map(|c| match c {
             ' ' => '-',
@@ -85,10 +54,10 @@ pub struct Note {
     tags: HashSet<String>,
 
     #[pyo3(get)]
-    backlinks: Vec<String>,
+    backlinks: HashSet<String>,
 
     #[pyo3(get)]
-    links: Vec<String>,
+    links: HashSet<String>,
 }
 
 #[pymethods]
@@ -104,15 +73,11 @@ impl Note {
     }
 
     fn add_link(&mut self, link: String) {
-        if !self.links.contains(&link) {
-            self.links.push(link);
-        }
+        self.links.insert(link);
     }
 
     fn add_backlink(&mut self, backlink: String) {
-        if !self.backlinks.contains(&backlink) {
-            self.backlinks.push(backlink);
-        }
+        self.backlinks.insert(backlink);
     }
 }
 
@@ -170,7 +135,6 @@ impl Vault {
         self.attachments().cloned().collect()
     }
 
-
     #[pyo3(name = "tags")]
     pub fn tags(&self) -> Vec<String> {
         self.tags.keys().cloned().collect()
@@ -178,7 +142,8 @@ impl Vault {
 
     #[pyo3(name = "get_notes_with_tag")]
     pub fn py_get_notes_with_tag(&self, tag: &str) -> Option<Vec<Note>> {
-        let notes = self.tags
+        let notes = self
+            .tags
             .get(tag)?
             .iter()
             .filter_map(|name| self.get_note(name))
@@ -189,9 +154,41 @@ impl Vault {
 
     #[pyo3(name = "get_note_by_name")]
     pub fn py_get_note(&self, name: &str) -> Option<Note> {
-        self.get_note(&normalize_name(name.to_string())).cloned()
+        self.get_note(&normalize(name.to_string())).cloned()
     }
 
+    #[pyo3(name = "get_linked_items")]
+    pub fn py_get_linked_items<'py>(
+        &self,
+        py: Python<'py>,
+        name: &str,
+    ) -> PyResult<Vec<pyo3::Bound<'py, PyAny>>> {
+        let Some(note) = self.get_note(&normalize(name.to_string())) else {
+            return PyResult::Err(PyValueError::new_err(format!(
+                "Could not find note: '{}'",
+                name
+            )));
+        };
+
+        let mut links = vec![];
+
+        for link in &note.links {
+            let Some(item) = self.get_item(link) else {
+                continue;
+            };
+
+            let obj = match item {
+                VaultItem::Note { note } => note.clone().into_pyobject(py)?.into_super(),
+                VaultItem::Attachment { attachment } => {
+                    attachment.clone().into_pyobject(py)?.into_super()
+                }
+            };
+
+            links.push(obj);
+        }
+
+        Ok(links)
+    }
 }
 
 impl Vault {
@@ -240,15 +237,13 @@ impl Vault {
     }
 
     pub fn set_item(&mut self, item: Note) -> Option<VaultItem> {
-        self.items.insert(
-            normalize_name(item.name.clone()),
-            VaultItem::Note { note: item },
-        )
+        self.items
+            .insert(normalize(item.name.clone()), VaultItem::Note { note: item })
     }
 
     pub fn set_note(&mut self, note: Note) -> Option<VaultItem> {
         self.items
-            .insert(normalize_name(note.name.clone()), VaultItem::Note { note })
+            .insert(normalize(note.name.clone()), VaultItem::Note { note })
     }
 
     /// Add a note to the vault
@@ -277,16 +272,16 @@ impl Vault {
             name: name.to_string(),
             tokens,
             frontmatter,
-            links: Vec::new(),
+            links: Default::default(),
             tags: Default::default(),
-            backlinks: Vec::new(),
+            backlinks: Default::default(),
         };
-        let normalized_name = normalize_name(name.to_string());
+        let normalized_name = normalize(name.to_string());
         self.items.insert(normalized_name, VaultItem::Note { note });
     }
 
     fn add_attachment(&mut self, path: PathBuf) {
-        let name = normalize_name(path.file_name().unwrap().to_str().unwrap().to_string());
+        let name = normalize(path.file_name().unwrap().to_str().unwrap().to_string());
         let relpath = path.strip_prefix(&self.path).unwrap().to_path_buf();
         let attachment = Attachment { path: relpath };
         self.items
@@ -344,7 +339,7 @@ impl Vault {
                     | Token::ExternalLink { .. } => {}
                     Token::Tag { tag } => {
                         note.tags.insert(tag.clone());
-                        let name = normalize_name(note.name.clone());
+                        let name = normalize(note.name.clone());
                         tags.push((tag.clone(), name));
                     }
                     Token::InternalLink { link } => {
@@ -354,8 +349,8 @@ impl Vault {
                             continue;
                         }
 
-                        let from = normalize_name(note.name.clone());
-                        let to = normalize_name(link.dest.clone());
+                        let from = normalize(note.name.clone());
+                        let to = normalize(link.dest.clone());
                         links.push((from, to));
                     }
                 }

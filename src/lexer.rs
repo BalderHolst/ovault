@@ -77,6 +77,7 @@ pub struct Callout {
 #[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
+    Frontmatter { yaml: String }, // This can only appear as the first token
     Text { text: String },
     Tag { tag: String },
     Header { level: usize, heading: String },
@@ -88,7 +89,6 @@ pub enum Token {
     InlineMath { latex: String },
     DisplayMath { latex: String },
     Divider {},
-    Frontmatter { yaml: String }, // This can only appear as the first token
 }
 
 #[pymethods]
