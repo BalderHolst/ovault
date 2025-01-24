@@ -56,7 +56,6 @@ fn normalize_string(name: String) -> String {
         .chars()
         .filter(|c| match c {
             '\'' => false,
-            '.' => false,
             _ => true,
         })
         .collect()
@@ -100,11 +99,18 @@ impl Note {
         self.path.components().count()
     }
 
+    fn add_link(&mut self, link: String) {
+        if !self.links.contains(&link) {
+            self.links.push(link);
+        }
+    }
+
     fn add_backlink(&mut self, backlink: String) {
         if !self.backlinks.contains(&backlink) {
             self.backlinks.push(backlink);
         }
     }
+
 }
 
 #[pyclass]
@@ -116,7 +122,7 @@ pub struct Attachment {
 
 #[pyclass]
 #[derive(Debug, Clone, PartialEq)]
-enum VaultItem {
+pub enum VaultItem {
     Note { note: Note },
     Attachment { attachment: Attachment },
 }
@@ -129,8 +135,7 @@ pub struct Vault {
 
     /// Path to Obsidian vault
     #[pyo3(get)]
-    vault_root: PathBuf,
-
+    path: PathBuf,
 
     /// Maps tags to notes with those tags
     tags: HashMap<String, Vec<String>>,
@@ -143,6 +148,7 @@ impl Vault {
         let path = PathBuf::from(path);
         let mut v = Self::new(&path);
         v.add_dir(&path)?;
+        v.index();
         Ok(v)
     }
 
@@ -165,52 +171,64 @@ impl Vault {
 impl Vault {
     pub fn new(path: &PathBuf) -> Self {
         Self {
+            path: path.clone(),
             items: HashMap::new(),
-            vault_root: path.clone(),
+            tags: HashMap::new(),
         }
     }
 
-    pub fn items(&self) -> impl Iterator<Item=&VaultItem> {
+    pub fn items(&self) -> impl Iterator<Item = &VaultItem> {
         self.items.values()
     }
 
-    pub fn items_mut(&mut self) -> impl Iterator<Item=&mut VaultItem> {
+    pub fn items_mut(&mut self) -> impl Iterator<Item = &mut VaultItem> {
         self.items.values_mut()
     }
 
-    pub fn notes(&self) -> impl Iterator<Item=&Note> {
+    pub fn notes(&self) -> impl Iterator<Item = &Note> {
         self.items().filter_map(|item| match item {
             VaultItem::Note { note } => Some(note),
             _ => None,
         })
     }
 
-    pub fn notes_mut(&mut self) -> impl Iterator<Item=&mut Note> {
+    pub fn notes_mut(&mut self) -> impl Iterator<Item = &mut Note> {
         self.items_mut().filter_map(|item| match item {
             VaultItem::Note { note } => Some(note),
             _ => None,
         })
     }
 
-    pub fn attachments(&self) -> impl Iterator<Item=&Attachment> {
+    pub fn attachments(&self) -> impl Iterator<Item = &Attachment> {
         self.items().filter_map(|item| match item {
             VaultItem::Attachment { attachment } => Some(attachment),
             _ => None,
         })
     }
 
-    pub fn attachments_mut(&mut self) -> impl Iterator<Item=&mut Attachment> {
+    pub fn attachments_mut(&mut self) -> impl Iterator<Item = &mut Attachment> {
         self.items_mut().filter_map(|item| match item {
             VaultItem::Attachment { attachment } => Some(attachment),
             _ => None,
         })
+    }
+
+    pub fn set_item(&mut self, item: Note) -> Option<VaultItem> {
+        self.items.insert(
+            normalize_name(item.name.clone()),
+            VaultItem::Note { note: item },
+        )
     }
 
     pub fn set_note(&mut self, note: Note) -> Option<VaultItem> {
-        self.items.insert(normalize_name(note.name.clone()), VaultItem::Note { note })
+        self.items
+            .insert(normalize_name(note.name.clone()), VaultItem::Note { note })
     }
 
+    /// Add a note to the vault
     pub fn add_note(&mut self, path: &PathBuf) {
+        debug_assert_eq!(path.extension().unwrap(), "md");
+
         let name = path.file_stem().unwrap().to_str().unwrap();
         let tokens: Vec<Token> = match Lexer::from_file(path.as_path()) {
             Ok(lexer) => lexer.collect(),
@@ -220,6 +238,7 @@ impl Vault {
             }
         };
 
+        // Extract frontmatter if it exists
         let (frontmatter, tokens) = match tokens.first() {
             Some(Token::Frontmatter { yaml }) => {
                 (Some(yaml.clone()), tokens.split_first().unwrap().1.to_vec())
@@ -228,7 +247,7 @@ impl Vault {
         };
 
         let note = Note {
-            path: path.strip_prefix(&self.vault_root).unwrap().to_path_buf(),
+            path: path.strip_prefix(&self.path).unwrap().to_path_buf(),
             name: name.to_string(),
             tokens,
             frontmatter,
@@ -242,7 +261,7 @@ impl Vault {
 
     fn add_attachment(&mut self, path: PathBuf) {
         let name = normalize_name(path.file_name().unwrap().to_str().unwrap().to_string());
-        let relpath = path.strip_prefix(&self.vault_root).unwrap().to_path_buf();
+        let relpath = path.strip_prefix(&self.path).unwrap().to_path_buf();
         let attachment = Attachment { path: relpath };
         self.items
             .insert(name, VaultItem::Attachment { attachment });
@@ -278,54 +297,66 @@ impl Vault {
     }
 
     pub fn index(&mut self) {
+
+        let mut links = vec![];
+
         for note in self.notes_mut() {
             for token in &note.tokens {
                 match token {
-                    Token::Frontmatter { .. } => {}
-                    Token::Text { .. } => {}
-                    Token::Header { .. } => {}
-                    Token::Callout { .. } => {}
-                    Token::Quote { .. } => {}
-                    Token::Divider { .. } => {}
-                    Token::InlineMath { .. } => {}
-                    Token::DisplayMath { .. } => {}
+                    Token::Frontmatter { .. }
+                    | Token::Text { .. }
+                    | Token::Header { .. }
+                    | Token::Callout { .. }
+                    | Token::Quote { .. }
+                    | Token::Divider { .. }
+                    | Token::InlineMath { .. }
+                    | Token::DisplayMath { .. }
+                    | Token::ExternalLink { .. } => {}
                     Token::Tag { tag } => note.tags.push(tag.to_string()),
-                    Token::ExternalLink { .. } => {}
                     Token::InternalLink { link } => {
-                        // if `dest` field is emply, the link points to itself and we don't have to
-                        // do anything in that case.
+
+                        // if `dest` field is empty, the link points to heading in itself
+                        // and we don't have to do anything in that case.
                         if link.dest.is_empty() {
                             continue;
                         }
 
-                        let to_note_name = normalize_name(link.dest.clone());
-                        // let mut to_note = match self.notes.get(&to_note_name) {
-                        //     Some(n) => n.clone(),
-                        //     None => {
-                        //         // Is it an attachment?
-                        //         if self.attachments.get(&to_note_name).is_some() {
-                        //             continue;
-                        //         }
-
-                        //         eprintln!(
-                        //             "WARNING [{}]: Could not find linked note: '{}'",
-                        //             note_name, to_note_name
-                        //         );
-                        //         continue;
-                        //     }
-                        // };
-
-                        // TODO: Add path instead of link
-                        note.links.push(to_note_name.clone());
-
-                        // to_note.add_backlink(
-                        //     "/".to_string() + &normalize_path_to_string(&hugo_site_path),
-                        // );
-                        // self.notes.insert(to_note_name, to_note);
+                        let from = normalize_name(note.name.clone());
+                        let to = normalize_name(link.dest.clone());
+                        links.push((from, to));
                     }
                 }
             }
         }
+
+        for (from, to) in links {
+
+            // Link
+            {
+                let Some(from_note) = self.get_note_mut(&from) else {
+                    eprintln!("WARNING: Could not find note: '{}'", from);
+                    continue;
+                };
+
+                // TODO: Add path instead of link
+                from_note.add_link(to.clone());
+            }
+
+            // Backlink
+            {
+                if let Some(to_note) = self.get_note_mut(&to) {
+                    to_note.add_backlink(from.clone());
+                    continue;
+                };
+
+                if let Some(_to_attachment) = self.get_attachment_mut(&to) {
+                    continue;
+                };
+
+                // eprintln!("WARNING: Could not find linked item: '{from}' -> '{to}'");
+            }
+        }
+
     }
 
     pub fn tokens_to_string<I>(&self, note: &Note, tokens: I) -> String
@@ -342,6 +373,10 @@ impl Vault {
         self.items.get(normalized_name)
     }
 
+    fn get_item_mut(&mut self, normalized_name: &String) -> Option<&mut VaultItem> {
+        self.items.get_mut(normalized_name)
+    }
+
     fn get_note(&self, normalized_name: &String) -> Option<&Note> {
         match self.get_item(normalized_name) {
             Some(VaultItem::Note { note }) => Some(note),
@@ -349,9 +384,23 @@ impl Vault {
         }
     }
 
-    fn get_attachment(&self, normalized_name: &String) -> Option<&PathBuf> {
+    fn get_note_mut(&mut self, normalized_name: &String) -> Option<&mut Note> {
+        match self.get_item_mut(normalized_name) {
+            Some(VaultItem::Note { note }) => Some(note),
+            _ => None,
+        }
+    }
+
+    fn get_attachment(&self, normalized_name: &String) -> Option<&Attachment> {
         match self.get_item(normalized_name) {
-            Some(VaultItem::Attachment { attachment }) => Some(&attachment.path),
+            Some(VaultItem::Attachment { attachment }) => Some(attachment),
+            _ => None,
+        }
+    }
+
+    fn get_attachment_mut(&mut self, normalized_name: &String) -> Option<&mut Attachment> {
+        match self.get_item_mut(normalized_name) {
+            Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,
         }
     }
@@ -378,9 +427,9 @@ impl Vault {
                     None => {
                         match self.get_attachment(&normalized_name) {
                             // Found attachment!
-                            Some(p) => {
+                            Some(Attachment { path }) => {
                                 is_attachment = true;
-                                normalize_path_to_string_keep_ext(p)
+                                normalize_path_to_string_keep_ext(path)
                             },
 
                             // Remove link if it does not point to anything
