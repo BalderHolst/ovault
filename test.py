@@ -16,7 +16,6 @@ print(v.get_notes_with_tag("c"))
 print("\n" + "-"*30)
 note = v.get_note_by_name("trigonometri")
 
-for link in note.links:
-    linked_note = v.get_note_by_name(link)
-    print(linked_note)
+for t in note.tokens:
+    print(t)
 

@@ -149,6 +149,7 @@ impl Token {
 
 pub struct Lexer {
     cursor: usize,
+    slow_cursor: usize,
     text: Vec<char>,
     queue: VecDeque<Token>,
     first_token: bool,
@@ -159,6 +160,7 @@ impl Lexer {
         let chars = text.chars().collect();
         Self {
             cursor: 0,
+            slow_cursor: 0,
             text: chars,
             queue: Default::default(),
             first_token: true,
@@ -186,11 +188,16 @@ impl Lexer {
         self.peek(-1)
     }
 
-    fn consume_expect(&mut self, expected: char) {
+    fn consume_expect(&mut self, expect: impl FnOnce(char) -> bool) -> Option<char> {
         let c = self.consume();
-        if Some(expected) != c {
-            panic!("Found unexpected char: '{}'", expected); // TODO: return error
-        }
+        c.map(|a| match expect(a) {
+            true => Some(a),
+            false => None
+        }).flatten()
+    }
+
+    fn consume_expected(&mut self, expected: char) -> Option<char> {
+        self.consume_expect(|c| c == expected)
     }
 
     fn consume_until(&mut self, cond: impl Fn(char) -> bool) -> String {
@@ -207,8 +214,15 @@ impl Lexer {
 
     /// Get the text between the mark and the cursor
     fn extract(&self, start: usize) -> String {
-        self.text[start..self.cursor].iter().collect()
+        let start = start.min(self.text.len());
+        let end = self.cursor.min(self.text.len());
+        self.text[start..end].iter().collect()
     }
+
+    fn queue_token(&mut self, token: Token) {
+        self.queue.push_back(token);
+    }
+
 }
 
 // Methods that construct tokens
@@ -299,7 +313,7 @@ impl Lexer {
 
         let mut show_how = String::new();
 
-        self.consume_expect('[');
+        self.consume_expected('[');
 
         while let Some(c) = self.consume() {
             if c == ']' {
@@ -315,7 +329,7 @@ impl Lexer {
             };
         }
 
-        self.consume_expect('(');
+        self.consume_expected('(');
 
         let mut url = String::new();
 
@@ -329,7 +343,7 @@ impl Lexer {
         if self.current() == None {
             eprintln!("WARNING: Unclosed bracket.");
             self.cursor = start; // Reset cursor
-            self.consume_expect('[');
+            self.consume_expected('[');
             return Token::Text {
                 text: "[".to_string(),
             };
@@ -396,33 +410,41 @@ impl Lexer {
         tokens
     }
 
-    fn consume_heading(&mut self) -> Token {
-        assert_eq!(self.current(), Some('#'));
-        let mut level: usize = 0;
+    fn try_lex_heading(&mut self) -> Option<Token> {
+        self.consume_expected('#')?;
+
+        let mut level: usize = 1;
         while self.current() == Some('#') {
             self.consume();
             level += 1;
         }
-        let _ = self.consume_whitespace();
+
+        // Assert that there is white space
+        self.consume_expect(|c| c.is_whitespace())?;
+        _ = self.consume_whitespace();
+
         let start = self.cursor;
         while !matches!(self.current(), Some('\n') | None) {
             self.consume();
         }
-        let heading = self.text[start..self.cursor].iter().collect();
-        Token::Header { level, heading }
+        let heading = self.extract(start);
+        Some(Token::Header { level, heading })
     }
 
-    fn consume_tag(&mut self) -> Token {
-        assert_eq!(self.consume(), Some('#'));
-        let mut text = String::new();
-        while match self.current() {
-            Some(c) => !c.is_whitespace(),
-            None => false,
-        } {
-            let c = self.consume().unwrap();
-            text.push(c);
+    fn try_lex_tag(&mut self) -> Option<Token> {
+        let w = self.consume_expect(|c| c.is_whitespace())?;
+        self.consume_expected('#')?;
+
+        let tag = self.consume_until(|c| !c.is_alphabetic());
+
+        if tag.is_empty() {
+            return None;
         }
-        Token::Tag { tag: text }
+
+        // Add the text before the tag
+        self.queue_token(Token::Text { text: w.to_string() });
+
+        Some(Token::Tag { tag })
     }
 
     // blocks of text beginning with '>'. Either Callout or quote.
@@ -615,56 +637,123 @@ impl Iterator for Lexer {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if !self.queue.is_empty() {
-            return Some(
-                self.queue
-                    .pop_front()
-                    .expect("We should not get to here if the queue is empty."),
-            );
+
+        macro_rules! please {
+            ($method:ident) => {
+                let start = self.cursor;
+                let token = self.$method();
+                if let Some(token) = token {
+                    if self.cursor != self.slow_cursor {
+                        let text = self.extract(self.slow_cursor);
+                        self.queue.push_back(Token::Text { text });
+                    }
+                    self.queue.push_back(token);
+                    self.slow_cursor = self.cursor;
+                    continue;
+                }
+                self.cursor = start;
+            };
         }
 
-        let token = match self.current()? {
-            '#' => {
-                let next = self.peek(1);
-                if next == Some(' ') || next == Some('#') {
-                    Some(self.consume_heading())
-                } else {
-                    Some(self.consume_tag())
+        loop {
+
+            if !self.queue.is_empty() {
+                return Some(
+                    self.queue
+                        .pop_front()
+                        .expect("We should not get to here if the queue is empty."),
+                );
+            }
+
+            please!(try_lex_heading);
+            please!(try_lex_tag);
+
+            // Check if we are at the end of the file
+            if self.current().is_none() {
+                println!("EOF");
+                if self.slow_cursor >= self.text.len() {
+                    return None;
                 }
+                let text = self.extract(self.slow_cursor);
+                self.queue.push_back(Token::Text { text });
+                self.slow_cursor = self.cursor;
             }
-            '>' => Some(self.consume_block()),
-            '-' if self.first_token && (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
-                match self.consume_front_matter() {
-                    Ok(t) => Some(t),
-                    Err(e) => {
-                        eprintln!("ERROR: Could not parse frontmatter: {}", e);
-                        Some(Token::Text {
-                            text: "".to_string(),
-                        })
-                    }
-                }
-            }
-            '-' if (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
-                Some(self.consume_divider())
-            }
-            '`' if (self.peek(1), self.peek(2)) == (Some('`'), Some('`')) => {
-                Some(self.consume_code())
-            }
-            '$' if self.peek(1) == Some('$') => Some(self.consume_display_math()),
-            '$' => Some(self.consume_inline_math()),
-            c if c.is_whitespace() => Some(Token::Text {
-                text: self.consume_whitespace(),
-            }),
-            _ => {
-                for token in self.consume_line() {
-                    self.queue.push_back(token);
-                }
-                self.queue.pop_front()
-            }
-        };
-        if self.first_token {
-            self.first_token = false
+
+            // Consume a text character
+            self.consume();
         }
-        token
+
+
+        // let start = self.cursor;
+        // token = self.try_lex_tag();
+        // if token.is_some() {
+        //     self.slow_cursor = self.cursor;
+        //     return token;
+        // }
+        // self.cursor = start;
+
+
+        // let token = match self.current()? {
+        //     '#' => {
+        //         let next = self.peek(1);
+        //         if next == Some(' ') || next == Some('#') {
+        //             Some(self.consume_heading())
+        //         } else {
+        //             Some(self.consume_tag())
+        //         }
+        //     }
+        //     '>' => Some(self.consume_block()),
+        //     '-' if self.first_token && (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
+        //         match self.consume_front_matter() {
+        //             Ok(t) => Some(t),
+        //             Err(e) => {
+        //                 eprintln!("ERROR: Could not parse frontmatter: {}", e);
+        //                 Some(Token::Text {
+        //                     text: "".to_string(),
+        //                 })
+        //             }
+        //         }
+        //     }
+        //     '-' if (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
+        //         Some(self.consume_divider())
+        //     }
+        //     '`' if (self.peek(1), self.peek(2)) == (Some('`'), Some('`')) => {
+        //         Some(self.consume_code())
+        //     }
+        //     '$' if self.peek(1) == Some('$') => Some(self.consume_display_math()),
+        //     '$' => Some(self.consume_inline_math()),
+        //     c if c.is_whitespace() => Some(Token::Text {
+        //         text: self.consume_whitespace(),
+        //     }),
+        //     _ => {
+        //         for token in self.consume_line() {
+        //             self.queue.push_back(token);
+        //         }
+        //         self.queue.pop_front()
+        //     }
+        // };
+        // if self.first_token {
+        //     self.first_token = false
+        // }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lex_heading() {
+        let mut lexer = Lexer::new("# Heading".to_string());
+        let token = lexer.next().unwrap();
+        assert_eq!(token, Token::Header { level: 1, heading: "Heading".to_string() });
+    }
+
+    #[test]
+    fn test_lex_tag() {
+        let mut lexer = Lexer::new("#tag".to_string());
+        let token = lexer.next().unwrap();
+        assert_eq!(token, Token::Tag { tag: "tag".to_string() });
+    }
+
 }
