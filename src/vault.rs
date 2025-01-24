@@ -1,13 +1,5 @@
-use std::{
-    collections::HashMap,
-    ffi::OsStr,
-    fs,
-    io::{self, Write},
-    path::PathBuf,
-};
-
-
-use yaml_rust::Yaml;
+use pyo3::{pyclass, pymethods, PyResult};
+use std::{collections::HashMap, ffi::OsStr, fs, io, path::PathBuf};
 
 use crate::lexer::{Lexer, Token};
 
@@ -70,16 +62,37 @@ fn normalize_string(name: String) -> String {
         .collect()
 }
 
+#[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Note {
     /// Relative path within vault
+    #[pyo3(get)]
     path: PathBuf,
+
+    #[pyo3(get)]
     name: String,
+
+    #[pyo3(get)]
     tokens: Vec<Token>,
-    frontmatter: Yaml,
+
+    #[pyo3(get)]
+    frontmatter: Option<String>,
+
+    #[pyo3(get)]
     tags: Vec<String>,
+
+    #[pyo3(get)]
     backlinks: Vec<String>,
+
+    #[pyo3(get)]
     links: Vec<String>,
+}
+
+#[pymethods]
+impl Note {
+    pub fn __repr__(&self) -> String {
+        format!("Note({})", self.name)
+    }
 }
 
 impl Note {
@@ -94,25 +107,110 @@ impl Note {
     }
 }
 
+#[pyclass]
+#[derive(Debug, Clone, PartialEq)]
+pub struct Attachment {
+    #[pyo3(get, set)]
+    path: PathBuf,
+}
+
+#[pyclass]
+#[derive(Debug, Clone, PartialEq)]
+enum VaultItem {
+    Note { note: Note },
+    Attachment { attachment: Attachment },
+}
+
+#[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vault {
     /// Maps normalized note names to notes
-    notes: HashMap<String, Note>,
-    /// Maps normalized attachment names to their relative paths within vault
-    attachments: HashMap<String, PathBuf>,
-    /// Path to Obidian vault
-    obsidian_vault_path: PathBuf,
-    /// Path to the generated vault relative to `hugo_site_path`
-    hugo_vault_path: PathBuf,
-    /// Path to the generated vault for attachments relative to `hugo_site_path`
-    hugo_vault_attachment_path: PathBuf,
-    /// The path to the hugo site on local machine
-    hugo_site_path: PathBuf,
+    items: HashMap<String, VaultItem>,
+
+    /// Path to Obsidian vault
+    #[pyo3(get)]
+    vault_root: PathBuf,
+
+
+    /// Maps tags to notes with those tags
+    tags: HashMap<String, Vec<String>>,
+}
+
+#[pymethods]
+impl Vault {
+    #[new]
+    pub fn py_new(path: &str) -> PyResult<Self> {
+        let path = PathBuf::from(path);
+        let mut v = Self::new(&path);
+        v.add_dir(&path)?;
+        Ok(v)
+    }
+
+    #[pyo3(name = "items")]
+    pub fn py_items(&self) -> Vec<VaultItem> {
+        self.items.values().cloned().collect()
+    }
+
+    #[pyo3(name = "notes")]
+    pub fn py_notes(&self) -> Vec<Note> {
+        self.notes().cloned().collect()
+    }
+
+    #[pyo3(name = "attachments")]
+    pub fn py_attachments(&self) -> Vec<Attachment> {
+        self.attachments().cloned().collect()
+    }
 }
 
 impl Vault {
+    pub fn new(path: &PathBuf) -> Self {
+        Self {
+            items: HashMap::new(),
+            vault_root: path.clone(),
+        }
+    }
+
+    pub fn items(&self) -> impl Iterator<Item=&VaultItem> {
+        self.items.values()
+    }
+
+    pub fn items_mut(&mut self) -> impl Iterator<Item=&mut VaultItem> {
+        self.items.values_mut()
+    }
+
+    pub fn notes(&self) -> impl Iterator<Item=&Note> {
+        self.items().filter_map(|item| match item {
+            VaultItem::Note { note } => Some(note),
+            _ => None,
+        })
+    }
+
+    pub fn notes_mut(&mut self) -> impl Iterator<Item=&mut Note> {
+        self.items_mut().filter_map(|item| match item {
+            VaultItem::Note { note } => Some(note),
+            _ => None,
+        })
+    }
+
+    pub fn attachments(&self) -> impl Iterator<Item=&Attachment> {
+        self.items().filter_map(|item| match item {
+            VaultItem::Attachment { attachment } => Some(attachment),
+            _ => None,
+        })
+    }
+
+    pub fn attachments_mut(&mut self) -> impl Iterator<Item=&mut Attachment> {
+        self.items_mut().filter_map(|item| match item {
+            VaultItem::Attachment { attachment } => Some(attachment),
+            _ => None,
+        })
+    }
+
+    pub fn set_note(&mut self, note: Note) -> Option<VaultItem> {
+        self.items.insert(normalize_name(note.name.clone()), VaultItem::Note { note })
+    }
+
     pub fn add_note(&mut self, path: &PathBuf) {
-        println!("Adding note: {}", path.display());
         let name = path.file_stem().unwrap().to_str().unwrap();
         let tokens: Vec<Token> = match Lexer::from_file(path.as_path()) {
             Ok(lexer) => lexer.collect(),
@@ -122,26 +220,15 @@ impl Vault {
             }
         };
 
-        let (mut frontmatter, tokens) = match tokens.first() {
-            Some(Token::Frontmatter(f)) => (f.clone(), tokens.split_first().unwrap().1.to_vec()),
-            _ => (Yaml::Hash(yaml_rust::yaml::Hash::new()), tokens),
+        let (frontmatter, tokens) = match tokens.first() {
+            Some(Token::Frontmatter { yaml }) => {
+                (Some(yaml.clone()), tokens.split_first().unwrap().1.to_vec())
+            }
+            _ => (None, tokens),
         };
 
-        match &mut frontmatter {
-            Yaml::Hash(f) => {
-                f.insert(
-                    Yaml::String("type".to_string()),
-                    Yaml::String("note".to_string()),
-                );
-            }
-            _ => panic!("Frontmatter yaml root should be `Hash`."),
-        }
-
         let note = Note {
-            path: path
-                .strip_prefix(&self.obsidian_vault_path)
-                .unwrap()
-                .to_path_buf(),
+            path: path.strip_prefix(&self.vault_root).unwrap().to_path_buf(),
             name: name.to_string(),
             tokens,
             frontmatter,
@@ -150,23 +237,15 @@ impl Vault {
             backlinks: Vec::new(),
         };
         let normalized_name = normalize_name(name.to_string());
-        self.notes.insert(normalized_name, note);
+        self.items.insert(normalized_name, VaultItem::Note { note });
     }
 
     fn add_attachment(&mut self, path: PathBuf) {
-        println!("Adding attachment: {:?}", path.display());
         let name = normalize_name(path.file_name().unwrap().to_str().unwrap().to_string());
-        self.attachments.insert(
-            name,
-            path.strip_prefix(&self.obsidian_vault_path)
-                .unwrap()
-                .to_path_buf(),
-        );
-    }
-
-    #[cfg(test)]
-    pub fn notes(&self) -> &HashMap<String, Note> {
-        &self.notes
+        let relpath = path.strip_prefix(&self.vault_root).unwrap().to_path_buf();
+        let attachment = Attachment { path: relpath };
+        self.items
+            .insert(name, VaultItem::Attachment { attachment });
     }
 
     pub fn add_dir(&mut self, path: &PathBuf) -> io::Result<()> {
@@ -179,8 +258,6 @@ impl Vault {
             | Some(Some("Excalidraw")) => return Ok(()),
             _ => {}
         }
-
-        println!("Adding directory: {}", path.display());
 
         for file in fs::read_dir(path)? {
             let file = file?;
@@ -200,76 +277,21 @@ impl Vault {
         Ok(())
     }
 
-    pub fn from_directory(
-        path: &PathBuf,
-        output_path: PathBuf,
-        hugo_site_path: Option<PathBuf>,
-    ) -> io::Result<Self> {
-        let hugo_site_path = match hugo_site_path {
-            Some(p) => p,
-            None => {
-                let mut site_path = output_path.clone();
-
-                'outer: loop {
-                    if site_path.is_dir() {
-                        for file in fs::read_dir(&site_path).unwrap() {
-                            let file = file.unwrap();
-                            if file.file_name() == std::ffi::OsString::from("config.toml") {
-                                break 'outer;
-                            }
-                        }
-                    }
-
-                    match site_path.parent() {
-                        Some(p) => site_path = p.to_path_buf(),
-                        None => panic!("Could not find hugo site path."),
-                    }
-                }
-                site_path
-            }
-        };
-
-        println!("Found Hugo site path :'{}'", hugo_site_path.display());
-
-        let hugo_vault_path = output_path
-            .strip_prefix(&hugo_site_path)
-            .unwrap()
-            .to_path_buf();
-
-        let hugo_vault_attachment_path = PathBuf::from("static").join(
-            hugo_vault_path
-                .strip_prefix("content")
-                .unwrap()
-                .to_path_buf(),
-        );
-
-        let vault = Self {
-            notes: HashMap::new(),
-            attachments: HashMap::new(),
-            obsidian_vault_path: path.clone(),
-            hugo_vault_path,
-            hugo_vault_attachment_path,
-            hugo_site_path,
-        };
-        Ok(vault)
-    }
-
     pub fn index(&mut self) {
-        for note_name in self.notes.clone().keys() {
-            let mut note = self.notes.get(&note_name.clone()).unwrap().clone();
-            for token in note.tokens.clone() {
+        for note in self.notes_mut() {
+            for token in &note.tokens {
                 match token {
-                    Token::Text(_) => {},
-                    Token::Header(_, _) => {},
-                    Token::Callout(_) => {},
-                    Token::Quote(_) => {},
-                    Token::Frontmatter(_) => {},
-                    Token::Divider => {},
-                    Token::InlineMath(_) => {},
-                    Token::DisplayMath(_) => {},
-                    Token::Tag(tag) => note.tags.push(tag.to_string()),
-                    Token::ExternalLink(_) => {},
-                    Token::InternalLink(link) => {
+                    Token::Frontmatter { .. } => {}
+                    Token::Text { .. } => {}
+                    Token::Header { .. } => {}
+                    Token::Callout { .. } => {}
+                    Token::Quote { .. } => {}
+                    Token::Divider { .. } => {}
+                    Token::InlineMath { .. } => {}
+                    Token::DisplayMath { .. } => {}
+                    Token::Tag { tag } => note.tags.push(tag.to_string()),
+                    Token::ExternalLink { .. } => {}
+                    Token::InternalLink { link } => {
                         // if `dest` field is emply, the link points to itself and we don't have to
                         // do anything in that case.
                         if link.dest.is_empty() {
@@ -277,38 +299,31 @@ impl Vault {
                         }
 
                         let to_note_name = normalize_name(link.dest.clone());
-                        let mut to_note = match self.notes.get(&to_note_name) {
-                            Some(n) => n.clone(),
-                            None => {
-                                // Is it an attachment?
-                                if self.attachments.get(&to_note_name).is_some() {
-                                    continue;
-                                }
+                        // let mut to_note = match self.notes.get(&to_note_name) {
+                        //     Some(n) => n.clone(),
+                        //     None => {
+                        //         // Is it an attachment?
+                        //         if self.attachments.get(&to_note_name).is_some() {
+                        //             continue;
+                        //         }
 
-                                eprintln!(
-                                    "WARNING [{}]: Could not find linked note: '{}'",
-                                    note_name, to_note_name
-                                );
-                                continue;
-                            }
-                        };
+                        //         eprintln!(
+                        //             "WARNING [{}]: Could not find linked note: '{}'",
+                        //             note_name, to_note_name
+                        //         );
+                        //         continue;
+                        //     }
+                        // };
 
                         // TODO: Add path instead of link
                         note.links.push(to_note_name.clone());
 
-                        let hugo_site_path = self
-                            .hugo_vault_path
-                            .strip_prefix("content")
-                            .unwrap()
-                            .join(&note.path.parent().unwrap())
-                            .join(&note.path.file_stem().unwrap());
-                        to_note.add_backlink(
-                            "/".to_string() + &normalize_path_to_string(&hugo_site_path),
-                        );
-                        self.notes.insert(to_note_name, to_note);
-                    },
+                        // to_note.add_backlink(
+                        //     "/".to_string() + &normalize_path_to_string(&hugo_site_path),
+                        // );
+                        // self.notes.insert(to_note_name, to_note);
+                    }
                 }
-                self.notes.insert(note_name.clone(), note.clone());
             }
         }
     }
@@ -323,27 +338,37 @@ impl Vault {
             .collect::<String>()
     }
 
+    fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
+        self.items.get(normalized_name)
+    }
+
     fn get_note(&self, normalized_name: &String) -> Option<&Note> {
-        self.notes.get(normalized_name)
+        match self.get_item(normalized_name) {
+            Some(VaultItem::Note { note }) => Some(note),
+            _ => None,
+        }
     }
 
     fn get_attachment(&self, normalized_name: &String) -> Option<&PathBuf> {
-        self.attachments.get(normalized_name)
+        match self.get_item(normalized_name) {
+            Some(VaultItem::Attachment { attachment }) => Some(&attachment.path),
+            _ => None,
+        }
     }
 
     fn token_to_string(&self, note: &Note, token: &Token) -> String {
         let mut is_attachment = false;
 
         match token {
-            Token::Text(s) => s.clone(),
-            Token::Tag(s) => format!("#{s}"),
-            Token::Header(level, title) => format!(
+            Token::Text { text } => text.clone(),
+            Token::Tag { tag } => format!("#{tag}"),
+            Token::Header { level, heading } => format!(
                 "{} {}",
                 "#".repeat(*level),
-                self.tokens_to_string(note, title.clone()),
+                self.tokens_to_string(note, heading.clone()),
             ),
-            Token::ExternalLink(link) => todo!(),
-            Token::InternalLink(link) => {
+            Token::ExternalLink { link } => todo!("{link:?}"),
+            Token::InternalLink { link } => {
                 let normalized_name = normalize_name(link.dest.clone());
                 let normalized_path = match self.get_note(&normalized_name){
                     Some(note) if note.path.extension() == Some(OsStr::new("md")) => normalize_path_to_string(&remove_extension(&note.path)),
@@ -391,138 +416,18 @@ impl Vault {
                         ),
                 }
             },
-            Token::Callout(callout) => format!(
+            Token::Callout { callout } => format!(
                 "\n{{{{< callout type=\"{}\" title=\"{}\" foldable=\"{}\" >}}}}\n{}{{{{< /callout >}}}}\n",
                 callout.kind,
                 self.tokens_to_string(note, callout.title.clone()),
                 if callout.foldable { "true" } else { "false" },
                 self.tokens_to_string(note, callout.contents.clone()),
             ),
-            Token::Quote(quote) => quote.iter().map(|token| "> ".to_string() + self.token_to_string(note, token).as_str()).collect(),
-            Token::Frontmatter(_) => panic!("Frontmatter should never be part of a note body."),
-            Token::Divider => "\n--------------------\n".to_string(),
-            Token::InlineMath(math) => format!("${}$", math.to_string()),
-            Token::DisplayMath(math) => format!("$${}$$", math.to_string()),
-        }
-    }
-
-    fn note_to_string(&self, note: &Note) -> String {
-        // This could probably be done better...
-        let frontmatter = match note.frontmatter.clone() {
-            Yaml::Hash(mut hash) => {
-                // Title
-                hash.insert(
-                    Yaml::String("title".to_string()),
-                    Yaml::String(note.name.clone()),
-                );
-
-                // Tags
-                hash.insert(
-                    Yaml::String("note_tags".to_string()),
-                    Yaml::Array(note.tags.iter().map(|t| Yaml::String(t.clone())).collect()),
-                );
-
-                // Backlinks
-                hash.insert(
-                    Yaml::String("backlinks".to_string()),
-                    Yaml::Array(
-                        note.backlinks
-                            .iter()
-                            .map(|t| Yaml::String(t.clone()))
-                            .collect(),
-                    ),
-                );
-
-                // Links
-                hash.insert(
-                    Yaml::String("links".to_string()),
-                    Yaml::Array(note.links.iter().map(|t| Yaml::String(t.clone())).collect()),
-                );
-
-                Yaml::Hash(hash)
-            }
-            _ => panic!("Frontmatter should always be hash."),
-        };
-
-        let frontmatter_text = {
-            let mut out_str = String::new();
-            yaml_rust::YamlEmitter::new(&mut out_str)
-                .dump(&frontmatter)
-                .unwrap();
-
-            // I do not know why, but a "---" is already added in the beginning of `out_str`
-            format!("{}\n---\n\n", out_str)
-        };
-
-        let mut tokens = note.tokens.clone();
-
-        for (tags_begin_offset, rtoken) in tokens.clone().iter().rev().enumerate() {
-            match rtoken {
-                Token::Divider => {
-                    let (slice, _) = tokens
-                        .as_slice()
-                        .split_at(tokens.len() - tags_begin_offset - 1);
-                    tokens = Vec::from(slice);
-                }
-                Token::Tag(_) => {}
-                t => {
-                    if !t.is_whitespace() {
-                        break;
-                    }
-                }
-            }
-        }
-
-        let body: String = self.tokens_to_string(note, tokens);
-
-        frontmatter_text + body.as_str()
-    }
-
-    pub fn output(&self) {
-        // Convert Notes
-        for note in self.notes.values() {
-            let note_text = self.note_to_string(note);
-            let out_path = self
-                .hugo_site_path
-                .join(&self.hugo_vault_path)
-                .join(&note.path);
-
-            let out_dir = out_path.parent().unwrap();
-
-            // TODO: this does not work with paths with `.`
-            if let Err(e) = fs::create_dir_all(normalize_path(&out_dir.to_path_buf())) {
-                eprint!(
-                    "Could not create output directory `{}`: {}",
-                    out_dir.display(),
-                    e
-                );
-                std::process::exit(1)
-            }
-
-            let out_path = normalize_path_to_string_keep_ext(&out_path);
-
-            fs::OpenOptions::new()
-                .write(true)
-                .create(true)
-                .truncate(true)
-                .open(out_path)
-                .unwrap()
-                .write_all(note_text.as_bytes())
-                .unwrap();
-        }
-
-        // Copy attachments
-        for attachment in self.attachments.values() {
-            let vault_path = self.obsidian_vault_path.join(attachment);
-            let out_path = normalize_path(
-                &self
-                    .hugo_site_path
-                    .join(&self.hugo_vault_attachment_path)
-                    .join(attachment),
-            );
-            let dir = out_path.parent().unwrap();
-            fs::create_dir_all(dir).unwrap();
-            fs::copy(vault_path, out_path).unwrap();
+            Token::Quote { contents } => contents.iter().map(|token| "> ".to_string() + self.token_to_string(note, token).as_str()).collect(),
+            Token::Frontmatter { .. } => panic!("Frontmatter should never be part of a note body."),
+            Token::Divider { .. } => "\n--------------------\n".to_string(),
+            Token::InlineMath { latex } => format!("${}$", latex.clone()),
+            Token::DisplayMath { latex } => format!("$${}$$", latex.clone()),
         }
     }
 }

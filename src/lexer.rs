@@ -1,5 +1,6 @@
+use pyo3::{pyclass, pymethods};
 use std::{collections::VecDeque, fs, path::Path};
-use yaml_rust::{self, ScanError, Yaml};
+use yaml_rust::{self, ScanError};
 
 #[derive(Debug)]
 pub enum LexerError {
@@ -7,10 +8,14 @@ pub enum LexerError {
     Utf(std::string::FromUtf8Error),
 }
 
+#[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExternalLink {
+    #[pyo3(get, set)]
     pub url: String,
-    show_how: String,
+    #[pyo3(get, set)]
+    pub show_how: String,
+    #[pyo3(get, set)]
     pub render: bool,
     // TODO:
     // pub options: Option<String>,
@@ -21,19 +26,24 @@ impl ExternalLink {
     pub fn label(&self) -> &str {
         if self.show_how.is_empty() {
             self.url.as_str()
-        }
-        else {
+        } else {
             self.show_how.as_str()
         }
     }
 }
 
+#[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalLink {
+    #[pyo3(get, set)]
     pub dest: String,
+    #[pyo3(get, set)]
     pub position: Option<String>,
+    #[pyo3(get, set)]
     pub show_how: Option<String>,
+    #[pyo3(get, set)]
     pub options: Option<String>,
+    #[pyo3(get, set)]
     pub render: bool,
 }
 
@@ -42,7 +52,8 @@ impl InternalLink {
         let l = match &self.show_how {
             Some(s) => return s.to_owned(),
             None => self.dest.as_str(),
-        }.to_string();
+        }
+        .to_string();
         match &self.position {
             Some(pos) => format!("{}>{}", l, pos),
             None => l,
@@ -50,51 +61,81 @@ impl InternalLink {
     }
 }
 
-#[allow(dead_code)]
+#[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Callout {
+    #[pyo3(get, set)]
     pub kind: String,
+    #[pyo3(get, set)]
     pub title: Vec<Token>,
+    #[pyo3(get, set)]
     pub contents: Vec<Token>,
+    #[pyo3(get, set)]
     pub foldable: bool,
 }
 
+#[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
-    Text(String),
-    Tag(String),
-    Header(usize, Vec<Token>),
-    InternalLink(InternalLink),
-    ExternalLink(ExternalLink),
-    Callout(Callout),
-    Quote(Vec<Token>),
-    Frontmatter(Yaml), // This can only appear as the first token
-    InlineMath(String),
-    DisplayMath(String),
-    Divider,
+    Text { text: String },
+    Tag { tag: String },
+    Header { level: usize, heading: Vec<Token> },
+    InternalLink { link: InternalLink },
+    ExternalLink { link: ExternalLink },
+    Callout { callout: Callout },
+    Quote { contents: Vec<Token> },
+    InlineMath { latex: String },
+    DisplayMath { latex: String },
+    Divider {},
+    Frontmatter { yaml: String }, // This can only appear as the first token
+}
+
+#[pymethods]
+impl Token {
+    pub fn __repr__(&self) -> String {
+        const MAX_LEN: usize = 20;
+        fn string(s: &str) -> String {
+            let mut new_s = String::from(s);
+            if new_s.len() > MAX_LEN {
+                new_s = format!("{}...", &new_s.chars().take(MAX_LEN).collect::<String>());
+                new_s = new_s.trim_end().to_string();
+            }
+            let new_s = new_s.replace("\n", "\\n");
+            new_s
+        }
+
+        match self {
+            Token::Text { text } => format!("Text({})", string(text)),
+            Token::Tag { tag } => format!("Tag({})", string(tag)),
+            Token::Header { level, heading } => {
+                format!("Header({}, {})", level, string(&format!("{:?}", heading)))
+            }
+            Token::InternalLink { link } => format!("InternalLink({})", link.label()),
+            Token::ExternalLink { link } => format!("ExternalLink({})", link.label()),
+            Token::Callout { callout } => format!("Callout({})", string(&format!("{:?}", callout))),
+            Token::Quote { contents } => format!("Quote({})", string(&format!("{:?}", contents))),
+            Token::Frontmatter { yaml } => format!("Frontmatter({})", string(yaml)),
+            Token::InlineMath { latex } => format!("InlineMath({})", string(latex)),
+            Token::DisplayMath { latex } => format!("DisplayMath({})", string(latex)),
+            Token::Divider {} => format!("Divider"),
+        }
+    }
 }
 
 impl Token {
     pub fn is_whitespace(&self) -> bool {
         match self {
-            Token::Text(t) => {
-                for c in t.chars() {
-                    if !c.is_whitespace() {
-                        return false;
-                    }
-                }
-                true
-            }
-            Token::Tag(_) => false,
-            Token::Header(_, _) => false,
-            Token::InternalLink(_) => false,
-            Token::ExternalLink(_) => false,
-            Token::Callout(_) => false,
-            Token::Quote(_) => false,
-            Token::Frontmatter(_) => false,
-            Token::Divider => false,
-            Token::InlineMath(_) => false,
-            Token::DisplayMath(_) => false,
+            Token::Text { text } => text.chars().all(char::is_whitespace),
+            Token::Tag { .. } => false,
+            Token::Header { .. } => false,
+            Token::InternalLink { .. } => false,
+            Token::ExternalLink { .. } => false,
+            Token::Callout { .. } => false,
+            Token::Quote { .. } => false,
+            Token::Frontmatter { .. } => false,
+            Token::Divider {} => false,
+            Token::InlineMath { .. } => false,
+            Token::DisplayMath { .. } => false,
         }
     }
 }
@@ -196,27 +237,33 @@ impl Lexer {
 
         match fields.len() {
             0 => todo!("Emply link."),
-            1 => Token::InternalLink(InternalLink {
-                dest: note_name.clone(),
-                position,
-                show_how: None,
-                options: None,
-                render: shown,
-            }),
-            2 => Token::InternalLink(InternalLink {
-                dest: note_name,
-                position,
-                show_how: Some(fields[1].clone()),
-                options: None,
-                render: shown,
-            }),
-            3 => Token::InternalLink(InternalLink {
-                dest: note_name,
-                position,
-                show_how: Some(fields[2].clone()),
-                options: Some(fields[1].clone()),
-                render: shown,
-            }),
+            1 => Token::InternalLink {
+                link: InternalLink {
+                    dest: note_name.clone(),
+                    position,
+                    show_how: None,
+                    options: None,
+                    render: shown,
+                },
+            },
+            2 => Token::InternalLink {
+                link: InternalLink {
+                    dest: note_name,
+                    position,
+                    show_how: Some(fields[1].clone()),
+                    options: None,
+                    render: shown,
+                },
+            },
+            3 => Token::InternalLink {
+                link: InternalLink {
+                    dest: note_name,
+                    position,
+                    show_how: Some(fields[2].clone()),
+                    options: Some(fields[1].clone()),
+                    render: shown,
+                },
+            },
             n => panic!("Invalid amount of fields in link: `{n}`."),
         }
     }
@@ -248,7 +295,9 @@ impl Lexer {
 
         // Return text if it was not a link after all
         if self.current() != Some('(') {
-            return Token::Text(self.text[start..].iter().collect());
+            return Token::Text {
+                text: self.text[start..].iter().collect(),
+            };
         }
 
         self.consume_expect('(');
@@ -266,14 +315,18 @@ impl Lexer {
             eprintln!("WARNING: Unclosed bracket.");
             self.cursor = start; // Reset cursor
             self.consume_expect('[');
-            return Token::Text("[".to_string());
+            return Token::Text {
+                text: "[".to_string(),
+            };
         }
 
-        Token::ExternalLink(ExternalLink {
-            url,
-            show_how,
-            render,
-        })
+        Token::ExternalLink {
+            link: ExternalLink {
+                url,
+                show_how,
+                render,
+            },
+        }
     }
 
     // TODO: Find a way to remove. This messes things up with quotes and callouts. Maybe rename to
@@ -291,22 +344,22 @@ impl Lexer {
         while !matches!(self.current(), Some('\n') | None) {
             match (self.current(), self.peak(1), self.peak(2)) {
                 (Some('['), Some('['), _) | (Some('!'), Some('['), Some('[')) => {
-                    tokens.push(Token::Text(s.clone()));
+                    tokens.push(Token::Text { text: s.clone() });
                     s.clear();
                     tokens.push(self.consume_internal_link());
                 }
                 (Some('['), Some(_), _) | (Some('!'), Some('['), _) => {
-                    tokens.push(Token::Text(s.clone()));
+                    tokens.push(Token::Text { text: s.clone() });
                     s.clear();
                     tokens.push(self.consume_external_link());
                 }
                 (Some('$'), Some('$'), _) => {
-                    tokens.push(Token::Text(s.clone()));
+                    tokens.push(Token::Text { text: s.clone() });
                     s.clear();
                     tokens.push(self.consume_display_math());
                 }
                 (Some('$'), _, _) => {
-                    tokens.push(Token::Text(s.clone()));
+                    tokens.push(Token::Text { text: s.clone() });
                     s.clear();
                     tokens.push(self.consume_inline_math());
                 }
@@ -324,7 +377,7 @@ impl Lexer {
             self.consume();
             s.push('\n');
         }
-        tokens.push(Token::Text(s));
+        tokens.push(Token::Text { text: s });
         tokens
     }
 
@@ -336,8 +389,8 @@ impl Lexer {
             level += 1;
         }
         let _ = self.consume_whitespace();
-        let header = self.consume_line();
-        Token::Header(level, header)
+        let heading = self.consume_line();
+        Token::Header { level, heading }
     }
 
     fn consume_tag(&mut self) -> Token {
@@ -350,7 +403,7 @@ impl Lexer {
             let c = self.consume().unwrap();
             text.push(c);
         }
-        Token::Tag(text)
+        Token::Tag { tag: text }
     }
 
     // blocks of text beginning with '>'. Either Callout or quote.
@@ -369,7 +422,9 @@ impl Lexer {
         if (self.peak(pointer), self.peak(pointer + 1)) == (Some('['), Some('!')) {
             self.consume_callout()
         } else {
-            Token::Quote(self.consume_quote())
+            Token::Quote {
+                contents: self.consume_quote(),
+            }
         }
     }
 
@@ -395,11 +450,11 @@ impl Lexer {
         let title = if self.peak(-1) != Some('\n') {
             let mut title = self.consume_line();
             match title.last() {
-                Some(Token::Text(t)) if t.ends_with('\n') => {
+                Some(Token::Text { text: t }) if t.ends_with('\n') => {
                     let mut t = t.clone();
                     t.pop();
                     title.pop();
-                    title.push(Token::Text(t))
+                    title.push(Token::Text { text: t })
                 }
                 _ => {}
             }
@@ -408,17 +463,19 @@ impl Lexer {
             // If the callout does not have a title
             let mut name = kind.clone();
             name = name[0..1].to_uppercase() + &name[1..];
-            vec![Token::Text(name)]
+            vec![Token::Text { text: name }]
         };
 
         let contents = self.consume_quote();
 
-        Token::Callout(Callout {
-            kind,
-            title,
-            contents,
-            foldable,
-        })
+        Token::Callout {
+            callout: Callout {
+                kind,
+                title,
+                contents,
+                foldable,
+            },
+        }
     }
 
     fn consume_quote(&mut self) -> Vec<Token> {
@@ -439,30 +496,23 @@ impl Lexer {
         assert_eq!(self.consume(), Some('-'));
         assert_eq!(self.consume(), Some('-'));
 
-        let mut yaml_text = String::new();
+        let mut yaml = String::new();
 
         while (self.peak(0), self.peak(1), self.peak(2)) != (Some('-'), Some('-'), Some('-'))
             && self.peak(2).is_some()
         {
-            yaml_text.push(
+            yaml.push(
                 self.consume()
                     .expect("The check for Some is already done here."),
             );
         }
-
-        let frontmatter = yaml_rust::YamlLoader::load_from_str(yaml_text.as_str())?;
-        if frontmatter.is_empty() {
-            return Ok(Token::Text("".to_string()));
-        }
-
-        let frontmatter = frontmatter[0].clone();
 
         // TODO: make good error message if frontmatter is not ended correctly
         assert_eq!(self.consume(), Some('-'));
         assert_eq!(self.consume(), Some('-'));
         assert_eq!(self.consume(), Some('-'));
 
-        Ok(Token::Frontmatter(frontmatter))
+        Ok(Token::Frontmatter { yaml })
     }
 
     fn consume_divider(&mut self) -> Token {
@@ -476,7 +526,7 @@ impl Lexer {
             self.consume();
         }
         debug_assert!(matches!(self.consume(), Some('\n') | None));
-        Token::Divider
+        Token::Divider {}
     }
 
     fn consume_display_math(&mut self) -> Token {
@@ -495,7 +545,7 @@ impl Lexer {
 
         assert_eq!(self.consume(), Some('$'));
         assert_eq!(self.consume(), Some('$'));
-        Token::DisplayMath(inline_math)
+        Token::DisplayMath { latex: inline_math }
     }
 
     fn consume_inline_math(&mut self) -> Token {
@@ -509,7 +559,7 @@ impl Lexer {
         let inline_math = self.text[start..self.cursor].iter().collect();
 
         assert_eq!(self.consume(), Some('$'));
-        Token::InlineMath(inline_math)
+        Token::InlineMath { latex: inline_math }
     }
 }
 
@@ -540,7 +590,9 @@ impl Iterator for Lexer {
                     Ok(t) => Some(t),
                     Err(e) => {
                         eprintln!("ERROR: Could not parse frontmatter: {}", e);
-                        Some(Token::Text("".to_string()))
+                        Some(Token::Text {
+                            text: "".to_string(),
+                        })
                     }
                 }
             }
@@ -549,7 +601,7 @@ impl Iterator for Lexer {
             }
             '$' if self.peak(1) == Some('$') => Some(self.consume_display_math()),
             '$' => Some(self.consume_inline_math()),
-            c if c.is_whitespace() => Some(Token::Text(self.consume_whitespace())),
+            c if c.is_whitespace() => Some(Token::Text { text: self.consume_whitespace() }),
             _ => {
                 for token in self.consume_line() {
                     self.queue.push_back(token);

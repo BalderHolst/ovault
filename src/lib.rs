@@ -1,3 +1,7 @@
+use lexer::Token;
+use pyo3::{pymodule, types::{PyModule, PyModuleMethods}, Bound, PyResult};
+use vault::Vault;
+
 mod vault;
 mod lexer;
 
@@ -15,3 +19,11 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
+
+#[pymodule]
+fn pyvault(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<Vault>()?;
+    m.add_class::<Token>()?;
+    Ok(())
+}
+
