@@ -156,39 +156,6 @@ impl Vault {
     pub fn py_get_note(&self, name: &str) -> Option<Note> {
         self.get_note(&normalize(name.to_string())).cloned()
     }
-
-    #[pyo3(name = "get_linked_items")]
-    pub fn py_get_linked_items<'py>(
-        &self,
-        py: Python<'py>,
-        name: &str,
-    ) -> PyResult<Vec<pyo3::Bound<'py, PyAny>>> {
-        let Some(note) = self.get_note(&normalize(name.to_string())) else {
-            return PyResult::Err(PyValueError::new_err(format!(
-                "Could not find note: '{}'",
-                name
-            )));
-        };
-
-        let mut links = vec![];
-
-        for link in &note.links {
-            let Some(item) = self.get_item(link) else {
-                continue;
-            };
-
-            let obj = match item {
-                VaultItem::Note { note } => note.clone().into_pyobject(py)?.into_super(),
-                VaultItem::Attachment { attachment } => {
-                    attachment.clone().into_pyobject(py)?.into_super()
-                }
-            };
-
-            links.push(obj);
-        }
-
-        Ok(links)
-    }
 }
 
 impl Vault {
