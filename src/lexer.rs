@@ -79,7 +79,7 @@ pub struct Callout {
 pub enum Token {
     Text { text: String },
     Tag { tag: String },
-    Header { level: usize, heading: Vec<Token> },
+    Header { level: usize, heading: String },
     InternalLink { link: InternalLink },
     ExternalLink { link: ExternalLink },
     Callout { callout: Callout },
@@ -108,7 +108,7 @@ impl Token {
             Token::Text { text } => format!("Text({})", string(text)),
             Token::Tag { tag } => format!("Tag({})", string(tag)),
             Token::Header { level, heading } => {
-                format!("Header({}, {})", level, string(&format!("{:?}", heading)))
+                format!("Header({}, {})", level, string(heading))
             }
             Token::InternalLink { link } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link } => format!("ExternalLink({})", link.label()),
@@ -381,7 +381,7 @@ impl Lexer {
         tokens
     }
 
-    fn consume_header(&mut self) -> Token {
+    fn consume_heading(&mut self) -> Token {
         assert_eq!(self.current(), Some('#'));
         let mut level: usize = 0;
         while self.current() == Some('#') {
@@ -389,7 +389,11 @@ impl Lexer {
             level += 1;
         }
         let _ = self.consume_whitespace();
-        let heading = self.consume_line();
+        let start = self.cursor;
+        while !matches!(self.current(), Some('\n') | None) {
+            self.consume();
+        }
+        let heading = self.text[start..self.cursor].iter().collect();
         Token::Header { level, heading }
     }
 
@@ -579,7 +583,7 @@ impl Iterator for Lexer {
             '#' => {
                 let next = self.peak(1);
                 if next == Some(' ') || next == Some('#') {
-                    Some(self.consume_header())
+                    Some(self.consume_heading())
                 } else {
                     Some(self.consume_tag())
                 }
