@@ -1,5 +1,5 @@
 use pyo3::{pyclass, pymethods, PyResult};
-use std::{collections::HashMap, ffi::OsStr, fs, io, path::PathBuf};
+use std::{collections::HashMap, fs, io, path::PathBuf};
 
 use crate::lexer::{Lexer, Token};
 
@@ -359,16 +359,6 @@ impl Vault {
 
     }
 
-    pub fn tokens_to_string<I>(&self, note: &Note, tokens: I) -> String
-    where
-        I: IntoIterator<Item = Token>,
-    {
-        tokens
-            .into_iter()
-            .map(|token| self.token_to_string(note, &token))
-            .collect::<String>()
-    }
-
     fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
         self.items.get(normalized_name)
     }
@@ -402,81 +392,6 @@ impl Vault {
         match self.get_item_mut(normalized_name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,
-        }
-    }
-
-    fn token_to_string(&self, note: &Note, token: &Token) -> String {
-        let mut is_attachment = false;
-
-        match token {
-            Token::Text { text } => text.clone(),
-            Token::Tag { tag } => format!("#{tag}"),
-            Token::Header { level, heading } => format!(
-                "{} {}",
-                "#".repeat(*level),
-                self.tokens_to_string(note, heading.clone()),
-            ),
-            Token::ExternalLink { link } => todo!("{link:?}"),
-            Token::InternalLink { link } => {
-                let normalized_name = normalize_name(link.dest.clone());
-                let normalized_path = match self.get_note(&normalized_name){
-                    Some(note) if note.path.extension() == Some(OsStr::new("md")) => normalize_path_to_string(&remove_extension(&note.path)),
-                    Some(note) => normalize_path_to_string(&note.path),
-
-                    // If link does not point to a note
-                    None => {
-                        match self.get_attachment(&normalized_name) {
-                            // Found attachment!
-                            Some(Attachment { path }) => {
-                                is_attachment = true;
-                                normalize_path_to_string_keep_ext(path)
-                            },
-
-                            // Remove link if it does not point to anything
-                            None => {
-                                let s = link.label();
-                                // TODO: specify from where in error
-                                eprintln!("WARNING: Removing link to '{s}'.");
-                                return s.to_owned();
-                            }
-                        }
-
-                    },
-                };
-                let url = "../".repeat(note.path_debth()) + normalized_path.as_str();
-                let vault_url = "notes/vault/".to_string() + normalized_path.as_str();
-                match (is_attachment, link.render, &link.position) {
-                    (_, true, None) => format!("![{}]({})", link.label(), url),
-                    (_, false, None) => format!("[{}]({})", link.label(), url),
-                    // TODO: actually embed things idk
-                    (_, true, Some(position))  => format!("![{}#{}]({})", link.label(), position, url),
-                    (false, false, Some(_position)) => format!(
-                        // TODO: Jump to heading (position) when link is clicked
-                        "[{show_how}]({{{{< ref \"{url}\" >}}}})",
-                        show_how=link.label(),
-                        url=vault_url
-                        //pos=position,
-                        ),
-                    (true, false, Some(position)) => format!(
-                        "[{show_how}]({url}#{pos})",
-                        show_how=link.label(),
-                        pos=position,
-                        url=url
-                        ),
-                }
-            },
-            Token::Callout { callout } => format!(
-                "\n{{{{< callout type=\"{}\" title=\"{}\" foldable=\"{}\" >}}}}\n{}{{{{< /callout >}}}}\n",
-                callout.kind,
-                self.tokens_to_string(note, callout.title.clone()),
-                if callout.foldable { "true" } else { "false" },
-                self.tokens_to_string(note, callout.contents.clone()),
-            ),
-            Token::Quote { contents } => contents.iter().map(|token| "> ".to_string() + self.token_to_string(note, token).as_str()).collect(),
-            Token::Frontmatter { .. } => panic!("Frontmatter should never be part of a note body."),
-            Token::Divider { .. } => "\n--------------------\n".to_string(),
-            Token::InlineMath { latex } => format!("${}$", latex.clone()),
-            Token::DisplayMath { latex } => format!("$${}$$", latex.clone()),
         }
     }
 }
