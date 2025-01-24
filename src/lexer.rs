@@ -82,6 +82,7 @@ pub enum Token {
     Header { level: usize, heading: String },
     InternalLink { link: InternalLink },
     ExternalLink { link: ExternalLink },
+    Code { lang: Option<String>, code: String },
     Callout { callout: Callout },
     Quote { contents: Vec<Token> },
     InlineMath { latex: String },
@@ -108,10 +109,14 @@ impl Token {
             Token::Text { text } => format!("Text({})", string(text)),
             Token::Tag { tag } => format!("Tag({})", string(tag)),
             Token::Header { level, heading } => {
-                format!("Header({}, {})", level, string(heading))
+                format!("Header({} {})", "#".repeat(*level), string(heading))
             }
             Token::InternalLink { link } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link } => format!("ExternalLink({})", link.label()),
+            Token::Code { lang, code } => match lang {
+                Some(lang) => format!("Code({}: {})", string(lang), string(code)),
+                None => format!("Code({})", string(code)),
+            },
             Token::Callout { callout } => format!("Callout({})", string(&format!("{:?}", callout))),
             Token::Quote { contents } => format!("Quote({})", string(&format!("{:?}", contents))),
             Token::Frontmatter { yaml } => format!("Frontmatter({})", string(yaml)),
@@ -126,16 +131,18 @@ impl Token {
     pub fn is_whitespace(&self) -> bool {
         match self {
             Token::Text { text } => text.chars().all(char::is_whitespace),
-            Token::Tag { .. } => false,
-            Token::Header { .. } => false,
-            Token::InternalLink { .. } => false,
-            Token::ExternalLink { .. } => false,
-            Token::Callout { .. } => false,
-            Token::Quote { .. } => false,
-            Token::Frontmatter { .. } => false,
-            Token::Divider {} => false,
-            Token::InlineMath { .. } => false,
-            Token::DisplayMath { .. } => false,
+
+            Token::Tag { .. }
+            | Token::Header { .. }
+            | Token::InternalLink { .. }
+            | Token::ExternalLink { .. }
+            | Token::Code { .. }
+            | Token::Callout { .. }
+            | Token::Quote { .. }
+            | Token::Frontmatter { .. }
+            | Token::Divider {}
+            | Token::InlineMath { .. }
+            | Token::DisplayMath { .. } => false,
         }
     }
 }
@@ -164,15 +171,19 @@ impl Lexer {
         Ok(Self::new(text))
     }
 
-    fn peak(&self, offset: isize) -> Option<char> {
+    fn peek(&self, offset: isize) -> Option<char> {
         let index = (self.cursor as isize + offset) as usize;
         self.text.get(index).copied()
+    }
+
+    fn current(&self) -> Option<char> {
+        self.peek(0)
     }
 
     // Consume a character
     fn consume(&mut self) -> Option<char> {
         self.cursor += 1;
-        self.peak(-1)
+        self.peek(-1)
     }
 
     fn consume_expect(&mut self, expected: char) {
@@ -182,22 +193,26 @@ impl Lexer {
         }
     }
 
-    fn current(&self) -> Option<char> {
-        self.peak(0)
+    fn consume_until(&mut self, cond: impl Fn(char) -> bool) -> String {
+        let start = self.cursor;
+        while self.current().map_or(false, |c| !cond(c)) {
+            self.consume();
+        }
+        self.extract(start)
     }
 
     fn consume_whitespace(&mut self) -> String {
-        let mut s = String::new();
-        while match self.current() {
-            Some(c) => c.is_whitespace(),
-            None => false,
-        } {
-            let c = self.consume().unwrap();
-            s.push(c);
-        }
-        s
+        self.consume_until(|c| !c.is_whitespace())
     }
 
+    /// Get the text between the mark and the cursor
+    fn extract(&self, start: usize) -> String {
+        self.text[start..self.cursor].iter().collect()
+    }
+}
+
+// Methods that construct tokens
+impl Lexer {
     fn consume_internal_link(&mut self) -> Token {
         let mut fields = vec![String::new()];
         let mut shown = false;
@@ -342,7 +357,7 @@ impl Lexer {
         let mut found_eof = false;
 
         while !matches!(self.current(), Some('\n') | None) {
-            match (self.current(), self.peak(1), self.peak(2)) {
+            match (self.current(), self.peek(1), self.peek(2)) {
                 (Some('['), Some('['), _) | (Some('!'), Some('['), Some('[')) => {
                     tokens.push(Token::Text { text: s.clone() });
                     s.clear();
@@ -413,9 +428,9 @@ impl Lexer {
     // blocks of text beginning with '>'. Either Callout or quote.
     fn consume_block(&mut self) -> Token {
         // Find the starting character to determine if block is a callout
-        assert_eq!(self.peak(0), Some('>'));
+        assert_eq!(self.peek(0), Some('>'));
         let mut pointer: isize = 1;
-        while match self.peak(pointer) {
+        while match self.peek(pointer) {
             Some(c) => c.is_whitespace(),
             None => false,
         } {
@@ -423,7 +438,7 @@ impl Lexer {
         }
 
         // Is the quote a callout?
-        if (self.peak(pointer), self.peak(pointer + 1)) == (Some('['), Some('!')) {
+        if (self.peek(pointer), self.peek(pointer + 1)) == (Some('['), Some('!')) {
             self.consume_callout()
         } else {
             Token::Quote {
@@ -451,7 +466,7 @@ impl Lexer {
         }
         self.consume_whitespace();
 
-        let title = if self.peak(-1) != Some('\n') {
+        let title = if self.peek(-1) != Some('\n') {
             let mut title = self.consume_line();
             match title.last() {
                 Some(Token::Text { text: t }) if t.ends_with('\n') => {
@@ -502,8 +517,8 @@ impl Lexer {
 
         let mut yaml = String::new();
 
-        while (self.peak(0), self.peak(1), self.peak(2)) != (Some('-'), Some('-'), Some('-'))
-            && self.peak(2).is_some()
+        while (self.peek(0), self.peek(1), self.peek(2)) != (Some('-'), Some('-'), Some('-'))
+            && self.peek(2).is_some()
         {
             yaml.push(
                 self.consume()
@@ -520,17 +535,46 @@ impl Lexer {
     }
 
     fn consume_divider(&mut self) -> Token {
-        debug_assert_eq!(self.consume(), Some('-'));
-        debug_assert_eq!(self.consume(), Some('-'));
-        debug_assert_eq!(self.consume(), Some('-'));
-        while self.current() == Some('-') {
-            self.consume();
-        }
-        while self.current() == Some(' ') {
-            self.consume();
-        }
-        debug_assert!(matches!(self.consume(), Some('\n') | None));
+        assert_eq!(self.consume(), Some('-'));
+        assert_eq!(self.consume(), Some('-'));
+        assert_eq!(self.consume(), Some('-'));
+        self.consume_until(|c| c != '-');
+        self.consume_until(|c| !c.is_whitespace() || c == '\n');
+        assert!(matches!(self.consume(), Some('\n') | None));
         Token::Divider {}
+    }
+
+    fn consume_code(&mut self) -> Token {
+        assert_eq!(self.consume(), Some('`'));
+        assert_eq!(self.consume(), Some('`'));
+        assert_eq!(self.consume(), Some('`'));
+
+        let lang = self.consume_until(|c| c == '\n');
+        self.consume(); // consume newline
+
+        let lang = match lang.is_empty() {
+            true => None,
+            false => Some(lang),
+        };
+
+        let code_start = self.cursor;
+        loop {
+            self.consume_until(|c| c == '`');
+            if self.peek(1) == Some('`') && self.peek(2) == Some('`') {
+                break;
+            }
+
+            // consume the "`" we found
+            self.consume();
+        }
+
+        let code = self.extract(code_start);
+
+        assert_eq!(self.consume(), Some('`'));
+        assert_eq!(self.consume(), Some('`'));
+        assert_eq!(self.consume(), Some('`'));
+
+        Token::Code { lang, code }
     }
 
     fn consume_display_math(&mut self) -> Token {
@@ -539,7 +583,7 @@ impl Lexer {
 
         let start = self.cursor.clone();
         while !matches!(
-            (self.current(), self.peak(1)),
+            (self.current(), self.peek(1)),
             (Some('$'), Some('$')) | (None, _) | (_, None)
         ) {
             self.consume();
@@ -581,7 +625,7 @@ impl Iterator for Lexer {
 
         let token = match self.current()? {
             '#' => {
-                let next = self.peak(1);
+                let next = self.peek(1);
                 if next == Some(' ') || next == Some('#') {
                     Some(self.consume_heading())
                 } else {
@@ -589,7 +633,7 @@ impl Iterator for Lexer {
                 }
             }
             '>' => Some(self.consume_block()),
-            '-' if self.first_token && (self.peak(1), self.peak(2)) == (Some('-'), Some('-')) => {
+            '-' if self.first_token && (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
                 match self.consume_front_matter() {
                     Ok(t) => Some(t),
                     Err(e) => {
@@ -600,12 +644,17 @@ impl Iterator for Lexer {
                     }
                 }
             }
-            '-' if (self.peak(1), self.peak(2)) == (Some('-'), Some('-')) => {
+            '-' if (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
                 Some(self.consume_divider())
             }
-            '$' if self.peak(1) == Some('$') => Some(self.consume_display_math()),
+            '`' if (self.peek(1), self.peek(2)) == (Some('`'), Some('`')) => {
+                Some(self.consume_code())
+            }
+            '$' if self.peek(1) == Some('$') => Some(self.consume_display_math()),
             '$' => Some(self.consume_inline_math()),
-            c if c.is_whitespace() => Some(Token::Text { text: self.consume_whitespace() }),
+            c if c.is_whitespace() => Some(Token::Text {
+                text: self.consume_whitespace(),
+            }),
             _ => {
                 for token in self.consume_line() {
                     self.queue.push_back(token);

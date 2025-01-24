@@ -1,5 +1,9 @@
 use pyo3::{pyclass, pymethods, PyResult};
-use std::{collections::HashMap, fs, io, path::PathBuf};
+use std::{
+    collections::{HashMap, HashSet},
+    fs, io,
+    path::PathBuf,
+};
 
 use crate::lexer::{Lexer, Token};
 
@@ -78,7 +82,7 @@ pub struct Note {
     frontmatter: Option<String>,
 
     #[pyo3(get)]
-    tags: Vec<String>,
+    tags: HashSet<String>,
 
     #[pyo3(get)]
     backlinks: Vec<String>,
@@ -110,7 +114,6 @@ impl Note {
             self.backlinks.push(backlink);
         }
     }
-
 }
 
 #[pyclass]
@@ -138,7 +141,7 @@ pub struct Vault {
     path: PathBuf,
 
     /// Maps tags to notes with those tags
-    tags: HashMap<String, Vec<String>>,
+    tags: HashMap<String, HashSet<String>>,
 }
 
 #[pymethods]
@@ -166,6 +169,29 @@ impl Vault {
     pub fn py_attachments(&self) -> Vec<Attachment> {
         self.attachments().cloned().collect()
     }
+
+
+    #[pyo3(name = "tags")]
+    pub fn tags(&self) -> Vec<String> {
+        self.tags.keys().cloned().collect()
+    }
+
+    #[pyo3(name = "get_notes_with_tag")]
+    pub fn py_get_notes_with_tag(&self, tag: &str) -> Option<Vec<Note>> {
+        let notes = self.tags
+            .get(tag)?
+            .iter()
+            .filter_map(|name| self.get_note(name))
+            .cloned()
+            .collect();
+        Some(notes)
+    }
+
+    #[pyo3(name = "get_note_by_name")]
+    pub fn py_get_note(&self, name: &str) -> Option<Note> {
+        self.get_note(&normalize_name(name.to_string())).cloned()
+    }
+
 }
 
 impl Vault {
@@ -252,7 +278,7 @@ impl Vault {
             tokens,
             frontmatter,
             links: Vec::new(),
-            tags: Vec::new(),
+            tags: Default::default(),
             backlinks: Vec::new(),
         };
         let normalized_name = normalize_name(name.to_string());
@@ -297,8 +323,11 @@ impl Vault {
     }
 
     pub fn index(&mut self) {
-
+        // New links
         let mut links = vec![];
+
+        // New Tags
+        let mut tags = vec![];
 
         for note in self.notes_mut() {
             for token in &note.tokens {
@@ -311,10 +340,14 @@ impl Vault {
                     | Token::Divider { .. }
                     | Token::InlineMath { .. }
                     | Token::DisplayMath { .. }
+                    | Token::Code { .. }
                     | Token::ExternalLink { .. } => {}
-                    Token::Tag { tag } => note.tags.push(tag.to_string()),
+                    Token::Tag { tag } => {
+                        note.tags.insert(tag.clone());
+                        let name = normalize_name(note.name.clone());
+                        tags.push((tag.clone(), name));
+                    }
                     Token::InternalLink { link } => {
-
                         // if `dest` field is empty, the link points to heading in itself
                         // and we don't have to do anything in that case.
                         if link.dest.is_empty() {
@@ -329,8 +362,13 @@ impl Vault {
             }
         }
 
-        for (from, to) in links {
+        // Insert the tags
+        for (tag, name) in tags {
+            self.tags.entry(tag).or_default().insert(name);
+        }
 
+        // Insert the links
+        for (from, to) in links {
             // Link
             {
                 let Some(from_note) = self.get_note_mut(&from) else {
@@ -356,7 +394,6 @@ impl Vault {
                 // eprintln!("WARNING: Could not find linked item: '{from}' -> '{to}'");
             }
         }
-
     }
 
     fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
