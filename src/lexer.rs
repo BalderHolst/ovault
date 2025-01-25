@@ -85,7 +85,7 @@ pub enum Token {
     ExternalLink { link: ExternalLink },
     Code { lang: Option<String>, code: String },
     Callout { callout: Callout },
-    Quote { contents: Vec<Token> },
+    Quote { contents: String },
     InlineMath { latex: String },
     DisplayMath { latex: String },
     Divider {},
@@ -174,7 +174,8 @@ impl Lexer {
     }
 
     fn peek(&self, offset: isize) -> Option<char> {
-        let index = (self.cursor as isize + offset) as usize;
+        let index = self.cursor as isize + offset;
+        let index = usize::try_from(index).ok()?;
         self.text.get(index).copied()
     }
 
@@ -406,28 +407,28 @@ impl Lexer {
         Some(Token::Tag { tag })
     }
 
-    // blocks of text beginning with '>'. Either Callout or quote.
-    fn consume_block(&mut self) -> Token {
+    // // blocks of text beginning with '>'. Either Callout or quote.
+    // fn consume_block(&mut self) -> Token {
 
-        // Find the starting character to determine if block is a callout
-        assert_eq!(self.peek(0), Some('>'));
-        let mut pointer: isize = 1;
-        while match self.peek(pointer) {
-            Some(c) => c.is_whitespace(),
-            None => false,
-        } {
-            pointer += 1;
-        }
+    //     // Find the starting character to determine if block is a callout
+    //     assert_eq!(self.peek(0), Some('>'));
+    //     let mut pointer: isize = 1;
+    //     while match self.peek(pointer) {
+    //         Some(c) => c.is_whitespace(),
+    //         None => false,
+    //     } {
+    //         pointer += 1;
+    //     }
 
-        // Is the quote a callout?
-        if (self.peek(pointer), self.peek(pointer + 1)) == (Some('['), Some('!')) {
-            self.consume_callout()
-        } else {
-            Token::Quote {
-                contents: self.consume_quote(),
-            }
-        }
-    }
+    //     // Is the quote a callout?
+    //     if (self.peek(pointer), self.peek(pointer + 1)) == (Some('['), Some('!')) {
+    //         self.consume_callout()
+    //     } else {
+    //         Token::Quote {
+    //             contents: self.consume_quote(),
+    //         }
+    //     }
+    // }
 
     fn consume_callout(&mut self) -> Token {
         // assert_eq!(self.consume(), Some('>'));
@@ -480,18 +481,34 @@ impl Lexer {
         todo!()
     }
 
-    fn consume_quote(&mut self) -> Vec<Token> {
-        // let mut contents = Vec::new();
-        // while self.current() == Some('>') {
-        //     self.consume();
+    fn try_lex_quote(&mut self) -> Option<Token> {
 
-        //     // Ignore white space
-        //     let _ = self.consume_whitespace();
+        // Quote must start after newline or at the start of a file
+        if !matches!(self.peek(-1), None | Some('\n')) {
+            return None;
+        }
 
-        //     contents.extend(self.consume_line());
-        // }
-        // contents
-        todo!()
+        if !matches!(self.current(), Some('>')) {
+            return None;
+        }
+
+        let mut lines = vec![];
+
+        loop {
+            if !matches!(self.current(), Some('>')) {
+                break;
+            }
+            self.consume(); // Consume '>'
+
+            let line_start = self.cursor;
+            self.consume_until(|c| c == '\n');
+            self.consume();
+
+            let line = self.extract(line_start);
+            lines.push(line);
+        }
+
+        Some(Token::Quote { contents: lines.join("") })
     }
 
     fn try_lex_front_matter(&mut self) -> Option<Token> {
@@ -655,6 +672,7 @@ impl Iterator for Lexer {
             please!(try_lex_code);
             please!(try_lex_display_math);
             please!(try_lex_inline_math);
+            please!(try_lex_quote);
             please!(try_lex_front_matter);
             please!(try_lex_divider);
 
@@ -677,6 +695,18 @@ impl Iterator for Lexer {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_lex_front_matter() {
+        let mut lexer = Lexer::new("---\nkey: value\n-----\n# this is a heading");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::Frontmatter {
+                yaml: "key: value\n".to_string()
+            }
+        );
+    }
 
     #[test]
     fn test_lex_heading() {
@@ -742,15 +772,10 @@ mod tests {
     }
 
     #[test]
-    fn test_lex_front_matter() {
-        let mut lexer = Lexer::new("---\nkey: value\n-----\n# this is a heading");
+    fn test_lex_quote() {
+        let mut lexer = Lexer::new("> 'fun quote!'\n> - Author");
         let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Frontmatter {
-                yaml: "key: value\n".to_string()
-            }
-        );
+        assert_eq!(token, Token::Quote { contents: " 'fun quote!'\n - Author".to_string() });
     }
 
 }
