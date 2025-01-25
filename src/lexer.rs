@@ -156,8 +156,8 @@ pub struct Lexer {
 }
 
 impl Lexer {
-    pub fn new(text: String) -> Self {
-        let chars = text.chars().collect();
+    pub fn new<S: ToString>(text: S) -> Self {
+        let chars = text.to_string().chars().collect();
         Self {
             cursor: 0,
             slow_cursor: 0,
@@ -654,13 +654,13 @@ impl Iterator for Lexer {
                 );
             }
 
+            please!(try_lex_heading);
+            please!(try_lex_tag);
+            please!(try_lex_code);
+            please!(try_lex_display_math);
+            please!(try_lex_inline_math);
             please!(try_lex_front_matter);
-            // please!(try_lex_heading);
-            // please!(try_lex_tag);
-            // please!(try_lex_divider);
-            // please!(try_lex_code);
-            // please!(try_lex_display_math);
-            // please!(try_lex_inline_math);
+            please!(try_lex_divider);
 
             // Check if we are at the end of the file
             if self.current().is_none() {
@@ -735,7 +735,7 @@ mod tests {
 
     #[test]
     fn test_lex_heading() {
-        let mut lexer = Lexer::new("# Heading".to_string());
+        let mut lexer = Lexer::new("# Heading");
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
@@ -748,7 +748,7 @@ mod tests {
 
     #[test]
     fn test_lex_tag() {
-        let mut lexer = Lexer::new("#tag".to_string());
+        let mut lexer = Lexer::new("#tag");
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
@@ -759,8 +759,46 @@ mod tests {
     }
 
     #[test]
+    fn test_lex_divider() {
+        let mut lexer = Lexer::new("---");
+        let token = lexer.next().unwrap();
+        assert_eq!(token, Token::Divider {});
+
+        let mut lexer = Lexer::new("---------");
+        let token = lexer.next().unwrap();
+        assert_eq!(token, Token::Divider {});
+    }
+
+    #[test]
+    fn test_lex_code() {
+        let mut lexer = Lexer::new("```rust\nthis is some code```");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::Code {
+                lang: Some("rust".to_string()),
+                code: "this is some code".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_lex_inline_math() {
+        let mut lexer = Lexer::new("$a=b$");
+        let token = lexer.next().unwrap();
+        assert_eq!(token, Token::InlineMath { latex: "a=b".to_string() });
+    }
+
+    #[test]
+    fn test_lex_display_math() {
+        let mut lexer = Lexer::new("$$a=b$$");
+        let token = lexer.next().unwrap();
+        assert_eq!(token, Token::DisplayMath { latex: "a=b".to_string() });
+    }
+
+    #[test]
     fn test_lex_front_matter() {
-        let mut lexer = Lexer::new("---\nkey: value\n-----\n# this is a heading".to_string());
+        let mut lexer = Lexer::new("---\nkey: value\n-----\n# this is a heading");
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
