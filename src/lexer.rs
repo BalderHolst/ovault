@@ -646,12 +646,8 @@ impl Iterator for Lexer {
 
         loop {
 
-            if !self.queue.is_empty() {
-                return Some(
-                    self.queue
-                        .pop_front()
-                        .expect("We should not get to here if the queue is empty."),
-                );
+            if let Some(t) = self.queue.pop_front() {
+                return Some(t)
             }
 
             please!(try_lex_heading);
@@ -675,57 +671,6 @@ impl Iterator for Lexer {
             // Consume a text character
             self.consume();
         }
-
-        // let start = self.cursor;
-        // token = self.try_lex_tag();
-        // if token.is_some() {
-        //     self.slow_cursor = self.cursor;
-        //     return token;
-        // }
-        // self.cursor = start;
-
-        // let token = match self.current()? {
-        //     '#' => {
-        //         let next = self.peek(1);
-        //         if next == Some(' ') || next == Some('#') {
-        //             Some(self.consume_heading())
-        //         } else {
-        //             Some(self.consume_tag())
-        //         }
-        //     }
-        //     '>' => Some(self.consume_block()),
-        //     '-' if self.first_token && (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
-        //         match self.consume_front_matter() {
-        //             Ok(t) => Some(t),
-        //             Err(e) => {
-        //                 eprintln!("ERROR: Could not parse frontmatter: {}", e);
-        //                 Some(Token::Text {
-        //                     text: "".to_string(),
-        //                 })
-        //             }
-        //         }
-        //     }
-        //     '-' if (self.peek(1), self.peek(2)) == (Some('-'), Some('-')) => {
-        //         Some(self.consume_divider())
-        //     }
-        //     '`' if (self.peek(1), self.peek(2)) == (Some('`'), Some('`')) => {
-        //         Some(self.consume_code())
-        //     }
-        //     '$' if self.peek(1) == Some('$') => Some(self.consume_display_math()),
-        //     '$' => Some(self.consume_inline_math()),
-        //     c if c.is_whitespace() => Some(Token::Text {
-        //         text: self.consume_whitespace(),
-        //     }),
-        //     _ => {
-        //         for token in self.consume_line() {
-        //             self.queue.push_back(token);
-        //         }
-        //         self.queue.pop_front()
-        //     }
-        // };
-        // if self.first_token {
-        //     self.first_token = false
-        // }
     }
 }
 
