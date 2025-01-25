@@ -1,4 +1,4 @@
-use pyo3::{exceptions::PyValueError, pyclass, pymethods, IntoPyObject, PyAny, PyResult, Python};
+use pyo3::{pyclass, pymethods, PyResult};
 use std::{
     collections::{HashMap, HashSet},
     fs, io,
@@ -222,13 +222,14 @@ impl Vault {
         debug_assert_eq!(path.extension().unwrap(), "md");
 
         let name = path.file_stem().unwrap().to_str().unwrap();
-        let tokens: Vec<Token> = match Lexer::from_file(path.as_path()) {
-            Ok(lexer) => lexer.collect(),
+        let note_contents = match fs::read_to_string(path) {
+            Ok(contents) => contents,
             Err(e) => {
-                eprintln!("ERROR: {:?}\nSkipping file '{}'.", e, path.display());
+                eprintln!("ERROR: Could not read file '{}': {}", path.display(), e);
                 return;
             }
         };
+        let tokens = Lexer::new(note_contents).collect(); 
 
         let note = Note {
             path: path.strip_prefix(&self.path).unwrap().to_path_buf(),

@@ -1,12 +1,5 @@
 use pyo3::{pyclass, pymethods};
-use std::{collections::VecDeque, fs, path::Path};
-use yaml_rust::{self, ScanError};
-
-#[derive(Debug)]
-pub enum LexerError {
-    Io(std::io::Error),
-    Utf(std::string::FromUtf8Error),
-}
+use std::collections::VecDeque;
 
 #[pyclass]
 #[derive(Debug, Clone, PartialEq)]
@@ -153,7 +146,6 @@ pub struct Lexer {
     slow_cursor: usize,
     text: Vec<char>,
     queue: VecDeque<Token>,
-    first_token: bool,
 }
 
 impl Lexer {
@@ -164,14 +156,7 @@ impl Lexer {
             slow_cursor: 0,
             text: chars,
             queue: Default::default(),
-            first_token: true,
         }
-    }
-
-    pub fn from_file(path: &Path) -> Result<Self, LexerError> {
-        let bytes = fs::read(path).map_err(LexerError::Io)?;
-        let text = String::from_utf8(bytes).map_err(LexerError::Utf)?;
-        Ok(Self::new(text))
     }
 
     fn peek(&self, offset: isize) -> Option<char> {
@@ -235,10 +220,6 @@ impl Lexer {
         let start = start.min(self.text.len());
         let end = self.cursor.min(self.text.len());
         self.text[start..end].iter().collect()
-    }
-
-    fn queue_token(&mut self, token: Token) {
-        self.queue.push_back(token);
     }
 }
 
