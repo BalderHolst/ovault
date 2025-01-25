@@ -12,14 +12,15 @@ pub enum LexerError {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExternalLink {
     #[pyo3(get, set)]
+    pub render: bool,
+    #[pyo3(get, set)]
     pub url: String,
     #[pyo3(get, set)]
     pub show_how: String,
     #[pyo3(get, set)]
-    pub render: bool,
-    // TODO:
-    // pub options: Option<String>,
-    // pub position: Option<String>,
+    pub options: Option<String>,
+    #[pyo3(get, set)]
+    pub position: Option<String>,
 }
 
 impl ExternalLink {
@@ -67,9 +68,9 @@ pub struct Callout {
     #[pyo3(get, set)]
     pub kind: String,
     #[pyo3(get, set)]
-    pub title: Vec<Token>,
+    pub title: String,
     #[pyo3(get, set)]
-    pub contents: Vec<Token>,
+    pub contents: String,
     #[pyo3(get, set)]
     pub foldable: bool,
 }
@@ -189,6 +190,13 @@ impl Lexer {
         self.peek(-1)
     }
 
+    fn consume_assert_eq(&mut self, expected: char) -> Option<char> {
+        self.cursor += 1;
+        let c = self.peek(-1);
+        debug_assert_eq!(c, Some(expected));
+        c
+    }
+
     fn consume_expect(&mut self, expect: impl FnOnce(char) -> bool) -> Option<char> {
         let c = self.consume();
         c.map(|a| match expect(a) {
@@ -236,137 +244,6 @@ impl Lexer {
 
 // Methods that construct tokens
 impl Lexer {
-    fn consume_internal_link(&mut self) -> Token {
-        let mut fields = vec![String::new()];
-        let mut shown = false;
-
-        if self.current() == Some('!') {
-            shown = true;
-            self.consume();
-        }
-
-        assert_eq!(self.consume(), Some('['));
-        assert_eq!(self.consume(), Some('['));
-
-        while self.current() != Some(']') {
-            match self.consume() {
-                // Start new field
-                Some('|') => fields.push(String::new()),
-
-                // Add character to current field
-                Some(c) => fields.last_mut().unwrap().push(c),
-
-                None => break,
-            };
-        }
-
-        assert_eq!(self.consume(), Some(']'));
-
-        // TODO: Give good error message
-        assert_eq!(self.consume(), Some(']'));
-
-        let note_name = fields[0].clone();
-        let (note_name, position) = match note_name.split_once('#') {
-            Some((d, p)) => (d.to_string(), Some(p.to_string())),
-            None => (note_name, None),
-        };
-
-        debug_assert!(!note_name.contains("#"));
-
-        match fields.len() {
-            0 => todo!("Emply link."),
-            1 => Token::InternalLink {
-                link: InternalLink {
-                    dest: note_name.clone(),
-                    position,
-                    show_how: None,
-                    options: None,
-                    render: shown,
-                },
-            },
-            2 => Token::InternalLink {
-                link: InternalLink {
-                    dest: note_name,
-                    position,
-                    show_how: Some(fields[1].clone()),
-                    options: None,
-                    render: shown,
-                },
-            },
-            3 => Token::InternalLink {
-                link: InternalLink {
-                    dest: note_name,
-                    position,
-                    show_how: Some(fields[2].clone()),
-                    options: Some(fields[1].clone()),
-                    render: shown,
-                },
-            },
-            n => panic!("Invalid amount of fields in link: `{n}`."),
-        }
-    }
-
-    fn consume_external_link(&mut self) -> Token {
-        let start = self.cursor;
-
-        let mut render = false;
-
-        if '!'
-            == self
-                .current()
-                .expect("This function should never be called at the end of a file.")
-        {
-            render = true;
-            self.consume();
-        }
-
-        let mut show_how = String::new();
-
-        self.consume_expected('[');
-
-        while let Some(c) = self.consume() {
-            if c == ']' {
-                break;
-            }
-            show_how.push(c);
-        }
-
-        // Return text if it was not a link after all
-        if self.current() != Some('(') {
-            return Token::Text {
-                text: self.text[start..].iter().collect(),
-            };
-        }
-
-        self.consume_expected('(');
-
-        let mut url = String::new();
-
-        while let Some(c) = self.consume() {
-            if c == ')' {
-                break;
-            }
-            url.push(c);
-        }
-
-        if self.current() == None {
-            eprintln!("WARNING: Unclosed bracket.");
-            self.cursor = start; // Reset cursor
-            self.consume_expected('[');
-            return Token::Text {
-                text: "[".to_string(),
-            };
-        }
-
-        Token::ExternalLink {
-            link: ExternalLink {
-                url,
-                show_how,
-                render,
-            },
-        }
-    }
-
     fn try_lex_heading(&mut self) -> Option<Token> {
         self.consume_expected('#')?;
 
@@ -389,7 +266,6 @@ impl Lexer {
     }
 
     fn try_lex_tag(&mut self) -> Option<Token> {
-
         // Whitespace must lead a tag
         let prev = self.peek(-1);
         if prev.is_some() && !matches!(prev, Some(c) if c.is_whitespace()) {
@@ -407,83 +283,120 @@ impl Lexer {
         Some(Token::Tag { tag })
     }
 
-    // // blocks of text beginning with '>'. Either Callout or quote.
-    // fn consume_block(&mut self) -> Token {
+    fn try_lex_external_link(&mut self) -> Option<Token> {
+        let mut render = false;
+        match self.consume()? {
+            '!' => {
+                render = true;
+                self.consume_expected('[')?;
+            }
+            '[' => {}
+            _ => return None,
+        }
 
-    //     // Find the starting character to determine if block is a callout
-    //     assert_eq!(self.peek(0), Some('>'));
-    //     let mut pointer: isize = 1;
-    //     while match self.peek(pointer) {
-    //         Some(c) => c.is_whitespace(),
-    //         None => false,
-    //     } {
-    //         pointer += 1;
-    //     }
+        let show_how = self.consume_until(|c| c == ']');
+        self.consume_assert_eq(']');
 
-    //     // Is the quote a callout?
-    //     if (self.peek(pointer), self.peek(pointer + 1)) == (Some('['), Some('!')) {
-    //         self.consume_callout()
-    //     } else {
-    //         Token::Quote {
-    //             contents: self.consume_quote(),
-    //         }
-    //     }
-    // }
+        self.consume_expected('(')?;
+        let url = self.consume_until(|c| c == ')');
+        self.consume_assert_eq(')')?;
 
-    fn consume_callout(&mut self) -> Token {
-        // assert_eq!(self.consume(), Some('>'));
-        // self.consume_whitespace();
-        // assert_eq!(self.consume(), Some('['));
-        // assert_eq!(self.consume(), Some('!'));
-        // let mut kind = String::new();
-        // while self.current() != Some(']') {
-        //     let c = self.consume().unwrap();
-        //     kind.push(c);
-        // }
-        // kind = kind.to_lowercase();
-        // assert_eq!(self.consume(), Some(']'));
-        // let mut foldable = false;
-        // if self.current() == Some('-') {
-        //     self.consume();
-        //     foldable = true;
-        // }
-        // self.consume_whitespace();
+        let (show_how, options) = match show_how.split_once('|') {
+            Some((show_how, options)) => (show_how.to_string(), Some(options.to_string())),
+            None => (show_how, None),
+        };
 
-//         let title = if self.peek(-1) != Some('\n') {
-//             let mut title = self.consume_line();
-//             match title.last() {
-//                 Some(Token::Text { text: t }) if t.ends_with('\n') => {
-//                     let mut t = t.clone();
-//                     t.pop();
-//                     title.pop();
-//                     title.push(Token::Text { text: t })
-//                 }
-//                 _ => {}
-//             }
-//             title
-//         } else {
-//             // If the callout does not have a title
-//             let mut name = kind.clone();
-//             name = name[0..1].to_uppercase() + &name[1..];
-//             vec![Token::Text { text: name }]
-//         };
+        let (position, url) = match url.split_once('#') {
+            Some((url, position)) => (Some(position.to_string()), url.to_string()),
+            None => (None, url),
+        };
 
-//         let contents = self.consume_quote();
-
-//         Token::Callout {
-//             callout: Callout {
-//                 kind,
-//                 title,
-//                 contents,
-//                 foldable,
-//             },
-//         }
-        todo!()
+        Some(Token::ExternalLink {
+            link: ExternalLink {
+                url,
+                show_how,
+                options,
+                position,
+                render,
+            },
+        })
     }
 
-    fn try_lex_quote(&mut self) -> Option<Token> {
+    fn try_lex_internal_link(&mut self) -> Option<Token> {
+        let mut render = false;
+        match self.consume()? {
+            '!' => {
+                render = true;
+                self.consume_expected('[')?;
+                self.consume_expected('[')?;
+            }
+            '[' => {
+                self.consume_expected('[')?;
+            }
+            _ => return None,
+        }
 
-        // Quote must start after newline or at the start of a file
+        let inner_start = self.cursor;
+        loop {
+            self.consume_until(|c| c == ']');
+            if self.peek(1)? == ']' {
+                break;
+            }
+        }
+
+        let inner = self.extract(inner_start);
+
+        self.consume_assert_eq(']');
+        self.consume_assert_eq(']');
+
+        let mut dest;
+        let mut position = None;
+        let mut show_how = None;
+        let mut options = None;
+
+        let fields: Vec<_> = inner.split('|').collect();
+        match fields.len() {
+            0 => {
+                dest = "".to_string();
+            }
+            1 => {
+                dest = inner;
+            }
+            2 => {
+                dest = fields[0].to_string();
+                show_how = Some(fields[1].to_string());
+            }
+            3 => {
+                dest = fields[0].to_string();
+                options = Some(fields[1].to_string());
+                show_how = Some(fields[2].to_string());
+            }
+            // This should maybe do something different, but i don't know what
+            _ => return None,
+        }
+
+        let dest_fields = dest.split('#').collect::<Vec<_>>();
+        match dest_fields.len() {
+            2 => {
+                position = Some(dest_fields[1].to_string());
+                dest = dest_fields[0].to_string();
+            }
+            1 | _ => dest = dest,
+        }
+
+        Some(Token::InternalLink {
+            link: InternalLink {
+                dest,
+                position,
+                show_how,
+                options,
+                render,
+            },
+        })
+    }
+
+    fn at_block_start(&self) -> Option<()> {
+        // Block must start after newline or at the start of a file
         if !matches!(self.peek(-1), None | Some('\n')) {
             return None;
         }
@@ -492,6 +405,13 @@ impl Lexer {
             return None;
         }
 
+        Some(())
+    }
+
+    /// Extract the text contained within a block prefixed with '>'
+    fn try_extract_block(&mut self) -> Option<String> {
+        self.at_block_start()?;
+
         let mut lines = vec![];
 
         loop {
@@ -499,6 +419,7 @@ impl Lexer {
                 break;
             }
             self.consume(); // Consume '>'
+            self.consume_if(|c| c == ' ');
 
             let line_start = self.cursor;
             self.consume_until(|c| c == '\n');
@@ -508,11 +429,46 @@ impl Lexer {
             lines.push(line);
         }
 
-        Some(Token::Quote { contents: lines.join("") })
+        Some(lines.join(""))
+    }
+
+    fn try_lex_quote(&mut self) -> Option<Token> {
+        let contents = self.try_extract_block()?;
+        Some(Token::Quote { contents })
+    }
+
+    fn try_lex_callout(&mut self) -> Option<Token> {
+        self.at_block_start()?;
+        self.consume_assert_eq('>');
+        self.consume_until(|c| !c.is_whitespace() || c == '\n');
+
+        self.consume_expected('[')?;
+        self.consume_expected('!')?;
+        let kind = self.consume_until(|c| c == ']');
+        self.consume_assert_eq(']');
+
+        let mut foldable = false;
+        if self.consume_if(|c| c == '-') {
+            foldable = true;
+        }
+
+        self.consume_until(|c| c != ' ');
+        let title = self.consume_until(|c| c == '\n');
+        self.consume_assert_eq('\n');
+
+        let contents = self.try_extract_block()?;
+
+        Some(Token::Callout {
+            callout: Callout {
+                kind,
+                title,
+                contents,
+                foldable,
+            },
+        })
     }
 
     fn try_lex_front_matter(&mut self) -> Option<Token> {
-
         if self.cursor != 0 {
             return None;
         }
@@ -640,7 +596,6 @@ impl Iterator for Lexer {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-
         // TODO: Tokens should hold their spans in the source text so
         // we can decouple the temporary enviornment and adding `continue`
         // if the token is `Some`
@@ -662,9 +617,8 @@ impl Iterator for Lexer {
         }
 
         loop {
-
             if let Some(t) = self.queue.pop_front() {
-                return Some(t)
+                return Some(t);
             }
 
             please!(try_lex_heading);
@@ -672,6 +626,9 @@ impl Iterator for Lexer {
             please!(try_lex_code);
             please!(try_lex_display_math);
             please!(try_lex_inline_math);
+            please!(try_lex_internal_link);
+            please!(try_lex_external_link);
+            please!(try_lex_callout);
             please!(try_lex_quote);
             please!(try_lex_front_matter);
             please!(try_lex_divider);
@@ -734,6 +691,102 @@ mod tests {
     }
 
     #[test]
+    fn test_lex_external_link() {
+        let mut lexer = Lexer::new("![alt text](https://link.domain)");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::ExternalLink {
+                link: ExternalLink {
+                    url: "https://link.domain".to_string(),
+                    show_how: "alt text".to_string(),
+                    options: None,
+                    position: None,
+                    render: true,
+                }
+            }
+        );
+
+        let mut lexer = Lexer::new("[other alt text|options](https://example.com#pos)");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::ExternalLink {
+                link: ExternalLink {
+                    url: "https://example.com".to_string(),
+                    show_how: "other alt text".to_string(),
+                    options: Some("options".to_string()),
+                    position: Some("pos".to_string()),
+                    render: false,
+                }
+            }
+        );
+    }
+
+    #[test]
+    fn test_lex_internal_link() {
+        let mut lexer = Lexer::new("![[other_note]]");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::InternalLink {
+                link: InternalLink {
+                    dest: "other_note".to_string(),
+                    position: None,
+                    show_how: None,
+                    options: None,
+                    render: true
+                }
+            }
+        );
+
+        let mut lexer = Lexer::new("[[other_note|alias]]");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::InternalLink {
+                link: InternalLink {
+                    dest: "other_note".to_string(),
+                    show_how: Some("alias".to_string()),
+                    position: None,
+                    options: None,
+                    render: false
+                }
+            }
+        );
+
+        let mut lexer = Lexer::new("[[other_note#some-heading]]");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::InternalLink {
+                link: InternalLink {
+                    dest: "other_note".to_string(),
+                    show_how: None,
+                    position: Some("some-heading".to_string()),
+                    options: None,
+                    render: false
+                }
+            }
+        );
+
+        let mut lexer = Lexer::new("[[other_note#page=13|center|alias]]");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::InternalLink {
+                link: InternalLink {
+                    dest: "other_note".to_string(),
+                    show_how: Some("alias".to_string()),
+                    position: Some("page=13".to_string()),
+                    options: Some("center".to_string()),
+                    render: false
+                }
+            }
+        );
+    }
+
+    #[test]
     fn test_lex_divider() {
         let mut lexer = Lexer::new("---");
         let token = lexer.next().unwrap();
@@ -761,21 +814,52 @@ mod tests {
     fn test_lex_inline_math() {
         let mut lexer = Lexer::new("$a=b$");
         let token = lexer.next().unwrap();
-        assert_eq!(token, Token::InlineMath { latex: "a=b".to_string() });
+        assert_eq!(
+            token,
+            Token::InlineMath {
+                latex: "a=b".to_string()
+            }
+        );
     }
 
     #[test]
     fn test_lex_display_math() {
         let mut lexer = Lexer::new("$$a=b$$");
         let token = lexer.next().unwrap();
-        assert_eq!(token, Token::DisplayMath { latex: "a=b".to_string() });
+        assert_eq!(
+            token,
+            Token::DisplayMath {
+                latex: "a=b".to_string()
+            }
+        );
     }
 
     #[test]
     fn test_lex_quote() {
         let mut lexer = Lexer::new("> 'fun quote!'\n> - Author");
         let token = lexer.next().unwrap();
-        assert_eq!(token, Token::Quote { contents: " 'fun quote!'\n - Author".to_string() });
+        assert_eq!(
+            token,
+            Token::Quote {
+                contents: "'fun quote!'\n- Author".to_string()
+            }
+        );
     }
 
+    #[test]
+    fn test_lex_callout() {
+        let mut lexer = Lexer::new("> [!kind]- Title!\n> this\n> is contents");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::Callout {
+                callout: Callout {
+                    kind: "kind".to_string(),
+                    title: "Title!".to_string(),
+                    contents: "this\nis contents".to_string(),
+                    foldable: true,
+                }
+            }
+        );
+    }
 }
