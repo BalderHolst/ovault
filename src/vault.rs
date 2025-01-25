@@ -229,7 +229,7 @@ impl Vault {
                 return;
             }
         };
-        let tokens = Lexer::new(note_contents).collect(); 
+        let tokens = Lexer::new(note_contents).collect();
 
         let note = Note {
             path: path.strip_prefix(&self.path).unwrap().to_path_buf(),
@@ -294,7 +294,7 @@ impl Vault {
                     Token::Frontmatter { .. }
                     | Token::Text { .. }
                     | Token::Header { .. }
-                    | Token::Callout { .. }
+                    | Token::Callout(_)
                     | Token::Quote { .. }
                     | Token::Divider { .. }
                     | Token::InlineMath { .. }
@@ -306,7 +306,7 @@ impl Vault {
                         let name = normalize(note.name.clone());
                         tags.push((tag.clone(), name));
                     }
-                    Token::InternalLink { link } => {
+                    Token::InternalLink(link) => {
                         // if `dest` field is empty, the link points to heading in itself
                         // and we don't have to do anything in that case.
                         if link.dest.is_empty() {

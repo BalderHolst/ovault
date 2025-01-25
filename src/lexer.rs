@@ -1,4 +1,4 @@
-use pyo3::{pyclass, pymethods};
+use pyo3::{exceptions::PyIndexError, pyclass, pymethods, Bound, IntoPyObject, PyAny, PyResult, Python};
 use std::collections::VecDeque;
 
 #[pyclass]
@@ -75,10 +75,10 @@ pub enum Token {
     Text { text: String },
     Tag { tag: String },
     Header { level: usize, heading: String },
-    InternalLink { link: InternalLink },
-    ExternalLink { link: ExternalLink },
     Code { lang: Option<String>, code: String },
-    Callout { callout: Callout },
+    Callout(Callout),
+    InternalLink(InternalLink),
+    ExternalLink(ExternalLink),
     Quote { contents: String },
     InlineMath { latex: String },
     DisplayMath { latex: String },
@@ -87,6 +87,53 @@ pub enum Token {
 
 #[pymethods]
 impl Token {
+    // Patch the __getattr__ method to allow for attribute access in tuple types
+    pub fn __getattr__<'py>(&self, py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
+        match self {
+            Token::InternalLink(link) => match name {
+                "dest" => Ok(link.dest.clone().into_pyobject(py).unwrap().into_any()),
+                "position" => Ok(link.position.clone().into_pyobject(py).unwrap().into_any()),
+                "show_how" => Ok(link.show_how.clone().into_pyobject(py).unwrap().into_any()),
+                "options" => Ok(link.options.clone().into_pyobject(py).unwrap().into_any()),
+                "render" => Ok(link.render.into_pyobject(py).unwrap().as_any().clone()),
+                _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
+                    "'InternalLink' has no attribute '{}'",
+                    name
+                ))),
+            },
+            Token::ExternalLink(link) => match name {
+                "url" => Ok(link.url.clone().into_pyobject(py).unwrap().into_any()),
+                "show_how" => Ok(link.show_how.clone().into_pyobject(py).unwrap().into_any()),
+                "options" => Ok(link.options.clone().into_pyobject(py).unwrap().into_any()),
+                "position" => Ok(link.position.clone().into_pyobject(py).unwrap().into_any()),
+                "render" => Ok(link.render.into_pyobject(py).unwrap().as_any().clone()),
+                _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
+                    "'ExternalLink' has no attribute '{}'",
+                    name
+                ))),
+            },
+            Token::Callout(callout) => match name {
+                "kind" => Ok(callout.kind.clone().into_pyobject(py).unwrap().into_any()),
+                "title" => Ok(callout.title.clone().into_pyobject(py).unwrap().into_any()),
+                "contents" => Ok(callout
+                    .contents
+                    .clone()
+                    .into_pyobject(py)
+                    .unwrap()
+                    .into_any()),
+                "foldable" => Ok(callout.foldable.into_pyobject(py).unwrap().as_any().clone()),
+                _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
+                    "'Callout' has no attribute '{}'",
+                    name
+                ))),
+            },
+            _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
+                "'Token' has no attribute '{}'",
+                name
+            ))),
+        }
+    }
+
     pub fn __repr__(&self) -> String {
         const MAX_LEN: usize = 20;
         fn string(s: &str) -> String {
@@ -105,13 +152,13 @@ impl Token {
             Token::Header { level, heading } => {
                 format!("Header({} {})", "#".repeat(*level), string(heading))
             }
-            Token::InternalLink { link } => format!("InternalLink({})", link.label()),
-            Token::ExternalLink { link } => format!("ExternalLink({})", link.label()),
+            Token::InternalLink(link) => format!("InternalLink({})", link.label()),
+            Token::ExternalLink(link) => format!("ExternalLink({})", link.label()),
             Token::Code { lang, code } => match lang {
                 Some(lang) => format!("Code({}: {})", string(lang), string(code)),
                 None => format!("Code({})", string(code)),
             },
-            Token::Callout { callout } => format!("Callout({})", string(&format!("{:?}", callout))),
+            Token::Callout(callout) => format!("Callout({})", string(&format!("{:?}", callout))),
             Token::Quote { contents } => format!("Quote({})", string(&format!("{:?}", contents))),
             Token::Frontmatter { yaml } => format!("Frontmatter({})", string(yaml)),
             Token::InlineMath { latex } => format!("InlineMath({})", string(latex)),
@@ -128,10 +175,10 @@ impl Token {
 
             Token::Tag { .. }
             | Token::Header { .. }
-            | Token::InternalLink { .. }
-            | Token::ExternalLink { .. }
+            | Token::InternalLink(_)
+            | Token::ExternalLink(_)
             | Token::Code { .. }
-            | Token::Callout { .. }
+            | Token::Callout(_)
             | Token::Quote { .. }
             | Token::Frontmatter { .. }
             | Token::Divider {}
@@ -292,15 +339,13 @@ impl Lexer {
             None => (None, url),
         };
 
-        Some(Token::ExternalLink {
-            link: ExternalLink {
-                url,
-                show_how,
-                options,
-                position,
-                render,
-            },
-        })
+        Some(Token::ExternalLink(ExternalLink {
+            url,
+            show_how,
+            options,
+            position,
+            render,
+        }))
     }
 
     fn try_lex_internal_link(&mut self) -> Option<Token> {
@@ -365,15 +410,13 @@ impl Lexer {
             1 | _ => dest = dest,
         }
 
-        Some(Token::InternalLink {
-            link: InternalLink {
-                dest,
-                position,
-                show_how,
-                options,
-                render,
-            },
-        })
+        Some(Token::InternalLink(InternalLink {
+            dest,
+            position,
+            show_how,
+            options,
+            render,
+        }))
     }
 
     fn at_block_start(&self) -> Option<()> {
@@ -439,14 +482,12 @@ impl Lexer {
 
         let contents = self.try_extract_block()?;
 
-        Some(Token::Callout {
-            callout: Callout {
-                kind,
-                title,
-                contents,
-                foldable,
-            },
-        })
+        Some(Token::Callout(Callout {
+            kind,
+            title,
+            contents,
+            foldable,
+        }))
     }
 
     fn try_lex_front_matter(&mut self) -> Option<Token> {
@@ -677,30 +718,26 @@ mod tests {
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
-            Token::ExternalLink {
-                link: ExternalLink {
-                    url: "https://link.domain".to_string(),
-                    show_how: "alt text".to_string(),
-                    options: None,
-                    position: None,
-                    render: true,
-                }
-            }
+            Token::ExternalLink(ExternalLink {
+                url: "https://link.domain".to_string(),
+                show_how: "alt text".to_string(),
+                options: None,
+                position: None,
+                render: true,
+            })
         );
 
         let mut lexer = Lexer::new("[other alt text|options](https://example.com#pos)");
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
-            Token::ExternalLink {
-                link: ExternalLink {
-                    url: "https://example.com".to_string(),
-                    show_how: "other alt text".to_string(),
-                    options: Some("options".to_string()),
-                    position: Some("pos".to_string()),
-                    render: false,
-                }
-            }
+            Token::ExternalLink(ExternalLink {
+                url: "https://example.com".to_string(),
+                show_how: "other alt text".to_string(),
+                options: Some("options".to_string()),
+                position: Some("pos".to_string()),
+                render: false,
+            })
         );
     }
 
@@ -710,60 +747,52 @@ mod tests {
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
-            Token::InternalLink {
-                link: InternalLink {
-                    dest: "other_note".to_string(),
-                    position: None,
-                    show_how: None,
-                    options: None,
-                    render: true
-                }
-            }
+            Token::InternalLink(InternalLink {
+                dest: "other_note".to_string(),
+                position: None,
+                show_how: None,
+                options: None,
+                render: true
+            })
         );
 
         let mut lexer = Lexer::new("[[other_note|alias]]");
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
-            Token::InternalLink {
-                link: InternalLink {
-                    dest: "other_note".to_string(),
-                    show_how: Some("alias".to_string()),
-                    position: None,
-                    options: None,
-                    render: false
-                }
-            }
+            Token::InternalLink(InternalLink {
+                dest: "other_note".to_string(),
+                show_how: Some("alias".to_string()),
+                position: None,
+                options: None,
+                render: false
+            })
         );
 
         let mut lexer = Lexer::new("[[other_note#some-heading]]");
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
-            Token::InternalLink {
-                link: InternalLink {
-                    dest: "other_note".to_string(),
-                    show_how: None,
-                    position: Some("some-heading".to_string()),
-                    options: None,
-                    render: false
-                }
-            }
+            Token::InternalLink(InternalLink {
+                dest: "other_note".to_string(),
+                show_how: None,
+                position: Some("some-heading".to_string()),
+                options: None,
+                render: false
+            })
         );
 
         let mut lexer = Lexer::new("[[other_note#page=13|center|alias]]");
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
-            Token::InternalLink {
-                link: InternalLink {
-                    dest: "other_note".to_string(),
-                    show_how: Some("alias".to_string()),
-                    position: Some("page=13".to_string()),
-                    options: Some("center".to_string()),
-                    render: false
-                }
-            }
+            Token::InternalLink(InternalLink {
+                dest: "other_note".to_string(),
+                show_how: Some("alias".to_string()),
+                position: Some("page=13".to_string()),
+                options: Some("center".to_string()),
+                render: false
+            })
         );
     }
 
@@ -833,14 +862,12 @@ mod tests {
         let token = lexer.next().unwrap();
         assert_eq!(
             token,
-            Token::Callout {
-                callout: Callout {
-                    kind: "kind".to_string(),
-                    title: "Title!".to_string(),
-                    contents: "this\nis contents".to_string(),
-                    foldable: true,
-                }
-            }
+            Token::Callout(Callout {
+                kind: "kind".to_string(),
+                title: "Title!".to_string(),
+                contents: "this\nis contents".to_string(),
+                foldable: true,
+            })
         );
     }
 }

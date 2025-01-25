@@ -15,12 +15,9 @@ print(v.get_notes_with_tag("c"))
 
 print("\n" + "-"*30)
 
-note = v.get_note_by_name("HOME")
+note = v.get_note_by_name("matrix")
 print(note)
 for t in note.tokens:
     if isinstance(t, t.Callout):
-        print(t.callout.kind)
-        print(t.callout.foldable)
-        print(t.callout.title)
-        print(t.callout.contents)
+        print(t.kind)
 
