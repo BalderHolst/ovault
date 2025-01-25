@@ -48,9 +48,6 @@ pub struct Note {
     tokens: Vec<Token>,
 
     #[pyo3(get)]
-    frontmatter: Option<String>,
-
-    #[pyo3(get)]
     tags: HashSet<String>,
 
     #[pyo3(get)]
@@ -64,6 +61,13 @@ pub struct Note {
 impl Note {
     pub fn __repr__(&self) -> String {
         format!("Note({})", self.name)
+    }
+
+    pub fn frontmatter(&self) -> Option<&String> {
+        match self.tokens.first()? {
+            Token::Frontmatter { yaml } => Some(yaml),
+            _ => None,
+        }
     }
 }
 
@@ -226,23 +230,15 @@ impl Vault {
             }
         };
 
-        // Extract frontmatter if it exists
-        let (frontmatter, tokens) = match tokens.first() {
-            Some(Token::Frontmatter { yaml }) => {
-                (Some(yaml.clone()), tokens.split_first().unwrap().1.to_vec())
-            }
-            _ => (None, tokens),
-        };
-
         let note = Note {
             path: path.strip_prefix(&self.path).unwrap().to_path_buf(),
             name: name.to_string(),
             tokens,
-            frontmatter,
             links: Default::default(),
             tags: Default::default(),
             backlinks: Default::default(),
         };
+
         let normalized_name = normalize(name.to_string());
         self.items.insert(normalized_name, VaultItem::Note { note });
     }

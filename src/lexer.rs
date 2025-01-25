@@ -192,8 +192,9 @@ impl Lexer {
         let c = self.consume();
         c.map(|a| match expect(a) {
             true => Some(a),
-            false => None
-        }).flatten()
+            false => None,
+        })
+        .flatten()
     }
 
     fn consume_expected(&mut self, expected: char) -> Option<char> {
@@ -206,6 +207,14 @@ impl Lexer {
             self.consume();
         }
         self.extract(start)
+    }
+
+    fn consume_if(&mut self, cond: impl Fn(char) -> bool) -> bool {
+        if self.current().map_or(false, cond) {
+            self.consume();
+            return true;
+        }
+        false
     }
 
     fn consume_whitespace(&mut self) -> String {
@@ -222,7 +231,6 @@ impl Lexer {
     fn queue_token(&mut self, token: Token) {
         self.queue.push_back(token);
     }
-
 }
 
 // Methods that construct tokens
@@ -358,58 +366,6 @@ impl Lexer {
         }
     }
 
-    // TODO: Find a way to remove. This messes things up with quotes and callouts. Maybe rename to
-    // `consume_text` and just return a single token
-    fn consume_line(&mut self) -> Vec<Token> {
-        // The vector of tokens for this line
-        let mut tokens = Vec::new();
-
-        // The string we are currently building
-        let mut s = String::new();
-
-        // Wether the line ends the entire file.
-        let mut found_eof = false;
-
-        while !matches!(self.current(), Some('\n') | None) {
-            match (self.current(), self.peek(1), self.peek(2)) {
-                (Some('['), Some('['), _) | (Some('!'), Some('['), Some('[')) => {
-                    tokens.push(Token::Text { text: s.clone() });
-                    s.clear();
-                    tokens.push(self.consume_internal_link());
-                }
-                (Some('['), Some(_), _) | (Some('!'), Some('['), _) => {
-                    tokens.push(Token::Text { text: s.clone() });
-                    s.clear();
-                    tokens.push(self.consume_external_link());
-                }
-                (Some('$'), Some('$'), _) => {
-                    tokens.push(Token::Text { text: s.clone() });
-                    s.clear();
-                    tokens.push(self.consume_display_math());
-                }
-                (Some('$'), _, _) => {
-                    tokens.push(Token::Text { text: s.clone() });
-                    s.clear();
-                    tokens.push(self.consume_inline_math());
-                }
-                (Some(c), _, _) => {
-                    self.consume();
-                    s.push(c);
-                }
-                (None, _, _) => {
-                    found_eof = true;
-                }
-            }
-        }
-        if !found_eof {
-            // Consume newline
-            self.consume();
-            s.push('\n');
-        }
-        tokens.push(Token::Text { text: s });
-        tokens
-    }
-
     fn try_lex_heading(&mut self) -> Option<Token> {
         self.consume_expected('#')?;
 
@@ -432,7 +388,13 @@ impl Lexer {
     }
 
     fn try_lex_tag(&mut self) -> Option<Token> {
-        let w = self.consume_expect(|c| c.is_whitespace())?;
+
+        // Whitespace must lead a tag
+        let prev = self.peek(-1);
+        if prev.is_some() && !matches!(prev, Some(c) if c.is_whitespace()) {
+            return None;
+        }
+
         self.consume_expected('#')?;
 
         let tag = self.consume_until(|c| !c.is_alphabetic());
@@ -441,14 +403,12 @@ impl Lexer {
             return None;
         }
 
-        // Add the text before the tag
-        self.queue_token(Token::Text { text: w.to_string() });
-
         Some(Token::Tag { tag })
     }
 
     // blocks of text beginning with '>'. Either Callout or quote.
     fn consume_block(&mut self) -> Token {
+
         // Find the starting character to determine if block is a callout
         assert_eq!(self.peek(0), Some('>'));
         let mut pointer: isize = 1;
@@ -470,109 +430,127 @@ impl Lexer {
     }
 
     fn consume_callout(&mut self) -> Token {
-        assert_eq!(self.consume(), Some('>'));
-        self.consume_whitespace();
-        assert_eq!(self.consume(), Some('['));
-        assert_eq!(self.consume(), Some('!'));
-        let mut kind = String::new();
-        while self.current() != Some(']') {
-            let c = self.consume().unwrap();
-            kind.push(c);
-        }
-        kind = kind.to_lowercase();
-        assert_eq!(self.consume(), Some(']'));
-        let mut foldable = false;
-        if self.current() == Some('-') {
-            self.consume();
-            foldable = true;
-        }
-        self.consume_whitespace();
+        // assert_eq!(self.consume(), Some('>'));
+        // self.consume_whitespace();
+        // assert_eq!(self.consume(), Some('['));
+        // assert_eq!(self.consume(), Some('!'));
+        // let mut kind = String::new();
+        // while self.current() != Some(']') {
+        //     let c = self.consume().unwrap();
+        //     kind.push(c);
+        // }
+        // kind = kind.to_lowercase();
+        // assert_eq!(self.consume(), Some(']'));
+        // let mut foldable = false;
+        // if self.current() == Some('-') {
+        //     self.consume();
+        //     foldable = true;
+        // }
+        // self.consume_whitespace();
 
-        let title = if self.peek(-1) != Some('\n') {
-            let mut title = self.consume_line();
-            match title.last() {
-                Some(Token::Text { text: t }) if t.ends_with('\n') => {
-                    let mut t = t.clone();
-                    t.pop();
-                    title.pop();
-                    title.push(Token::Text { text: t })
-                }
-                _ => {}
-            }
-            title
-        } else {
-            // If the callout does not have a title
-            let mut name = kind.clone();
-            name = name[0..1].to_uppercase() + &name[1..];
-            vec![Token::Text { text: name }]
-        };
+//         let title = if self.peek(-1) != Some('\n') {
+//             let mut title = self.consume_line();
+//             match title.last() {
+//                 Some(Token::Text { text: t }) if t.ends_with('\n') => {
+//                     let mut t = t.clone();
+//                     t.pop();
+//                     title.pop();
+//                     title.push(Token::Text { text: t })
+//                 }
+//                 _ => {}
+//             }
+//             title
+//         } else {
+//             // If the callout does not have a title
+//             let mut name = kind.clone();
+//             name = name[0..1].to_uppercase() + &name[1..];
+//             vec![Token::Text { text: name }]
+//         };
 
-        let contents = self.consume_quote();
+//         let contents = self.consume_quote();
 
-        Token::Callout {
-            callout: Callout {
-                kind,
-                title,
-                contents,
-                foldable,
-            },
-        }
+//         Token::Callout {
+//             callout: Callout {
+//                 kind,
+//                 title,
+//                 contents,
+//                 foldable,
+//             },
+//         }
+        todo!()
     }
 
     fn consume_quote(&mut self) -> Vec<Token> {
-        let mut contents = Vec::new();
-        while self.current() == Some('>') {
-            self.consume();
+        // let mut contents = Vec::new();
+        // while self.current() == Some('>') {
+        //     self.consume();
 
-            // Ignore white space
-            let _ = self.consume_whitespace();
+        //     // Ignore white space
+        //     let _ = self.consume_whitespace();
 
-            contents.extend(self.consume_line());
-        }
-        contents
+        //     contents.extend(self.consume_line());
+        // }
+        // contents
+        todo!()
     }
 
-    fn consume_front_matter(&mut self) -> Result<Token, ScanError> {
-        assert_eq!(self.consume(), Some('-'));
-        assert_eq!(self.consume(), Some('-'));
-        assert_eq!(self.consume(), Some('-'));
+    fn try_lex_front_matter(&mut self) -> Option<Token> {
 
-        let mut yaml = String::new();
-
-        while (self.peek(0), self.peek(1), self.peek(2)) != (Some('-'), Some('-'), Some('-'))
-            && self.peek(2).is_some()
-        {
-            yaml.push(
-                self.consume()
-                    .expect("The check for Some is already done here."),
-            );
+        if self.cursor != 0 {
+            return None;
         }
 
-        // TODO: make good error message if frontmatter is not ended correctly
-        assert_eq!(self.consume(), Some('-'));
-        assert_eq!(self.consume(), Some('-'));
-        assert_eq!(self.consume(), Some('-'));
+        self.consume_expected('-')?;
+        self.consume_expected('-')?;
+        self.consume_expected('-')?;
 
-        Ok(Token::Frontmatter { yaml })
-    }
-
-    fn consume_divider(&mut self) -> Token {
-        assert_eq!(self.consume(), Some('-'));
-        assert_eq!(self.consume(), Some('-'));
-        assert_eq!(self.consume(), Some('-'));
         self.consume_until(|c| c != '-');
         self.consume_until(|c| !c.is_whitespace() || c == '\n');
-        assert!(matches!(self.consume(), Some('\n') | None));
-        Token::Divider {}
+        self.consume_expected('\n')?;
+
+        let start = self.cursor;
+        loop {
+            self.consume_until(|c| c == '-');
+            if self.peek(1)? == '-' && self.peek(2)? == '-' {
+                break;
+            }
+            self.consume()?; // Consume single '-'
+        }
+        let yaml = self.extract(start);
+
+        self.consume_expected('-')?;
+        self.consume_expected('-')?;
+        self.consume_expected('-')?;
+
+        self.consume_until(|c| c != '-'); // Consume any remaining '-'
+
+        // Consume any white space followed by a newline
+        self.consume_until(|c| !c.is_whitespace() || c == '\n');
+        self.consume_expected('\n')?;
+
+        Some(Token::Frontmatter { yaml })
     }
 
-    fn consume_code(&mut self) -> Token {
-        assert_eq!(self.consume(), Some('`'));
-        assert_eq!(self.consume(), Some('`'));
-        assert_eq!(self.consume(), Some('`'));
+    fn try_lex_divider(&mut self) -> Option<Token> {
+        self.consume_expected('-')?;
+        self.consume_expected('-')?;
+        self.consume_expected('-')?;
+
+        self.consume_until(|c| c != '-');
+        self.consume_until(|c| !c.is_whitespace() || c == '\n');
+
+        self.consume_if(|c| c == '\n');
+
+        Some(Token::Divider {})
+    }
+
+    fn try_lex_code(&mut self) -> Option<Token> {
+        self.consume_expected('`')?;
+        self.consume_expected('`')?;
+        self.consume_expected('`')?;
 
         let lang = self.consume_until(|c| c == '\n');
-        self.consume(); // consume newline
+        self.consume()?; // consume newline
 
         let lang = match lang.is_empty() {
             true => None,
@@ -587,49 +565,57 @@ impl Lexer {
             }
 
             // consume the "`" we found
-            self.consume();
+            self.consume()?;
         }
 
         let code = self.extract(code_start);
 
-        assert_eq!(self.consume(), Some('`'));
-        assert_eq!(self.consume(), Some('`'));
-        assert_eq!(self.consume(), Some('`'));
+        self.consume_expected('`')?;
+        self.consume_expected('`')?;
+        self.consume_expected('`')?;
 
-        Token::Code { lang, code }
+        Some(Token::Code { lang, code })
     }
 
-    fn consume_display_math(&mut self) -> Token {
-        assert_eq!(self.consume(), Some('$'));
-        assert_eq!(self.consume(), Some('$'));
+    fn try_lex_display_math(&mut self) -> Option<Token> {
+        self.consume_expected('$')?;
+        self.consume_expected('$')?;
 
         let start = self.cursor.clone();
-        while !matches!(
-            (self.current(), self.peek(1)),
-            (Some('$'), Some('$')) | (None, _) | (_, None)
-        ) {
-            self.consume();
+        loop {
+            self.consume_until(|c| c == '$');
+            if self.peek(1)? == '$' {
+                break;
+            }
+
+            // Move past the single '$'
+            self.consume()?;
         }
 
-        let inline_math = self.text[start..self.cursor].iter().collect();
+        let latex = self.text[start..self.cursor].iter().collect();
 
-        assert_eq!(self.consume(), Some('$'));
-        assert_eq!(self.consume(), Some('$'));
-        Token::DisplayMath { latex: inline_math }
+        self.consume_expected('$')?;
+        self.consume_expected('$')?;
+
+        Some(Token::DisplayMath { latex })
     }
 
-    fn consume_inline_math(&mut self) -> Token {
-        assert_eq!(self.consume(), Some('$'));
+    fn try_lex_inline_math(&mut self) -> Option<Token> {
+        self.consume_expected('$')?;
 
-        let start = self.cursor.clone();
-        while !matches!(self.current(), Some('$') | None) {
-            self.consume();
+        // Make sure this is not a display match
+        #[cfg(test)]
+        {
+            if matches!(self.current(), Some('$')) {
+                panic!("Please try to parse display math before inline math.")
+            }
         }
 
-        let inline_math = self.text[start..self.cursor].iter().collect();
+        let latex = self.consume_until(|c| c == '$');
 
-        assert_eq!(self.consume(), Some('$'));
-        Token::InlineMath { latex: inline_math }
+        self.consume()?; // Consume '$'
+
+        Some(Token::InlineMath { latex })
     }
 }
 
@@ -638,13 +624,16 @@ impl Iterator for Lexer {
 
     fn next(&mut self) -> Option<Self::Item> {
 
+        // TODO: Tokens should hold their spans in the source text so
+        // we can decouple the temporary enviornment and adding `continue`
+        // if the token is `Some`
         macro_rules! please {
             ($method:ident) => {
                 let start = self.cursor;
                 let token = self.$method();
                 if let Some(token) = token {
-                    if self.cursor != self.slow_cursor {
-                        let text = self.extract(self.slow_cursor);
+                    if self.slow_cursor != start {
+                        let text = self.text[self.slow_cursor..start].iter().collect();
                         self.queue.push_back(Token::Text { text });
                     }
                     self.queue.push_back(token);
@@ -665,12 +654,16 @@ impl Iterator for Lexer {
                 );
             }
 
-            please!(try_lex_heading);
-            please!(try_lex_tag);
+            please!(try_lex_front_matter);
+            // please!(try_lex_heading);
+            // please!(try_lex_tag);
+            // please!(try_lex_divider);
+            // please!(try_lex_code);
+            // please!(try_lex_display_math);
+            // please!(try_lex_inline_math);
 
             // Check if we are at the end of the file
             if self.current().is_none() {
-                println!("EOF");
                 if self.slow_cursor >= self.text.len() {
                     return None;
                 }
@@ -683,7 +676,6 @@ impl Iterator for Lexer {
             self.consume();
         }
 
-
         // let start = self.cursor;
         // token = self.try_lex_tag();
         // if token.is_some() {
@@ -691,7 +683,6 @@ impl Iterator for Lexer {
         //     return token;
         // }
         // self.cursor = start;
-
 
         // let token = match self.current()? {
         //     '#' => {
@@ -746,14 +737,37 @@ mod tests {
     fn test_lex_heading() {
         let mut lexer = Lexer::new("# Heading".to_string());
         let token = lexer.next().unwrap();
-        assert_eq!(token, Token::Header { level: 1, heading: "Heading".to_string() });
+        assert_eq!(
+            token,
+            Token::Header {
+                level: 1,
+                heading: "Heading".to_string()
+            }
+        );
     }
 
     #[test]
     fn test_lex_tag() {
         let mut lexer = Lexer::new("#tag".to_string());
         let token = lexer.next().unwrap();
-        assert_eq!(token, Token::Tag { tag: "tag".to_string() });
+        assert_eq!(
+            token,
+            Token::Tag {
+                tag: "tag".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_lex_front_matter() {
+        let mut lexer = Lexer::new("---\nkey: value\n-----\n# this is a heading".to_string());
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::Frontmatter {
+                yaml: "key: value\n".to_string()
+            }
+        );
     }
 
 }
