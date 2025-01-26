@@ -11,13 +11,9 @@ print("attachments :", len(v.attachments()))
 print("tags        :", v.tags())
 
 print("\n" + "-"*30)
-print(v.get_notes_with_tag("c"))
+print(v.get_notes_by_tag("c"))
 
 print("\n" + "-"*30)
 
-note = v.get_note_by_name("matrix")
-print(note)
-for t in note.tokens:
-    if isinstance(t, t.Callout):
-        print(t.kind)
-
+for subject in v.get_notes_by_tag("subject"):
+    print(subject.name)

@@ -39,32 +39,71 @@ fn normalize(mut name: String) -> String {
 #[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Note {
+    /// Path to the vault
+    vault_path: PathBuf,
     /// Relative path within vault
     path: PathBuf,
     name: String,
-    tokens: Vec<Token>,
     tags: HashSet<String>,
     backlinks: HashSet<String>,
     links: HashSet<String>,
 }
 
-#[cfg_attr(feature = "python", pymethods)]
+// Python specific methods
+#[cfg(feature = "python")]
+#[pymethods]
 impl Note {
     pub fn __repr__(&self) -> String {
         format!("Note({})", self.name)
     }
 
-    pub fn frontmatter(&self) -> Option<&String> {
-        match self.tokens.first()? {
+    #[pyo3(name = "tokens")]
+    pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
+        match self.tokens() {
+            Ok(ts) => Ok(ts.collect()),
+            Err(e) => Err(e.into()),
+        }
+    }
+
+    #[pyo3(name = "full_path")]
+    pub fn py_full_path(&self) -> PathBuf {
+        self.full_path()
+    }
+
+    #[pyo3(name = "frontmatter")]
+    pub fn py_frontmatter(&self) -> Option<String> {
+        self.frontmatter()
+    }
+
+    pub fn read(&self) -> io::Result<String> {
+        self.contents()
+    }
+}
+
+// Rust specific methods
+impl Note {
+    fn full_path(&self) -> PathBuf {
+        self.vault_path.join(&self.path)
+    }
+
+    pub fn frontmatter(&self) -> Option<String> {
+        match self.tokens().ok()?.next()? {
             Token::Frontmatter { yaml, .. } => Some(yaml),
             _ => None,
         }
     }
-}
 
-impl Note {
     pub fn path_debth(&self) -> usize {
         self.path.components().count()
+    }
+
+    pub fn contents(&self) -> io::Result<String> {
+        fs::read_to_string(self.full_path())
+    }
+
+    fn tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
+        let contents = self.contents()?;
+        Ok(Lexer::new(contents))
     }
 
     fn add_link(&mut self, link: String) {
@@ -144,8 +183,8 @@ impl Vault {
         self.tags.keys().cloned().collect()
     }
 
-    #[pyo3(name = "get_notes_with_tag")]
-    pub fn py_get_notes_with_tag(&self, tag: &str) -> Option<Vec<Note>> {
+    #[pyo3(name = "get_notes_by_tag")]
+    pub fn py_get_notes_by_tag(&self, tag: &str) -> Option<Vec<Note>> {
         let notes = self
             .tags
             .get(tag)?
@@ -222,19 +261,11 @@ impl Vault {
         debug_assert_eq!(path.extension().unwrap(), "md");
 
         let name = path.file_stem().unwrap().to_str().unwrap();
-        let note_contents = match fs::read_to_string(path) {
-            Ok(contents) => contents,
-            Err(e) => {
-                eprintln!("ERROR: Could not read file '{}': {}", path.display(), e);
-                return;
-            }
-        };
-        let tokens = Lexer::new(note_contents).collect();
 
         let note = Note {
+            vault_path: self.path.clone(),
             path: path.strip_prefix(&self.path).unwrap().to_path_buf(),
             name: name.to_string(),
-            tokens,
             links: Default::default(),
             tags: Default::default(),
             backlinks: Default::default(),
@@ -289,7 +320,18 @@ impl Vault {
         let mut tags = vec![];
 
         for note in self.notes_mut() {
-            for token in &note.tokens {
+            let tokens = match note.tokens() {
+                Ok(ts) => ts,
+                Err(e) => {
+                    eprintln!(
+                        "WARNING: Could not read file '{}': {}",
+                        note.full_path().display(),
+                        e
+                    );
+                    continue;
+                }
+            };
+            for token in tokens {
                 match token {
                     Token::Frontmatter { .. }
                     | Token::Text { .. }

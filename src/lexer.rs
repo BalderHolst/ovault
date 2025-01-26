@@ -254,11 +254,10 @@ impl Lexer {
 
     fn consume_expect(&mut self, expect: impl FnOnce(char) -> bool) -> Option<char> {
         let c = self.consume();
-        c.map(|a| match expect(a) {
+        c.and_then(|a| match expect(a) {
             true => Some(a),
             false => None,
         })
-        .flatten()
     }
 
     fn consume_expected(&mut self, expected: char) -> Option<char> {
