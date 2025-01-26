@@ -4,17 +4,25 @@
     inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/24.05";
         flake-utils.url = "github:numtide/flake-utils";
+        rust-overlay.url = "github:oxalica/rust-overlay";
     };
 
-    outputs = { nixpkgs, flake-utils, ... }:
+    outputs = { nixpkgs, flake-utils, ... }@inputs:
         flake-utils.lib.eachDefaultSystem (system:
             let
-                pkgs = nixpkgs.legacyPackages.${system};
+                pkgs = import nixpkgs {
+                    inherit system;
+                    overlays = [
+                        inputs.rust-overlay.overlays.default
+                    ];
+                };
             in
             {
                 devShell = pkgs.mkShell {
                     buildInputs = with pkgs; [
-                        cargo
+                        (rust-bin.stable.latest.default.override {
+                            extensions = [ "rust-src" "clippy"];
+                        })
                         maturin
                     ];
                 };

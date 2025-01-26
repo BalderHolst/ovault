@@ -56,7 +56,7 @@ impl Note {
 
     pub fn frontmatter(&self) -> Option<&String> {
         match self.tokens.first()? {
-            Token::Frontmatter { yaml } => Some(yaml),
+            Token::Frontmatter { yaml, .. } => Some(yaml),
             _ => None,
         }
     }
@@ -108,7 +108,8 @@ pub struct Vault {
 pub struct Vault {
     items: HashMap<String, VaultItem>,
     tags: HashMap<String, HashSet<String>>,
-    #[pyo3(get)] path: PathBuf,
+    #[pyo3(get)]
+    path: PathBuf,
 }
 
 #[cfg(feature = "python")]
@@ -293,19 +294,19 @@ impl Vault {
                     Token::Frontmatter { .. }
                     | Token::Text { .. }
                     | Token::Header { .. }
-                    | Token::Callout(_)
+                    | Token::Callout { .. }
                     | Token::Quote { .. }
                     | Token::Divider { .. }
                     | Token::InlineMath { .. }
                     | Token::DisplayMath { .. }
                     | Token::Code { .. }
                     | Token::ExternalLink { .. } => {}
-                    Token::Tag { tag } => {
+                    Token::Tag { tag, .. } => {
                         note.tags.insert(tag.clone());
                         let name = normalize(note.name.clone());
                         tags.push((tag.clone(), name));
                     }
-                    Token::InternalLink(link) => {
+                    Token::InternalLink { link, .. } => {
                         // if `dest` field is empty, the link points to heading in itself
                         // and we don't have to do anything in that case.
                         if link.dest.is_empty() {
