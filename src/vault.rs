@@ -355,7 +355,7 @@ impl Vault {
         }
     }
 
-    fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
+    pub fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
         self.items.get(normalized_name)
     }
 
@@ -363,7 +363,7 @@ impl Vault {
         self.items.get_mut(normalized_name)
     }
 
-    fn get_note(&self, normalized_name: &String) -> Option<&Note> {
+    pub fn get_note(&self, normalized_name: &String) -> Option<&Note> {
         match self.get_item(normalized_name) {
             Some(VaultItem::Note { note }) => Some(note),
             _ => None,
@@ -377,7 +377,7 @@ impl Vault {
         }
     }
 
-    fn get_attachment(&self, normalized_name: &String) -> Option<&Attachment> {
+    pub fn get_attachment(&self, normalized_name: &String) -> Option<&Attachment> {
         match self.get_item(normalized_name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,
