@@ -229,6 +229,16 @@ impl Vault {
         self.tags.keys().cloned().collect()
     }
 
+    #[pyo3(name = "index")]
+    pub fn py_index(&mut self) -> PyResult<()> {
+        self.items.clear();
+        self.tags.clear();
+        let path = self.path.clone();
+        self.add_dir(&path).map_err(PyErr::from)?;
+        self.index();
+        Ok(())
+    }
+
     #[pyo3(name = "get_notes_by_tag")]
     pub fn py_get_notes_by_tag(&self, tag: &str) -> Option<Vec<Note>> {
         let notes = self
