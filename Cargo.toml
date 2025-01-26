@@ -1,10 +1,10 @@
 [package]
-name = "pyvault"
+name = "ovault"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "pyvault"
+name = "ovault"
 
 [features]
 default = []

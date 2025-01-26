@@ -1,8 +1,8 @@
-import pyvault
+import ovault
 
 VAULT_PATH = "/home/balder/Documents/uni/noter/"
 
-v = pyvault.Vault(VAULT_PATH)
+v = ovault.Vault(VAULT_PATH)
 
 print()
 print("path        :", v.path)

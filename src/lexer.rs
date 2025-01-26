@@ -177,6 +177,8 @@ impl Token {
     }
 }
 
+struct Mark(usize);
+
 pub struct Lexer {
     cursor: usize,
     slow_cursor: usize,
@@ -232,7 +234,7 @@ impl Lexer {
     }
 
     fn consume_until(&mut self, cond: impl Fn(char) -> bool) -> String {
-        let start = self.cursor;
+        let start = self.mark();
         while self.current().map_or(false, |c| !cond(c)) {
             self.consume();
         }
@@ -251,8 +253,13 @@ impl Lexer {
         self.consume_until(|c| !c.is_whitespace())
     }
 
+    fn mark(&self) -> Mark {
+        Mark(self.cursor)
+    }
+
     /// Get the text between the mark and the cursor
-    fn extract(&self, start: usize) -> String {
+    fn extract(&self, start: Mark) -> String {
+        let Mark(start) = start;
         let start = start.min(self.text.len());
         let end = self.cursor.min(self.text.len());
         self.text[start..end].iter().collect()
@@ -274,7 +281,7 @@ impl Lexer {
         self.consume_expect(|c| c.is_whitespace())?;
         _ = self.consume_whitespace();
 
-        let start = self.cursor;
+        let start = self.mark();
         while !matches!(self.current(), Some('\n') | None) {
             self.consume();
         }
@@ -351,7 +358,7 @@ impl Lexer {
             _ => return None,
         }
 
-        let inner_start = self.cursor;
+        let inner_start = self.mark();
         loop {
             self.consume_until(|c| c == ']');
             if self.peek(1)? == ']' {
@@ -434,7 +441,7 @@ impl Lexer {
             self.consume(); // Consume '>'
             self.consume_if(|c| c == ' ');
 
-            let line_start = self.cursor;
+            let line_start = self.mark();
             self.consume_until(|c| c == '\n');
             self.consume();
 
@@ -492,7 +499,7 @@ impl Lexer {
         self.consume_until(|c| !c.is_whitespace() || c == '\n');
         self.consume_expected('\n')?;
 
-        let start = self.cursor;
+        let start = self.mark();
         loop {
             self.consume_until(|c| c == '-');
             if self.peek(1)? == '-' && self.peek(2)? == '-' {
@@ -541,7 +548,7 @@ impl Lexer {
             false => Some(lang),
         };
 
-        let code_start = self.cursor;
+        let code_start = self.mark();
         loop {
             self.consume_until(|c| c == '`');
             if self.peek(1) == Some('`') && self.peek(2) == Some('`') {
@@ -565,7 +572,7 @@ impl Lexer {
         self.consume_expected('$')?;
         self.consume_expected('$')?;
 
-        let start = self.cursor.clone();
+        let start = self.mark();
         loop {
             self.consume_until(|c| c == '$');
             if self.peek(1)? == '$' {
@@ -576,7 +583,7 @@ impl Lexer {
             self.consume()?;
         }
 
-        let latex = self.text[start..self.cursor].iter().collect();
+        let latex = self.extract(start);
 
         self.consume_expected('$')?;
         self.consume_expected('$')?;
@@ -649,7 +656,7 @@ impl Iterator for Lexer {
                 if self.slow_cursor >= self.text.len() {
                     return None;
                 }
-                let text = self.extract(self.slow_cursor);
+                let text = self.extract(Mark(self.slow_cursor));
                 self.queue.push_back(Token::Text { text });
                 self.slow_cursor = self.cursor;
             }

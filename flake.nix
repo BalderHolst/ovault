@@ -1,5 +1,5 @@
 {
-    description = "pyvault project flake";
+    description = "ovault project flake";
 
     inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/24.05";

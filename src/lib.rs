@@ -6,7 +6,7 @@ mod lexer;
 
 #[cfg(feature = "python")]
 #[pymodule]
-fn pyvault(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn ovault(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<vault::Vault>()?;
     m.add_class::<lexer::Token>()?;
     Ok(())
