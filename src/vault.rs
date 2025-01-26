@@ -106,12 +106,58 @@ impl Note {
         Ok(Lexer::new(contents))
     }
 
-    fn add_link(&mut self, link: String) {
-        self.links.insert(link);
+    fn add_link(&mut self, to: String) {
+        self.links.insert(to);
     }
 
-    fn add_backlink(&mut self, backlink: String) {
-        self.backlinks.insert(backlink);
+    fn add_backlink(&mut self, from: String) {
+        self.backlinks.insert(from);
+    }
+
+    /// Update `tags` and `links` fields from note contents
+    fn index(&mut self) {
+        self.links.clear();
+        self.tags.clear();
+
+        let tokens = match self.tokens() {
+            Ok(ts) => ts,
+            Err(e) => {
+                eprintln!(
+                    "WARNING: Could not read file '{}': {}",
+                    self.full_path().display(),
+                    e
+                );
+                return;
+            }
+        };
+
+        for token in tokens {
+            match token {
+                Token::Frontmatter { .. }
+                | Token::Text { .. }
+                | Token::Header { .. }
+                | Token::Callout { .. }
+                | Token::Quote { .. }
+                | Token::Divider { .. }
+                | Token::InlineMath { .. }
+                | Token::DisplayMath { .. }
+                | Token::Code { .. }
+                | Token::ExternalLink { .. } => {}
+                Token::Tag { tag, .. } => {
+                    self.tags.insert(tag.clone());
+                }
+                Token::InternalLink { link, .. } => {
+                    // if `dest` field is empty, the link points to heading in itself
+                    // and we don't have to do anything in that case.
+                    if link.dest.is_empty() {
+                        continue;
+                    }
+
+                    let to = normalize(link.dest.clone());
+                    self.add_link(to);
+                }
+            }
+        }
     }
 }
 
@@ -313,54 +359,18 @@ impl Vault {
     }
 
     pub fn index(&mut self) {
-        // New links
+        let mut tags = vec![];
         let mut links = vec![];
 
-        // New Tags
-        let mut tags = vec![];
-
         for note in self.notes_mut() {
-            let tokens = match note.tokens() {
-                Ok(ts) => ts,
-                Err(e) => {
-                    eprintln!(
-                        "WARNING: Could not read file '{}': {}",
-                        note.full_path().display(),
-                        e
-                    );
-                    continue;
-                }
-            };
-            for token in tokens {
-                match token {
-                    Token::Frontmatter { .. }
-                    | Token::Text { .. }
-                    | Token::Header { .. }
-                    | Token::Callout { .. }
-                    | Token::Quote { .. }
-                    | Token::Divider { .. }
-                    | Token::InlineMath { .. }
-                    | Token::DisplayMath { .. }
-                    | Token::Code { .. }
-                    | Token::ExternalLink { .. } => {}
-                    Token::Tag { tag, .. } => {
-                        note.tags.insert(tag.clone());
-                        let name = normalize(note.name.clone());
-                        tags.push((tag.clone(), name));
-                    }
-                    Token::InternalLink { link, .. } => {
-                        // if `dest` field is empty, the link points to heading in itself
-                        // and we don't have to do anything in that case.
-                        if link.dest.is_empty() {
-                            continue;
-                        }
+            note.backlinks.clear();
+            note.index();
 
-                        let from = normalize(note.name.clone());
-                        let to = normalize(link.dest.clone());
-                        links.push((from, to));
-                    }
-                }
-            }
+            let name = normalize(note.name.clone());
+
+            tags.extend(note.tags.iter().map(|tag| (tag.clone(), name.clone())));
+
+            links.extend(note.links.iter().map(|link| (name.clone(), link.clone())))
         }
 
         // Insert the tags
