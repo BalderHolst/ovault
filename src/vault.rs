@@ -1,9 +1,11 @@
-use pyo3::{pyclass, pymethods, PyResult};
 use std::{
     collections::{HashMap, HashSet},
     fs, io,
     path::PathBuf,
 };
+
+#[cfg(feature = "python")]
+use pyo3::prelude::*;
 
 use crate::lexer::{Lexer, Token};
 
@@ -34,30 +36,19 @@ fn normalize(mut name: String) -> String {
         .collect()
 }
 
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Note {
     /// Relative path within vault
-    #[pyo3(get)]
     path: PathBuf,
-
-    #[pyo3(get)]
     name: String,
-
-    #[pyo3(get)]
     tokens: Vec<Token>,
-
-    #[pyo3(get)]
     tags: HashSet<String>,
-
-    #[pyo3(get)]
     backlinks: HashSet<String>,
-
-    #[pyo3(get)]
     links: HashSet<String>,
 }
 
-#[pymethods]
+#[cfg_attr(feature = "python", pymethods)]
 impl Note {
     pub fn __repr__(&self) -> String {
         format!("Note({})", self.name)
@@ -85,34 +76,42 @@ impl Note {
     }
 }
 
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Attachment {
-    #[pyo3(get, set)]
     path: PathBuf,
 }
 
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum VaultItem {
     Note { note: Note },
     Attachment { attachment: Attachment },
 }
 
-#[pyclass]
+#[cfg(not(feature = "python"))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vault {
     /// Maps normalized note names to notes
     items: HashMap<String, VaultItem>,
 
     /// Path to Obsidian vault
-    #[pyo3(get)]
     path: PathBuf,
 
     /// Maps tags to notes with those tags
     tags: HashMap<String, HashSet<String>>,
 }
 
+#[cfg(feature = "python")]
+#[pyclass]
+#[derive(Debug, Clone, PartialEq)]
+pub struct Vault {
+    items: HashMap<String, VaultItem>,
+    tags: HashMap<String, HashSet<String>>,
+    #[pyo3(get)] path: PathBuf,
+}
+
+#[cfg(feature = "python")]
 #[pymethods]
 impl Vault {
     #[new]

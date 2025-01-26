@@ -1,18 +1,15 @@
-use pyo3::{exceptions::PyIndexError, pyclass, pymethods, Bound, IntoPyObject, PyAny, PyResult, Python};
 use std::collections::VecDeque;
 
-#[pyclass]
+#[cfg(feature = "python")]
+use pyo3::{pyclass, pymethods, Bound, IntoPyObject, PyAny, PyResult, Python};
+
+#[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExternalLink {
-    #[pyo3(get, set)]
     pub render: bool,
-    #[pyo3(get, set)]
     pub url: String,
-    #[pyo3(get, set)]
     pub show_how: String,
-    #[pyo3(get, set)]
     pub options: Option<String>,
-    #[pyo3(get, set)]
     pub position: Option<String>,
 }
 
@@ -26,18 +23,13 @@ impl ExternalLink {
     }
 }
 
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalLink {
-    #[pyo3(get, set)]
     pub dest: String,
-    #[pyo3(get, set)]
     pub position: Option<String>,
-    #[pyo3(get, set)]
     pub show_how: Option<String>,
-    #[pyo3(get, set)]
     pub options: Option<String>,
-    #[pyo3(get, set)]
     pub render: bool,
 }
 
@@ -55,20 +47,16 @@ impl InternalLink {
     }
 }
 
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Callout {
-    #[pyo3(get, set)]
     pub kind: String,
-    #[pyo3(get, set)]
     pub title: String,
-    #[pyo3(get, set)]
     pub contents: String,
-    #[pyo3(get, set)]
     pub foldable: bool,
 }
 
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
     Frontmatter { yaml: String }, // This can only appear as the first token
@@ -85,6 +73,7 @@ pub enum Token {
     Divider {},
 }
 
+#[cfg(feature = "python")]
 #[pymethods]
 impl Token {
     // Patch the __getattr__ method to allow for attribute access in tuple types
