@@ -12,16 +12,14 @@ print("notes       :", len(v.notes()))
 print("attachments :", len(v.attachments()))
 print("tags        :", v.tags())
 
-print("\n" + "-"*30)
-
 note = v.get_note_by_name("code")
 
-token = None
-for t in note.tokens():
-    if isinstance(t, t.Code):
-        if t.lang == "python":
-            token = t
+print("\n" + "-"*30)
+print(note.read(), end="")
+print("\n" + "-"*30)
 
-print(token)
-for i in range(10):
-    note.insert_after_token(token, "\nhello there " + str(i) + "!!")
+note.insert_at(-1, "\nThis is THE END!")
+
+print("\n" + "-"*30)
+print(note.read(), end="")
+print("\n" + "-"*30)

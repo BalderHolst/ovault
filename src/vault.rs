@@ -1,7 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
-    fs,
-    io::{self, Seek, SeekFrom, Write},
+    fs, io,
     path::PathBuf,
 };
 
@@ -45,6 +44,7 @@ pub struct Note {
     /// Relative path within vault
     path: PathBuf,
     name: String,
+    length: usize,
     tags: HashSet<String>,
     backlinks: HashSet<String>,
     links: HashSet<String>,
@@ -80,9 +80,29 @@ impl Note {
         self.contents()
     }
 
-    pub fn insert_after_token(&self, token: Token, text: String) -> PyResult<()> {
+    #[pyo3(name = "insert_at")]
+    pub fn py_insert_at(&mut self, mut pos: isize, text: String) -> PyResult<()> {
+        if pos < 0 {
+            pos += self.length as isize;
+        }
+        let pos = usize::try_from(pos).map_err(|_| {
+            pyo3::exceptions::PyIndexError::new_err(format!(
+                "Note position out of range. The note is {} characters long.",
+                self.length
+            ))
+        })?;
+        let pos = pos as usize;
+        self.insert_at(pos, text).map_err(PyErr::from)
+    }
+
+    pub fn insert_before_token(&mut self, token: Token, text: String) -> PyResult<()> {
+        let pos = token.span().start;
+        self.insert_at(pos, text).map_err(PyErr::from)
+    }
+
+    pub fn insert_after_token(&mut self, token: Token, text: String) -> PyResult<()> {
         let pos = token.span().end;
-        self.insert_after(text, pos).map_err(PyErr::from)
+        self.insert_at(pos, text).map_err(PyErr::from)
     }
 }
 
@@ -120,10 +140,11 @@ impl Note {
         self.backlinks.insert(from);
     }
 
-    fn insert_after(&self, text: String, pos: usize) -> io::Result<()> {
+    fn insert_at(&mut self, pos: usize, text: String) -> io::Result<()> {
         let path = self.full_path();
         let contents = fs::read_to_string(path.clone())?;
         let contents = format!("{}{}{}", &contents[..pos], text, &contents[pos..]);
+        self.length = contents.len();
         fs::write(path, contents)
     }
 
@@ -132,7 +153,7 @@ impl Note {
         self.links.clear();
         self.tags.clear();
 
-        let tokens = match self.tokens() {
+        let contents = match self.contents() {
             Ok(ts) => ts,
             Err(e) => {
                 eprintln!(
@@ -144,7 +165,9 @@ impl Note {
             }
         };
 
-        for token in tokens {
+        self.length = contents.len();
+
+        for token in Lexer::new(contents) {
             match token {
                 Token::Frontmatter { .. }
                 | Token::Text { .. }
@@ -335,6 +358,7 @@ impl Vault {
             vault_path: self.path.clone(),
             path: path.strip_prefix(&self.path).unwrap().to_path_buf(),
             name: name.to_string(),
+            length: 0,
             links: Default::default(),
             tags: Default::default(),
             backlinks: Default::default(),
