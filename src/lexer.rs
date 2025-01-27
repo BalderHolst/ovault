@@ -59,8 +59,8 @@ pub struct Callout {
 #[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Span {
-    start: usize,
-    end: usize,
+    pub start: usize,
+    pub end: usize,
 }
 
 #[cfg_attr(feature = "python", pyclass)]

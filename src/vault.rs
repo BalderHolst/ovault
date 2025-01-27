@@ -1,6 +1,7 @@
 use std::{
     collections::{HashMap, HashSet},
-    fs, io,
+    fs,
+    io::{self, Seek, SeekFrom, Write},
     path::PathBuf,
 };
 
@@ -78,6 +79,11 @@ impl Note {
     pub fn read(&self) -> io::Result<String> {
         self.contents()
     }
+
+    pub fn insert_after_token(&self, token: Token, text: String) -> PyResult<()> {
+        let pos = token.span().end;
+        self.insert_after(text, pos).map_err(PyErr::from)
+    }
 }
 
 // Rust specific methods
@@ -112,6 +118,13 @@ impl Note {
 
     fn add_backlink(&mut self, from: String) {
         self.backlinks.insert(from);
+    }
+
+    fn insert_after(&self, text: String, pos: usize) -> io::Result<()> {
+        let path = self.full_path();
+        let contents = fs::read_to_string(path.clone())?;
+        let contents = format!("{}{}{}", &contents[..pos], text, &contents[pos..]);
+        fs::write(path, contents)
     }
 
     /// Update `tags` and `links` fields from note contents
