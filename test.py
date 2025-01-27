@@ -1,6 +1,6 @@
 import ovault
 
-VAULT_PATH = "/home/balder/Documents/uni/noter/"
+VAULT_PATH = "./tests/simple_vault"
 
 v = ovault.Vault(VAULT_PATH)
 
@@ -13,10 +13,5 @@ print("attachments :", len(v.attachments()))
 print("tags        :", v.tags())
 
 print("\n" + "-"*30)
-print(v.get_notes_by_tag("c"))
+print(v.get_notes_by_tag("linksaregood"))
 
-print("\n" + "-"*30)
-
-
-for subject in v.get_notes_by_tag("subject"):
-    print(subject.name)
