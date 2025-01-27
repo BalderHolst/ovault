@@ -5,3 +5,4 @@ Obsidian has these things called "callouts". They look like this:
 > This the contents of the first note:
 > ![[first_note]]
 
+#callout4you

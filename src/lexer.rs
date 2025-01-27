@@ -272,6 +272,14 @@ impl Lexer {
         self.extract(start)
     }
 
+    fn consume_while(&mut self, cond: impl Fn(char) -> bool) -> String {
+        let start = self.mark();
+        while self.current().map_or(false, |c| cond(c)) {
+            self.consume();
+        }
+        self.extract(start)
+    }
+
     fn consume_if(&mut self, cond: impl Fn(char) -> bool) -> bool {
         if self.current().map_or(false, cond) {
             self.consume();
@@ -344,7 +352,7 @@ impl Lexer {
 
         self.consume_expected('#')?;
 
-        let tag = self.consume_until(|c| !c.is_alphabetic());
+        let tag = self.consume_while(|c| c.is_alphabetic() || c.is_digit(10));
 
         if tag.is_empty() {
             return None;
@@ -720,7 +728,10 @@ impl Iterator for Lexer {
                 if let Some(token) = token {
                     if self.slow_cursor != start {
                         let text = self.text[self.slow_cursor..start].iter().collect();
-                        let span = Span { start: self.slow_cursor, end: start };
+                        let span = Span {
+                            start: self.slow_cursor,
+                            end: start,
+                        };
                         self.queue.push_back(Token::Text { span, text });
                     }
                     self.queue.push_back(token);
@@ -806,6 +817,16 @@ mod tests {
             Token::Tag {
                 span: Span { start: 0, end: 4 },
                 tag: "tag".to_string()
+            }
+        );
+
+        let mut lexer = Lexer::new("#tag4you");
+        let token = lexer.next().unwrap();
+        assert_eq!(
+            token,
+            Token::Tag {
+                span: Span { start: 0, end: 8 },
+                tag: "tag4you".to_string()
             }
         );
     }
