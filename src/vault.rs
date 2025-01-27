@@ -7,7 +7,7 @@ use std::{
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
-use crate::lexer::{Lexer, Token};
+use crate::lexer::{InternalLink, Lexer, Token};
 
 fn normalize(mut name: String) -> String {
     // TODO: Actually handle multiple files with the same name
@@ -100,13 +100,23 @@ impl Note {
     }
 
     #[pyo3(signature = (token, text, offset=0))]
-    pub fn insert_before_token(&mut self, token: Token, text: String, offset: isize) -> PyResult<()> {
+    pub fn insert_before_token(
+        &mut self,
+        token: Token,
+        text: String,
+        offset: isize,
+    ) -> PyResult<()> {
         let pos = token.span().start as isize + offset;
         self.py_insert_at(pos, text)
     }
 
     #[pyo3(signature = (token, text, offset=0))]
-    pub fn insert_after_token(&mut self, token: Token, text: String, offset: isize) -> PyResult<()> {
+    pub fn insert_after_token(
+        &mut self,
+        token: Token,
+        text: String,
+        offset: isize,
+    ) -> PyResult<()> {
         let pos = token.span().end as isize + offset;
         self.py_insert_at(pos, text)
     }
@@ -197,7 +207,9 @@ impl Note {
                 Token::Callout { callout, .. } => {
                     self.index_tokens(callout.contents.iter().cloned());
                 }
-                Token::Quote { contents: tokens, .. } => {
+                Token::Quote {
+                    contents: tokens, ..
+                } => {
                     self.index_tokens(tokens.iter().cloned());
                 }
                 Token::Frontmatter { .. }
@@ -237,16 +249,21 @@ pub struct Vault {
 
     /// Maps tags to notes with those tags
     tags: HashMap<String, HashSet<String>>,
+
+    /// Maps notes to the dangling links they contain
+    dangling_links: HashMap<String, Vec<InternalLink>>,
 }
 
 #[cfg(feature = "python")]
 #[pyclass]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vault {
-    items: HashMap<String, VaultItem>,
-    tags: HashMap<String, HashSet<String>>,
     #[pyo3(get)]
     path: PathBuf,
+    #[pyo3(get)]
+    dangling_links: HashMap<String, Vec<String>>,
+    items: HashMap<String, VaultItem>,
+    tags: HashMap<String, HashSet<String>>,
 }
 
 #[cfg(feature = "python")]
@@ -313,6 +330,7 @@ impl Vault {
     pub fn new(path: &PathBuf) -> Self {
         Self {
             path: path.clone(),
+            dangling_links: HashMap::new(),
             items: HashMap::new(),
             tags: HashMap::new(),
         }
@@ -465,7 +483,10 @@ impl Vault {
                     continue;
                 };
 
-                // eprintln!("WARNING: Could not find linked item: '{from}' -> '{to}'");
+                self.dangling_links
+                    .entry(from)
+                    .and_modify(|links| links.push(to.clone()))
+                    .or_insert(vec![to]);
             }
         }
     }
