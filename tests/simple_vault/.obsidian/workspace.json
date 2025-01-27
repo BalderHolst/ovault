@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "callout.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -52,7 +52,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#callout4you",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -73,8 +73,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -165,11 +164,16 @@
   },
   "active": "185c2ffc086fec97",
   "lastOpenFiles": [
-    "code.md",
-    "first_note.md",
+    "callout.md~",
+    "4913",
+    "frontmatter.md",
     "quote.md",
+    "code.md",
+    "code.md~",
+    "first_note.md",
+    "callout.md",
+    "frontmatter.md~",
     "quote.md~",
-    "second_note.md",
-    "callout.md"
+    "second_note.md"
   ]
 }

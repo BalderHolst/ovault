@@ -52,7 +52,7 @@ impl InternalLink {
 pub struct Callout {
     pub kind: String,
     pub title: String,
-    pub contents: String,
+    pub contents: Vec<Token>,
     pub foldable: bool,
 }
 
@@ -61,6 +61,15 @@ pub struct Callout {
 pub struct Span {
     pub start: usize,
     pub end: usize,
+}
+
+impl Span {
+    fn shift(&mut self, offset: isize) {
+        let start = self.start as isize + offset;
+        let end = self.end as isize + offset;
+        self.start = start as usize;
+        self.end = end as usize;
+    }
 }
 
 #[cfg_attr(feature = "python", pyclass)]
@@ -72,7 +81,7 @@ pub enum Token   {
     Tag          { span: Span, tag: String },
     Header       { span: Span, level: usize, heading: String },
     Code         { span: Span, lang: Option<String>, code: String },
-    Quote        { span: Span, contents: String },
+    Quote        { span: Span, contents: Vec<Token> },
     InlineMath   { span: Span, latex: String },
     DisplayMath  { span: Span, latex: String },
     Divider      { span: Span },
@@ -92,7 +101,13 @@ impl Token {
                 "position" => Ok(link.position.clone().into_pyobject(py).unwrap().into_any()),
                 "show_how" => Ok(link.show_how.clone().into_pyobject(py).unwrap().into_any()),
                 "options" => Ok(link.options.clone().into_pyobject(py).unwrap().into_any()),
-                "render" => Ok(link.render.into_pyobject(py).unwrap().as_any().clone()),
+                "render" => Ok(link
+                    .render
+                    .clone()
+                    .into_pyobject(py)
+                    .unwrap()
+                    .as_any()
+                    .clone()),
                 _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
                     "'InternalLink' has no attribute '{}'",
                     name
@@ -156,7 +171,17 @@ impl Token {
                 None => format!("Code({})", string(code)),
             },
             Token::Callout { callout, .. } => {
-                format!("Callout({})", string(&format!("{:?}", callout)))
+                format!(
+                    "Callout({})",
+                    &format!(
+                        "{}: {}",
+                        callout.kind,
+                        callout
+                            .contents
+                            .first()
+                            .map_or("<no contents>".to_string(), |t| string(&t.__repr__()))
+                    )
+                )
             }
             Token::Quote { contents, .. } => {
                 format!("Quote({})", string(&format!("{:?}", contents)))
@@ -171,6 +196,23 @@ impl Token {
 
 impl Token {
     pub fn span(&self) -> &Span {
+        match self {
+            Token::Frontmatter { span, .. }
+            | Token::Text { span, .. }
+            | Token::Tag { span, .. }
+            | Token::Header { span, .. }
+            | Token::Code { span, .. }
+            | Token::Quote { span, .. }
+            | Token::InlineMath { span, .. }
+            | Token::DisplayMath { span, .. }
+            | Token::Divider { span, .. }
+            | Token::Callout { span, .. }
+            | Token::InternalLink { span, .. }
+            | Token::ExternalLink { span, .. } => span,
+        }
+    }
+
+    pub fn span_mut(&mut self) -> &mut Span {
         match self {
             Token::Frontmatter { span, .. }
             | Token::Text { span, .. }
@@ -501,15 +543,16 @@ impl Lexer {
     }
 
     /// Extract the text contained within a block prefixed with '>'
-    fn try_extract_block(&mut self) -> Option<String> {
+    fn try_extract_block(&mut self) -> Option<Vec<Token>> {
         self.at_block_start()?;
 
-        let mut lines = vec![];
+        let mut tokens = vec![];
 
         loop {
             if !matches!(self.current(), Some('>')) {
                 break;
             }
+
             self.consume(); // Consume '>'
             self.consume_if(|c| c == ' ');
 
@@ -518,17 +561,25 @@ impl Lexer {
             self.consume();
 
             let line = self.extract(line_start);
-            lines.push(line);
+            let mut line_tokens: Vec<_> = Self::new(line).collect();
+            line_tokens
+                .iter_mut()
+                .for_each(|t| t.span_mut().shift(line_start.0 as isize));
+
+            tokens.extend(line_tokens);
         }
 
-        Some(lines.join(""))
+        Some(tokens)
     }
 
     fn try_lex_quote(&mut self) -> Option<Token> {
         let start = self.mark();
-        let contents = self.try_extract_block()?;
+        let tokens = self.try_extract_block()?;
         let span = self.extract_span(start);
-        Some(Token::Quote { span, contents })
+        Some(Token::Quote {
+            span,
+            contents: tokens,
+        })
     }
 
     fn try_lex_callout(&mut self) -> Option<Token> {
@@ -553,7 +604,7 @@ impl Lexer {
         let title = self.consume_until(|c| c == '\n');
         self.consume_assert_eq('\n');
 
-        let contents = self.try_extract_block()?;
+        let tokens = self.try_extract_block()?;
 
         let span = self.extract_span(start);
 
@@ -562,7 +613,7 @@ impl Lexer {
             callout: Callout {
                 kind,
                 title,
-                contents,
+                contents: tokens,
                 foldable,
             },
         })
@@ -805,7 +856,7 @@ mod tests {
 
     #[test]
     fn test_lex_heading() {
-        test_lex_token ! {
+        test_lex_token! {
             "# Heading"
             => Token::Header {
                 span: Span { start: 0, end: 9 },
@@ -817,7 +868,7 @@ mod tests {
 
     #[test]
     fn test_lex_tag() {
-        test_lex_token ! {
+        test_lex_token! {
             "#tag"
             => Token::Tag {
                 span: Span { start: 0, end: 4 },
@@ -825,7 +876,7 @@ mod tests {
             }
         }
 
-        test_lex_token ! {
+        test_lex_token! {
             "#tag4you"
             => Token::Tag {
                 span: Span { start: 0, end: 8 },
@@ -836,7 +887,7 @@ mod tests {
 
     #[test]
     fn test_lex_external_link() {
-        test_lex_token ! {
+        test_lex_token! {
             "![alt text](https://link.domain)"
             => Token::ExternalLink {
                 span: Span { start: 0, end: 32 },
@@ -850,7 +901,7 @@ mod tests {
             }
         }
 
-        test_lex_token ! {
+        test_lex_token! {
             "[other alt text|options](https://example.com#pos)"
             => Token::ExternalLink {
                 span: Span { start: 0, end: 49 },
@@ -867,7 +918,7 @@ mod tests {
 
     #[test]
     fn test_lex_internal_link() {
-        test_lex_token ! {
+        test_lex_token! {
             "![[other_note]]"
             => Token::InternalLink {
                 span: Span { start: 0, end: 15 },
@@ -881,7 +932,21 @@ mod tests {
             }
         }
 
-        test_lex_token ! {
+        test_lex_token! {
+            "![[other_note]]."
+            => Token::InternalLink {
+                span: Span { start: 0, end: 15 },
+                link: InternalLink {
+                    dest: "other_note".to_string(),
+                    position: None,
+                    show_how: None,
+                    options: None,
+                    render: true
+                }
+            }
+        }
+
+        test_lex_token! {
             "[[other_note|alias]]"
             => Token::InternalLink {
                 span: Span { start: 0, end: 20 },
@@ -895,7 +960,7 @@ mod tests {
             }
         }
 
-        test_lex_token ! {
+        test_lex_token! {
             "[[other_note#some-heading]]"
             => Token::InternalLink {
                 span: Span { start: 0, end: 27 },
@@ -909,7 +974,7 @@ mod tests {
             }
         }
 
-        test_lex_token ! {
+        test_lex_token! {
             "[[other_note#page=13|center|alias]]"
             => Token::InternalLink {
                 span: Span { start: 0, end: 35 },
@@ -926,14 +991,14 @@ mod tests {
 
     #[test]
     fn test_lex_divider() {
-        test_lex_token ! {
+        test_lex_token! {
             "---"
             => Token::Divider {
                 span: Span { start: 0, end: 3 },
             }
         }
 
-        test_lex_token ! {
+        test_lex_token! {
             "---------"
             => Token::Divider {
                 span: Span { start: 0, end: 9 },
@@ -943,7 +1008,7 @@ mod tests {
 
     #[test]
     fn test_lex_code() {
-        test_lex_token ! {
+        test_lex_token! {
             "```rust\nthis is some code```"
             => Token::Code {
                 span: Span { start: 0, end: 28 },
@@ -955,7 +1020,7 @@ mod tests {
 
     #[test]
     fn test_lex_inline_math() {
-        test_lex_token ! {
+        test_lex_token! {
             "$a=b$"
             => Token::InlineMath {
                 span: Span { start: 0, end: 5 },
@@ -966,7 +1031,7 @@ mod tests {
 
     #[test]
     fn test_lex_display_math() {
-        test_lex_token ! {
+        test_lex_token! {
             "$$a=b$$"
             => Token::DisplayMath {
                 span: Span { start: 0, end: 7 },
@@ -977,25 +1042,43 @@ mod tests {
 
     #[test]
     fn test_lex_quote() {
-        test_lex_token ! {
+        test_lex_token! {
             "> 'fun quote!'\n> - Author"
             => Token::Quote {
                 span: Span { start: 0, end: 25 },
-                contents: "'fun quote!'\n- Author".to_string()
+                contents: vec![
+                    Token::Text {
+                        span: Span { start: 2, end: 15 },
+                        text: "'fun quote!'\n".to_string(),
+                    },
+                    Token::Text {
+                        span: Span { start: 17, end: 25 },
+                        text: "- Author".to_string(),
+                    },
+                ],
             }
         }
     }
 
     #[test]
     fn test_lex_callout() {
-        test_lex_token ! {
+        test_lex_token! {
             "> [!kind]- Title!\n> this\n> is contents"
             => Token::Callout {
                 span: Span { start: 0, end: 38 },
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
-                    contents: "this\nis contents".to_string(),
+                    contents: vec![
+                        Token::Text {
+                            span: Span { start: 20, end: 25 },
+                            text: "this\n".to_string(),
+                        },
+                        Token::Text {
+                            span: Span { start: 27, end: 38 },
+                            text: "is contents".to_string(),
+                        },
+                    ],
                     foldable: true,
                 }
             }

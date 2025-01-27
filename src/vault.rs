@@ -148,6 +148,7 @@ impl Note {
         fs::write(path, contents)
     }
 
+    /// Update `tags` and `links` fields from note contents
     fn index(&mut self) {
         let contents = match self.contents() {
             Ok(ts) => ts,
@@ -163,25 +164,17 @@ impl Note {
         self.index_contents(contents);
     }
 
-    /// Update `tags` and `links` fields from note contents
     fn index_contents(&mut self, contents: String) {
         self.links.clear();
         self.tags.clear();
-
         self.length = contents.len();
+        let tokens = Lexer::new(contents);
+        self.index_tokens(tokens);
+    }
 
-        for token in Lexer::new(contents) {
+    fn index_tokens(&mut self, tokens: impl Iterator<Item = Token>) {
+        for token in tokens {
             match token {
-                Token::Frontmatter { .. }
-                | Token::Text { .. }
-                | Token::Header { .. }
-                | Token::Callout { .. }
-                | Token::Quote { .. }
-                | Token::Divider { .. }
-                | Token::InlineMath { .. }
-                | Token::DisplayMath { .. }
-                | Token::Code { .. }
-                | Token::ExternalLink { .. } => {}
                 Token::Tag { tag, .. } => {
                     self.tags.insert(tag.clone());
                 }
@@ -195,6 +188,20 @@ impl Note {
                     let to = normalize(link.dest.clone());
                     self.add_link(to);
                 }
+                Token::Callout { callout, .. } => {
+                    self.index_tokens(callout.contents.iter().cloned());
+                }
+                Token::Quote { contents: tokens, .. } => {
+                    self.index_tokens(tokens.iter().cloned());
+                }
+                Token::Frontmatter { .. }
+                | Token::Text { .. }
+                | Token::Header { .. }
+                | Token::Divider { .. }
+                | Token::InlineMath { .. }
+                | Token::DisplayMath { .. }
+                | Token::Code { .. }
+                | Token::ExternalLink { .. } => {}
             }
         }
     }
