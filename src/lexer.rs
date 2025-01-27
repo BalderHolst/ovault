@@ -781,63 +781,64 @@ impl Iterator for Lexer {
 mod tests {
     use super::*;
 
+    macro_rules! test_lex_token {
+        ($source:expr => $($token:tt)*) => {
+            let mut lexer = Lexer::new($source);
+            let token = lexer.next().unwrap();
+            assert_eq!(
+                token,
+                $($token)*
+            );
+        };
+    }
+
     #[test]
     fn test_lex_front_matter() {
-        let mut lexer = Lexer::new("---\nkey: value\n-----\n# this is a heading");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Frontmatter {
+        test_lex_token! {
+            "---\nkey: value\n-----\n# this is a heading"
+            => Token::Frontmatter {
                 span: Span { start: 0, end: 21 },
                 yaml: "key: value\n".to_string()
             }
-        );
+        };
     }
 
     #[test]
     fn test_lex_heading() {
-        let mut lexer = Lexer::new("# Heading");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Header {
+        test_lex_token ! {
+            "# Heading"
+            => Token::Header {
                 span: Span { start: 0, end: 9 },
                 level: 1,
                 heading: "Heading".to_string()
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_tag() {
-        let mut lexer = Lexer::new("#tag");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Tag {
+        test_lex_token ! {
+            "#tag"
+            => Token::Tag {
                 span: Span { start: 0, end: 4 },
                 tag: "tag".to_string()
             }
-        );
+        }
 
-        let mut lexer = Lexer::new("#tag4you");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Tag {
+        test_lex_token ! {
+            "#tag4you"
+            => Token::Tag {
                 span: Span { start: 0, end: 8 },
                 tag: "tag4you".to_string()
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_external_link() {
-        let mut lexer = Lexer::new("![alt text](https://link.domain)");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::ExternalLink {
+        test_lex_token ! {
+            "![alt text](https://link.domain)"
+            => Token::ExternalLink {
                 span: Span { start: 0, end: 32 },
                 link: ExternalLink {
                     url: "https://link.domain".to_string(),
@@ -847,13 +848,11 @@ mod tests {
                     render: true,
                 }
             }
-        );
+        }
 
-        let mut lexer = Lexer::new("[other alt text|options](https://example.com#pos)");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::ExternalLink {
+        test_lex_token ! {
+            "[other alt text|options](https://example.com#pos)"
+            => Token::ExternalLink {
                 span: Span { start: 0, end: 49 },
                 link: ExternalLink {
                     url: "https://example.com".to_string(),
@@ -863,16 +862,14 @@ mod tests {
                     render: false,
                 }
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_internal_link() {
-        let mut lexer = Lexer::new("![[other_note]]");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::InternalLink {
+        test_lex_token ! {
+            "![[other_note]]"
+            => Token::InternalLink {
                 span: Span { start: 0, end: 15 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
@@ -882,13 +879,11 @@ mod tests {
                     render: true
                 }
             }
-        );
+        }
 
-        let mut lexer = Lexer::new("[[other_note|alias]]");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::InternalLink {
+        test_lex_token ! {
+            "[[other_note|alias]]"
+            => Token::InternalLink {
                 span: Span { start: 0, end: 20 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
@@ -898,13 +893,11 @@ mod tests {
                     render: false
                 }
             }
-        );
+        }
 
-        let mut lexer = Lexer::new("[[other_note#some-heading]]");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::InternalLink {
+        test_lex_token ! {
+            "[[other_note#some-heading]]"
+            => Token::InternalLink {
                 span: Span { start: 0, end: 27 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
@@ -914,13 +907,11 @@ mod tests {
                     render: false
                 }
             }
-        );
+        }
 
-        let mut lexer = Lexer::new("[[other_note#page=13|center|alias]]");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::InternalLink {
+        test_lex_token ! {
+            "[[other_note#page=13|center|alias]]"
+            => Token::InternalLink {
                 span: Span { start: 0, end: 35 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
@@ -930,90 +921,76 @@ mod tests {
                     render: false
                 }
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_divider() {
-        let mut lexer = Lexer::new("---");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Divider {
+        test_lex_token ! {
+            "---"
+            => Token::Divider {
                 span: Span { start: 0, end: 3 },
             }
-        );
+        }
 
-        let mut lexer = Lexer::new("---------");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Divider {
+        test_lex_token ! {
+            "---------"
+            => Token::Divider {
                 span: Span { start: 0, end: 9 },
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_code() {
-        let mut lexer = Lexer::new("```rust\nthis is some code```");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Code {
+        test_lex_token ! {
+            "```rust\nthis is some code```"
+            => Token::Code {
                 span: Span { start: 0, end: 28 },
                 lang: Some("rust".to_string()),
                 code: "this is some code".to_string()
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_inline_math() {
-        let mut lexer = Lexer::new("$a=b$");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::InlineMath {
+        test_lex_token ! {
+            "$a=b$"
+            => Token::InlineMath {
                 span: Span { start: 0, end: 5 },
                 latex: "a=b".to_string()
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_display_math() {
-        let mut lexer = Lexer::new("$$a=b$$");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::DisplayMath {
+        test_lex_token ! {
+            "$$a=b$$"
+            => Token::DisplayMath {
                 span: Span { start: 0, end: 7 },
                 latex: "a=b".to_string()
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_quote() {
-        let mut lexer = Lexer::new("> 'fun quote!'\n> - Author");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Quote {
+        test_lex_token ! {
+            "> 'fun quote!'\n> - Author"
+            => Token::Quote {
                 span: Span { start: 0, end: 25 },
                 contents: "'fun quote!'\n- Author".to_string()
             }
-        );
+        }
     }
 
     #[test]
     fn test_lex_callout() {
-        let mut lexer = Lexer::new("> [!kind]- Title!\n> this\n> is contents");
-        let token = lexer.next().unwrap();
-        assert_eq!(
-            token,
-            Token::Callout {
+        test_lex_token ! {
+            "> [!kind]- Title!\n> this\n> is contents"
+            => Token::Callout {
                 span: Span { start: 0, end: 38 },
                 callout: Callout {
                     kind: "kind".to_string(),
@@ -1022,6 +999,6 @@ mod tests {
                     foldable: true,
                 }
             }
-        );
+        }
     }
 }
