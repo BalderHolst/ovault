@@ -13,5 +13,6 @@ print("attachments :", len(v.attachments()))
 print("tags        :", v.tags())
 
 print("\n" + "-"*30)
-print(v.get_notes_by_tag("linksaregood"))
 
+note = v.get_note_by_name("frontmatter")
+print(note.frontmatter())
