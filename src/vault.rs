@@ -144,15 +144,11 @@ impl Note {
         let path = self.full_path();
         let contents = fs::read_to_string(path.clone())?;
         let contents = format!("{}{}{}", &contents[..pos], text, &contents[pos..]);
-        self.length = contents.len();
+        self.index_contents(contents.clone());
         fs::write(path, contents)
     }
 
-    /// Update `tags` and `links` fields from note contents
     fn index(&mut self) {
-        self.links.clear();
-        self.tags.clear();
-
         let contents = match self.contents() {
             Ok(ts) => ts,
             Err(e) => {
@@ -164,6 +160,13 @@ impl Note {
                 return;
             }
         };
+        self.index_contents(contents);
+    }
+
+    /// Update `tags` and `links` fields from note contents
+    fn index_contents(&mut self, contents: String) {
+        self.links.clear();
+        self.tags.clear();
 
         self.length = contents.len();
 
