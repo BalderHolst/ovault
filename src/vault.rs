@@ -58,6 +58,10 @@ impl Note {
         format!("Note({})", self.name)
     }
 
+    pub fn __len__(&self) -> usize {
+        self.length
+    }
+
     #[pyo3(name = "tokens")]
     pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
         match self.tokens() {

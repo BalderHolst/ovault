@@ -11,6 +11,7 @@ print("attachments :", len(v.attachments()))
 print("tags        :", v.tags())
 
 note = v.get_note_by_name("quote")
+print(len(note))
 quote = None
 for t in note.tokens():
     if isinstance(t, t.Quote):
