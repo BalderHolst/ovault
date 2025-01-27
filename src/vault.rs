@@ -95,14 +95,16 @@ impl Note {
         self.insert_at(pos, text).map_err(PyErr::from)
     }
 
-    pub fn insert_before_token(&mut self, token: Token, text: String) -> PyResult<()> {
-        let pos = token.span().start;
-        self.insert_at(pos, text).map_err(PyErr::from)
+    #[pyo3(signature = (token, text, offset=0))]
+    pub fn insert_before_token(&mut self, token: Token, text: String, offset: isize) -> PyResult<()> {
+        let pos = token.span().start as isize + offset;
+        self.py_insert_at(pos, text)
     }
 
-    pub fn insert_after_token(&mut self, token: Token, text: String) -> PyResult<()> {
-        let pos = token.span().end;
-        self.insert_at(pos, text).map_err(PyErr::from)
+    #[pyo3(signature = (token, text, offset=0))]
+    pub fn insert_after_token(&mut self, token: Token, text: String, offset: isize) -> PyResult<()> {
+        let pos = token.span().end as isize + offset;
+        self.py_insert_at(pos, text)
     }
 }
 
