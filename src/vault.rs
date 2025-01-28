@@ -36,8 +36,9 @@ fn normalize(mut name: String) -> String {
         .collect()
 }
 
-#[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "python", pyclass(get_all))]
+/// A note in an Obsidian vault.
 pub struct Note {
     /// Path to the vault
     vault_path: PathBuf,
@@ -225,15 +226,17 @@ impl Note {
     }
 }
 
-#[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "python", pyclass(get_all))]
+/// An attachment in an Obsidian vault. An attachment is any
+/// file that is not a markdown file.
 pub struct Attachment {
     path: PathBuf,
 }
 
-#[cfg_attr(feature = "python", pyclass)]
 #[derive(Debug, Clone, PartialEq)]
-pub enum VaultItem {
+#[cfg_attr(feature = "python", pyclass)]
+enum VaultItem {
     Note { note: Note },
     Attachment { attachment: Attachment },
 }
@@ -255,8 +258,10 @@ pub struct Vault {
 }
 
 #[cfg(feature = "python")]
-#[pyclass]
 #[derive(Debug, Clone, PartialEq)]
+#[pyclass]
+/// An Obsidian vault containing notes and attachments. The vault is indexed
+/// on creation and can be re-indexed with the `index` method.
 pub struct Vault {
     #[pyo3(get)]
     path: PathBuf,
@@ -276,11 +281,6 @@ impl Vault {
         v.add_dir(&path)?;
         v.index();
         Ok(v)
-    }
-
-    #[pyo3(name = "items")]
-    pub fn py_items(&self) -> Vec<VaultItem> {
-        self.items.values().cloned().collect()
     }
 
     #[pyo3(name = "notes")]
@@ -336,11 +336,11 @@ impl Vault {
         }
     }
 
-    pub fn items(&self) -> impl Iterator<Item = &VaultItem> {
+    fn items(&self) -> impl Iterator<Item = &VaultItem> {
         self.items.values()
     }
 
-    pub fn items_mut(&mut self) -> impl Iterator<Item = &mut VaultItem> {
+    fn items_mut(&mut self) -> impl Iterator<Item = &mut VaultItem> {
         self.items.values_mut()
     }
 
@@ -370,16 +370,6 @@ impl Vault {
             VaultItem::Attachment { attachment } => Some(attachment),
             _ => None,
         })
-    }
-
-    pub fn set_item(&mut self, item: Note) -> Option<VaultItem> {
-        self.items
-            .insert(normalize(item.name.clone()), VaultItem::Note { note: item })
-    }
-
-    pub fn set_note(&mut self, note: Note) -> Option<VaultItem> {
-        self.items
-            .insert(normalize(note.name.clone()), VaultItem::Note { note })
     }
 
     /// Add a note to the vault
@@ -491,7 +481,7 @@ impl Vault {
         }
     }
 
-    pub fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
+    fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
         self.items.get(normalized_name)
     }
 
