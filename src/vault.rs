@@ -7,7 +7,7 @@ use std::{
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
-use crate::lexer::{InternalLink, Lexer, Token};
+use crate::lexer::{Lexer, Token};
 
 fn normalize(mut name: String) -> String {
     // TODO: Actually handle multiple files with the same name
@@ -156,7 +156,7 @@ impl Note {
         self.backlinks.insert(from);
     }
 
-    fn insert_at(&mut self, pos: usize, text: String) -> io::Result<()> {
+    pub fn insert_at(&mut self, pos: usize, text: String) -> io::Result<()> {
         let path = self.full_path();
         let contents = fs::read_to_string(path.clone())?;
         let contents = format!("{}{}{}", &contents[..pos], text, &contents[pos..]);
@@ -251,7 +251,7 @@ pub struct Vault {
     tags: HashMap<String, HashSet<String>>,
 
     /// Maps notes to the dangling links they contain
-    dangling_links: HashMap<String, Vec<InternalLink>>,
+    dangling_links: HashMap<String, Vec<String>>,
 }
 
 #[cfg(feature = "python")]
