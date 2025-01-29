@@ -24,7 +24,18 @@
                             extensions = [ "rust-src" "clippy"];
                         })
                         maturin
+                        python3
                     ];
+
+                    shellHook = ''
+                        # Create venv if it doesn't exist
+                        if [ ! -d venv ]; then
+                            python3 -m venv venv
+                        fi
+
+                        # Activate venv
+                        source venv/bin/activate
+                    '';
                 };
             }
     );
