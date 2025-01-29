@@ -1,3 +1,4 @@
 /target
 /venv
 .direnv/
+/ovault.pyi
