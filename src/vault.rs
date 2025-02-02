@@ -7,6 +7,8 @@ use std::{
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
+use glob::glob;
+
 use crate::lexer::{Lexer, Token};
 
 fn normalize(mut name: String) -> String {
@@ -250,6 +252,8 @@ pub struct Vault {
     /// Path to Obsidian vault
     path: PathBuf,
 
+    ignored: HashSet<PathBuf>,
+
     /// Maps tags to notes with those tags
     tags: HashMap<String, HashSet<String>>,
 
@@ -267,8 +271,17 @@ pub struct Vault {
     path: PathBuf,
     #[pyo3(get)]
     dangling_links: HashMap<String, Vec<String>>,
+
+    /// Paths that were ignored during indexing
+    #[pyo3(get)]
+    ignored: HashSet<PathBuf>,
     items: HashMap<String, VaultItem>,
     tags: HashMap<String, HashSet<String>>,
+}
+
+impl Vault {
+    const IGNORE_FILE: &str = ".vault-ignore";
+    const DEFAULT_IGNORED: &[&'static str] = &[Self::IGNORE_FILE, ".git", ".obsidian", ".trash"];
 }
 
 #[cfg(feature = "python")]
@@ -276,8 +289,18 @@ pub struct Vault {
 impl Vault {
     #[new]
     pub fn py_new(path: &str) -> PyResult<Self> {
+
         let path = PathBuf::from(path);
+        let path = path.canonicalize().map_err(|e| {
+            pyo3::exceptions::PyFileNotFoundError::new_err(format!(
+                "Could not find vault at '{}': {}",
+                path.display(),
+                e
+            ))
+        })?;
+
         let mut v = Self::new(&path);
+        v.parse_ignore_file(&path.join(Self::IGNORE_FILE))?;
         v.add_dir(&path)?;
         v.index();
         Ok(v)
@@ -327,12 +350,15 @@ impl Vault {
 }
 
 impl Vault {
+
     pub fn new(path: &PathBuf) -> Self {
+        let ignored = HashSet::from_iter(Self::DEFAULT_IGNORED.iter().map(PathBuf::from));
         Self {
             path: path.clone(),
             dangling_links: HashMap::new(),
             items: HashMap::new(),
             tags: HashMap::new(),
+            ignored,
         }
     }
 
@@ -372,6 +398,42 @@ impl Vault {
         })
     }
 
+    pub fn parse_ignore_file(&mut self, path: &PathBuf) -> io::Result<()> {
+        if !path.exists() {
+            return Ok(());
+        }
+
+        let contents = fs::read_to_string(path)?;
+        for (i, line) in contents.lines().enumerate() {
+            let line = line.trim();
+
+            // Skip empty lines and comments
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+
+            let gstr = match line.starts_with("/") {
+                true => format!("{}{}", self.path.display(), line),
+                false => format!("{}/**/{}", self.path.display(), line),
+            };
+
+            let Ok(ignored_paths) = glob(&gstr) else {
+                eprintln!(
+                    "WARNING: Could not parse line {} in ignore file '{}'",
+                    i + 1,
+                    path.display()
+                );
+                continue;
+            };
+            ignored_paths.filter_map(Result::ok).for_each(|path| {
+                let abs_path = path.canonicalize().unwrap();
+                let rel_path = abs_path.strip_prefix(&self.path).unwrap();
+                self.ignored.insert(rel_path.to_path_buf());
+            });
+        }
+        Ok(())
+    }
+
     /// Add a note to the vault
     pub fn add_note(&mut self, path: &PathBuf) {
         debug_assert_eq!(path.extension().unwrap(), "md");
@@ -401,29 +463,37 @@ impl Vault {
     }
 
     pub fn add_dir(&mut self, path: &PathBuf) -> io::Result<()> {
-        match path.file_name().map(|n| n.to_str()) {
-            Some(Some(".git"))
-            | Some(Some(".obsidian"))
-            | Some(Some("Templates"))
-            | Some(Some("External"))
-            | Some(Some(".trash"))
-            | Some(Some("Excalidraw")) => return Ok(()),
-            _ => {}
+        let Ok(rel_path) = path.strip_prefix(&self.path) else {
+            eprintln!(
+                "WARNING: Can not add directory outside of vault: '{}'",
+                path.display()
+            );
+            return Ok(());
+        };
+
+        if self.ignored.contains(rel_path) {
+            return Ok(());
         }
 
         for file in fs::read_dir(path)? {
             let file = file?;
-            let file_path = file.path();
-            if file_path.is_file() {
-                match file_path.extension() {
-                    Some(ex) => match ex.to_str() {
-                        Some("md") => self.add_note(&file_path),
-                        _ => self.add_attachment(file_path),
-                    },
-                    None => self.add_attachment(file_path),
+            let abs_file_path = file.path();
+            if abs_file_path.is_file() {
+
+                let rel_file_path = abs_file_path.strip_prefix(&self.path).unwrap();
+                if self.ignored.contains(rel_file_path) {
+                    continue;
                 }
-            } else if file_path.is_dir() {
-                self.add_dir(&file_path)?;
+
+                match abs_file_path.extension() {
+                    Some(ex) => match ex.to_str() {
+                        Some("md") => self.add_note(&abs_file_path),
+                        _ => self.add_attachment(abs_file_path),
+                    },
+                    None => self.add_attachment(abs_file_path),
+                }
+            } else if abs_file_path.is_dir() {
+                self.add_dir(&abs_file_path)?;
             }
         }
         Ok(())

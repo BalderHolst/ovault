@@ -11,6 +11,7 @@ default = []
 python = ["pyo3", "syn", "quote"]
 
 [dependencies]
+glob = "0.3.2"
 pyo3 = { version = "0.23.4", optional = true }
 
 [build-dependencies]
