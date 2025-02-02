@@ -23,7 +23,9 @@ mod stubify {
     };
 
     use quote::ToTokens;
-    use syn::{self, GenericArgument, Item, ItemImpl, ItemStruct, Type, Visibility};
+    use syn::{
+        self, FieldsNamed, GenericArgument, Item, ItemEnum, ItemImpl, ItemStruct, Type, Visibility,
+    };
 
     enum PyType {
         Int,
@@ -36,54 +38,7 @@ mod stubify {
         Any,
         None,
         Optional(Box<PyType>),
-    }
-
-    impl PyType {
-        fn try_from_str(t: &str) -> Self {
-            match t {
-                "String" => Self::Str,
-                "usize" => Self::Int,
-                _ => panic!("I don't know how to convert type '{}' to python", t),
-            }
-        }
-
-        fn try_from_type(t: &Type) -> Self {
-            match t {
-                Type::Path(p) => {
-                    let t = p.path.segments.last().unwrap();
-                    let t_ident = &t.ident.to_string();
-                    if t.arguments.is_empty() {
-                        return Self::try_from_str(&t_ident);
-                    }
-
-                    let syn::PathArguments::AngleBracketed(args) = &t.arguments else {
-                        panic!("I don't know how to convert '{:?}' to python", t)
-                    };
-                    let args: Vec<_> = args
-                        .args
-                        .iter()
-                        .map(|a| match a {
-                            GenericArgument::Type(t) => t,
-                            _ => panic!("Generic '{}' is not type.", t.to_token_stream()),
-                        })
-                        .collect();
-
-                    match t_ident.as_str() {
-                        "Option" => {
-                            Self::Optional(Box::new(Self::try_from_type(args.first().unwrap())))
-                        }
-                        "Vec" => {
-                            Self::List(Box::new(Self::try_from_type(args.first().unwrap())))
-                        }
-                        "PyResult" => {
-                            Self::try_from_type(args.first().unwrap())
-                        }
-                        _ => panic!("I don't know how to convert '{:?}' to python", t),
-                    }
-                }
-                _ => panic!("I don't know how to convert '{:?}' to python", t),
-            }
-        }
+        Custom(String),
     }
 
     impl Display for PyType {
@@ -102,6 +57,7 @@ mod stubify {
                 Self::Any => write!(f, "Any"),
                 Self::None => write!(f, "None"),
                 Self::Optional(t) => write!(f, "Optional[{}]", t),
+                Self::Custom(t) => write!(f, "{}", t),
             }
         }
     }
@@ -145,6 +101,7 @@ mod stubify {
         doc: Vec<String>,
         rust_file: PathBuf,
         methods: Vec<PyMethod>,
+        inherits: Option<String>,
     }
 
     impl Display for PyClass {
@@ -175,7 +132,16 @@ mod stubify {
         }
     }
 
+    struct PyTypeEnum {
+        name: String,
+        doc: Vec<String>,
+        variants: Vec<String>,
+        rustfields: Vec<FieldsNamed>,
+        rust_file: PathBuf,
+    }
+
     struct Stubifier {
+        enums: Vec<PyTypeEnum>,
         classes: Vec<PyClass>,
         impls: HashMap<String, Vec<PyMethod>>,
     }
@@ -189,12 +155,79 @@ mod stubify {
         fn new() -> Self {
             Self {
                 classes: vec![],
+                enums: vec![],
                 impls: HashMap::new(),
             }
         }
 
         fn get_class_mut(&mut self, name: &str) -> Option<&mut PyClass> {
             self.classes.iter_mut().find(|c| c.name == name)
+        }
+
+        fn is_defined(&self, name: &str) -> bool {
+            self.classes.iter().any(|c| c.name == name) || self.enums.iter().any(|e| e.name == name)
+        }
+
+        fn try_pythonify_str(&self, t: &str) -> PyType {
+            match t {
+                "String" => PyType::Str,
+                "usize" => PyType::Int,
+                ty => {
+                    if self.is_defined(ty) {
+                        panic!(
+                            "I don't know how to convert '{:?}' to python. Defined types: {}",
+                            t,
+                            self.classes
+                                .iter()
+                                .map(|c| c.name.clone())
+                                .collect::<Vec<String>>()
+                                .join(", ")
+                        )
+                    }
+                    PyType::Custom(ty.to_string())
+                }
+            }
+        }
+
+        fn try_pythonify_type(&self, t: &Type) -> PyType {
+            match t {
+                Type::Path(p) => {
+                    let t = p.path.segments.last().unwrap();
+                    let t_ident = &t.ident.to_string();
+                    if t.arguments.is_empty() {
+                        return self.try_pythonify_str(t_ident);
+                    }
+
+                    let syn::PathArguments::AngleBracketed(args) = &t.arguments else {
+                        panic!("I don't know how to convert '{:?}' to python", t)
+                    };
+                    let args: Vec<_> = args
+                        .args
+                        .iter()
+                        .map(|a| match a {
+                            GenericArgument::Type(t) => t,
+                            _ => panic!("Generic '{}' is not type.", t.to_token_stream()),
+                        })
+                        .collect();
+
+                    match t_ident.as_str() {
+                        "Option" => PyType::Optional(Box::new(
+                            self.try_pythonify_type(args.first().unwrap()),
+                        )),
+                        "Vec" => {
+                            PyType::List(Box::new(self.try_pythonify_type(args.first().unwrap())))
+                        }
+                        "PyResult" => self.try_pythonify_type(args.first().unwrap()),
+                        ty => {
+                            if self.is_defined(ty) {
+                                panic!("I don't know how to generic convert '{:?}' to python", t)
+                            }
+                            PyType::Custom(ty.to_string())
+                        }
+                    }
+                }
+                _ => panic!("I don't know how to convert '{:?}' to python", t),
+            }
         }
 
         fn handle_struct(&mut self, path: &PathBuf, s: ItemStruct) {
@@ -245,7 +278,71 @@ mod stubify {
                     .unwrap()
                     .to_path_buf(),
                 methods: vec![],
+                inherits: None,
             });
+        }
+
+        fn handle_enum(&mut self, path: &PathBuf, e: ItemEnum) {
+            let Visibility::Public(_) = e.vis else {
+                return;
+            };
+
+            let mut is_pyclass = false;
+            let mut docstring = vec![];
+
+            for attr in &e.attrs {
+                if attr.to_token_stream().to_string().contains("pyclass") {
+                    is_pyclass = true;
+                }
+
+                match &attr.meta {
+                    syn::Meta::Path(_path) => {}
+                    syn::Meta::List(_meta_list) => {}
+                    syn::Meta::NameValue(meta_name_value) => {
+                        if !meta_name_value.path.is_ident("doc") {
+                            continue;
+                        }
+                        docstring.push(
+                            meta_name_value
+                                .value
+                                .to_token_stream()
+                                .to_string()
+                                .strip_prefix("\"")
+                                .unwrap()
+                                .strip_suffix("\"")
+                                .unwrap()
+                                .trim()
+                                .to_string(),
+                        );
+                    }
+                }
+            }
+
+            if !is_pyclass {
+                return;
+            }
+
+            let mut pyenum = PyTypeEnum {
+                name: e.ident.to_string(),
+                doc: docstring.clone(),
+                variants: vec![],
+                rustfields: vec![],
+                rust_file: path.to_path_buf(),
+            };
+
+            for variant in &e.variants {
+                match &variant.fields {
+                    syn::Fields::Named(fields) => {
+                        pyenum.variants.push(variant.ident.to_string());
+                        pyenum.rustfields.push(fields.clone());
+                    }
+                    syn::Fields::Unnamed(_) | syn::Fields::Unit => {
+                        panic!("Enum variant must have named fields.")
+                    }
+                }
+            }
+
+            self.enums.push(pyenum);
         }
 
         fn handle_impl(&mut self, path: &PathBuf, i: ItemImpl) {
@@ -262,17 +359,16 @@ mod stubify {
 
             let class_name = i.self_ty.to_token_stream().to_string();
 
-            let Some(class) = self.get_class_mut(&class_name) else {
-                return;
-            };
-
             for item in &i.items {
                 match item {
                     syn::ImplItem::Fn(f) => {
                         let name = f.sig.ident.to_string();
                         let ret = match &f.sig.output {
                             syn::ReturnType::Default => PyType::None,
-                            syn::ReturnType::Type(_, t) => PyType::try_from_type(t),
+                            syn::ReturnType::Type(_, t) => self.try_pythonify_type(t),
+                        };
+                        let Some(class) = self.get_class_mut(&class_name) else {
+                            continue;
                         };
                         class.methods.push(PyMethod {
                             name,
@@ -321,6 +417,7 @@ mod stubify {
         fn collect_classes(&mut self, path: &PathBuf) {
             self.visit_items(path, |stubifier, path, item| match item {
                 syn::Item::Struct(s) => stubifier.handle_struct(&path, s),
+                syn::Item::Enum(s) => stubifier.handle_enum(&path, s),
                 _ => {}
             });
         }
@@ -330,6 +427,31 @@ mod stubify {
                 syn::Item::Impl(s) => stubifier.handle_impl(&path, s),
                 _ => {}
             });
+        }
+
+        fn collect_enum_structs(&mut self) {
+            for e in &self.enums {
+                for (variant, fields) in e.variants.iter().zip(e.rustfields.iter()) {
+                    let methods = fields
+                        .named
+                        .iter()
+                        .map(|f| PyMethod {
+                            name: f.ident.as_ref().unwrap().to_string(),
+                            doc: vec![],
+                            args: vec![],
+                            ret: self.try_pythonify_type(&f.ty),
+                        })
+                        .collect();
+
+                    self.classes.push(PyClass {
+                        name: variant.to_string(),
+                        doc: vec![],
+                        rust_file: e.rust_file.to_path_buf(),
+                        methods,
+                        inherits: Some(e.name.clone()),
+                    });
+                }
+            }
         }
 
         fn write(&self, out_path: &PathBuf) {
@@ -360,7 +482,8 @@ mod stubify {
     pub fn stubify(path: PathBuf, out_path: &PathBuf) {
         let stubifier = &mut Stubifier::new();
         stubifier.collect_classes(&path);
-        stubifier.collect_impls(&path);
+        stubifier.collect_enum_structs();
+        // stubifier.collect_impls(&path);
         stubifier.write(out_path);
     }
 }
