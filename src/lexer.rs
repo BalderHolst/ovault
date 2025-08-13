@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 #[cfg(feature = "python")]
-use pyo3::{pyclass, pymethods, Bound, IntoPyObject, PyAny, PyResult, Python};
+use pyo3::{pyclass, pymethods};
 
 #[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
@@ -93,59 +93,6 @@ pub enum Token   {
 #[cfg(feature = "python")]
 #[pymethods]
 impl Token {
-    // Patch the __getattr__ method to allow for attribute access in tuple types
-    pub fn __getattr__<'py>(&self, py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-        match self {
-            Token::InternalLink { link, .. } => match name {
-                "dest" => Ok(link.dest.clone().into_pyobject(py).unwrap().into_any()),
-                "position" => Ok(link.position.clone().into_pyobject(py).unwrap().into_any()),
-                "show_how" => Ok(link.show_how.clone().into_pyobject(py).unwrap().into_any()),
-                "options" => Ok(link.options.clone().into_pyobject(py).unwrap().into_any()),
-                "render" => Ok(link
-                    .render
-                    .clone()
-                    .into_pyobject(py)
-                    .unwrap()
-                    .as_any()
-                    .clone()),
-                _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
-                    "'InternalLink' has no attribute '{}'",
-                    name
-                ))),
-            },
-            Token::ExternalLink { link, .. } => match name {
-                "url" => Ok(link.url.clone().into_pyobject(py).unwrap().into_any()),
-                "show_how" => Ok(link.show_how.clone().into_pyobject(py).unwrap().into_any()),
-                "options" => Ok(link.options.clone().into_pyobject(py).unwrap().into_any()),
-                "position" => Ok(link.position.clone().into_pyobject(py).unwrap().into_any()),
-                "render" => Ok(link.render.into_pyobject(py).unwrap().as_any().clone()),
-                _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
-                    "'ExternalLink' has no attribute '{}'",
-                    name
-                ))),
-            },
-            Token::Callout { callout, .. } => match name {
-                "kind" => Ok(callout.kind.clone().into_pyobject(py).unwrap().into_any()),
-                "title" => Ok(callout.title.clone().into_pyobject(py).unwrap().into_any()),
-                "contents" => Ok(callout
-                    .contents
-                    .clone()
-                    .into_pyobject(py)
-                    .unwrap()
-                    .into_any()),
-                "foldable" => Ok(callout.foldable.into_pyobject(py).unwrap().as_any().clone()),
-                _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
-                    "'Callout' has no attribute '{}'",
-                    name
-                ))),
-            },
-            _ => PyResult::Err(pyo3::exceptions::PyAttributeError::new_err(format!(
-                "'Token' has no attribute '{}'",
-                name
-            ))),
-        }
-    }
-
     pub fn __repr__(&self) -> String {
         const MAX_LEN: usize = 20;
         fn string(s: &str) -> String {
