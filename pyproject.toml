@@ -4,3 +4,13 @@ build-backend = "maturin"
 
 [tool.maturin]
 features = ["python"]
+
+[project]
+name = "ovault"
+dynamic = ["version"]
+description = "Library for Managing your Obsidian Vault "
+readme = "README.md"
+license = "MIT"
+license-files = ["LICEN[CS]E.*"]
+keywords = ["Obsidian", "Vault", "Notes"]
+Repository = "https://github.com/BalderHolst/ovault"
