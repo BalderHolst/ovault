@@ -1,0 +1,12 @@
+# OVault
+A python library for accessing and editing your [Obsidian](https://obsidian.md) vault.
+
+Check out the [examples](./examples/)!
+
+## Development
+
+### Build for Testing
+```bash
+maturin develop --release --features python
+```
+
