@@ -3,6 +3,7 @@ use pyo3::{pymodule, types::{PyModule, PyModuleMethods}, Bound, PyResult};
 
 mod vault;
 mod lexer;
+mod normalize;
 
 pub use vault::Vault;
 pub use lexer::Token;

@@ -9,34 +9,7 @@ use pyo3::prelude::*;
 
 use glob::glob;
 
-use crate::lexer::{Lexer, Token};
-
-fn normalize(mut name: String) -> String {
-    // TODO: Actually handle multiple files with the same name
-    if name.contains('/') {
-        name = name.split_once('/').unwrap().1.to_string();
-    }
-
-    name.chars()
-        .map(|c| match c {
-            ' ' => '-',
-            _ => c.to_lowercase().next().unwrap(),
-        })
-        // Remove repeated '-'
-        .collect::<String>()
-        .split('-')
-        .filter(|part| !part.is_empty())
-        .map(|part| part.to_string())
-        .collect::<Vec<String>>()
-        .join("-")
-        // Filter other chars away in name
-        .chars()
-        .filter(|c| match c {
-            '\'' => false,
-            _ => true,
-        })
-        .collect()
-}
+use crate::{lexer::{Lexer, Token}, normalize::normalize};
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
