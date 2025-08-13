@@ -9,7 +9,10 @@ use pyo3::prelude::*;
 
 use glob::glob;
 
-use crate::{lexer::{Lexer, Token}, normalize::normalize};
+use crate::{
+    lexer::{Lexer, Token},
+    normalize::normalize,
+};
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
@@ -262,7 +265,6 @@ impl Vault {
 impl Vault {
     #[new]
     pub fn py_new(path: &str) -> PyResult<Self> {
-
         let path = PathBuf::from(path);
         let path = path.canonicalize().map_err(|e| {
             pyo3::exceptions::PyFileNotFoundError::new_err(format!(
@@ -305,15 +307,14 @@ impl Vault {
     }
 
     #[pyo3(name = "get_notes_by_tag")]
-    pub fn py_get_notes_by_tag(&self, tag: &str) -> Option<Vec<Note>> {
-        let notes = self
-            .tags
-            .get(tag)?
-            .iter()
+    pub fn py_get_notes_by_tag(&self, tag: &str) -> Vec<Note> {
+        let Some(tag) = self.tags.get(tag) else {
+            return vec![];
+        };
+        tag.iter()
             .filter_map(|name| self.get_note(name))
             .cloned()
-            .collect();
-        Some(notes)
+            .collect()
     }
 
     #[pyo3(name = "get_note_by_name")]
@@ -323,7 +324,6 @@ impl Vault {
 }
 
 impl Vault {
-
     pub fn new(path: &PathBuf) -> Self {
         let ignored = HashSet::from_iter(Self::DEFAULT_IGNORED.iter().map(PathBuf::from));
         Self {
@@ -452,7 +452,6 @@ impl Vault {
             let file = file?;
             let abs_file_path = file.path();
             if abs_file_path.is_file() {
-
                 let rel_file_path = abs_file_path.strip_prefix(&self.path).unwrap();
                 if self.ignored.contains(rel_file_path) {
                     continue;
