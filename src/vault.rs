@@ -59,7 +59,13 @@ impl Note {
         self.frontmatter()
     }
 
-    pub fn read(&self) -> io::Result<String> {
+    #[pyo3(name = "normalized_name")]
+    pub fn py_normalized_name(&self) -> String {
+        normalize(self.name.clone())
+    }
+
+    #[pyo3(name = "read")]
+    pub fn py_read(&self) -> io::Result<String> {
         self.contents()
     }
 
