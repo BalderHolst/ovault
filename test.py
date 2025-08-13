@@ -1,6 +1,7 @@
+import os
 import ovault
 
-VAULT_PATH = "./tests/simple_vault"
+VAULT_PATH = os.path.expanduser("~/Documents/uni/notes")
 
 v = ovault.Vault(VAULT_PATH)
 
@@ -12,9 +13,6 @@ print("tags        :", v.tags())
 
 print("\nNotes:")
 for note in v.notes():
-    print(f"\t{note.name}")
-
-print("\nAttachments:")
-for attachment in v.attachments():
-    print(f"\t{attachment.path}")
-
+    for token in note.tokens():
+        if isinstance(token, token.Code):
+            print(f"\t{note.name}: {token.lang}")
