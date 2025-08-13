@@ -1,0 +1,190 @@
+{
+  "main": {
+    "id": "8c3d2f6b915fe6c4",
+    "type": "split",
+    "children": [
+      {
+        "id": "5244419e867c394e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a75bae746398dd3c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Formatting/Comment.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Comment"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "163300d16e78b622",
+    "type": "split",
+    "children": [
+      {
+        "id": "06e3d30e203a00e4",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "cc43350478076f58",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "aeb8944f9e806733",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "0aa5f889fd510905",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "0f856694ab3d9092",
+    "type": "split",
+    "children": [
+      {
+        "id": "640187f7b5be824a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b89de9f216bb1ae7",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Start Here.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Start Here"
+            }
+          },
+          {
+            "id": "f200923e315a8e9d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Start Here.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Start Here"
+            }
+          },
+          {
+            "id": "ac17c06ba1e420a9",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "cb26517dd65a0d72",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Start Here.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Start Here"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "cc43350478076f58",
+  "lastOpenFiles": [
+    "Start Here.md",
+    "Formatting/Blockquote.md",
+    "Formatting/Task.md",
+    "Formatting/Table.md",
+    "Formatting/Strikethrough.md",
+    "Formatting/Math.md",
+    "Formatting/Lists.md",
+    "Formatting/Links.md",
+    "Formatting/Internal link.md",
+    "Formatting/Inline code.md",
+    "Formatting/Images.md",
+    "Formatting/Horizontal divider.md",
+    "Formatting/Highlighting.md",
+    "Formatting/Emphasis.md",
+    "Formatting/Embeds.md",
+    "Formatting/Diagram.md"
+  ]
+}
