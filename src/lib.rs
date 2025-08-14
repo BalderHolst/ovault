@@ -8,6 +8,7 @@ mod normalize;
 pub use vault::Vault;
 pub use lexer::Token;
 
+/// Python module for managing an [Obsidian](https://obsidian.md/) vault.
 #[cfg(feature = "python")]
 #[pymodule]
 mod ovault {
