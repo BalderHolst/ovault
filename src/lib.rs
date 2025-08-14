@@ -6,7 +6,13 @@ mod lexer;
 mod normalize;
 
 pub use vault::Vault;
-pub use lexer::Token;
+pub use lexer::{
+    Token,
+    Callout,
+    InternalLink,
+    ExternalLink,
+    Span,
+};
 
 /// Python module for managing an [Obsidian](https://obsidian.md/) vault.
 #[cfg(feature = "python")]
@@ -16,6 +22,12 @@ mod ovault {
 
     #[pymodule_export] use Vault;
     #[pymodule_export] use Token;
+    #[pymodule_export] use Callout;
+    #[pymodule_export] use InternalLink;
+    #[pymodule_export] use ExternalLink;
+    #[pymodule_export] use Span;
+
+    #[pymodule_export] use normalize::normalize;
 
     #[allow(non_upper_case_globals)]
     #[pymodule_export]

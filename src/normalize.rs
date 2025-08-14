@@ -1,3 +1,7 @@
+#[cfg(feature = "python")]
+use pyo3::prelude::*;
+
+#[cfg_attr(feature = "python", pyfunction)]
 pub fn normalize(mut name: String) -> String {
     // TODO: Actually handle multiple files with the same name
     while name.contains('/') {
