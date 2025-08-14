@@ -18,8 +18,7 @@ pub use lexer::{
     Span,
 };
 
-/// Python module for managing an [Obsidian](https://obsidian.md/) vault.
-#[doc = include_str!("../documentation.md")]
+#[doc = include_str!("../docs/documentation.md")]
 #[cfg(feature = "python")]
 #[pymodule]
 mod ovault {

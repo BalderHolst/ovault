@@ -1,0 +1,92 @@
+**Version**: !(python){
+
+    import tomllib
+    import json
+    import subprocess
+    res = subprocess.run(["cargo", "locate-project"], check=True, capture_output=True, text=True)
+    manifest = json.loads(res.stdout)["root"]
+    with open(manifest, 'rb') as f:
+        data = tomllib.load(f)
+    print(data["package"]["version"])
+
+}
+
+Python module for managing [Obsidian](https://obsidian.md/) vaults.
+
+## Examples
+Below is a list of simple examples to get you started!
+
+!(python){
+
+    import os
+    import sys
+    import re
+    import subprocess
+
+    PREFIX = '# Example '
+    examples = []
+
+    ROOT = subprocess.run(
+        ['git', 'rev-parse', '--show-toplevel'],
+        check=True, capture_output=True, text=True
+        ).stdout.strip()
+
+    dir = os.path.join(ROOT, 'examples')
+
+    if not os.path.exists(dir):
+        print(f"Directory {dir} does not exist", file=sys.stderr)
+        exit(1)
+
+    # Gather examples
+    for root, dirs, files in os.walk(dir):
+        for file in files:
+            if not file.endswith('.py'): continue
+            file_path = os.path.join(root, file)
+            with open(file_path, 'r') as f:
+                lines = f.readlines()
+
+            line = lines[0].strip()
+            line.startswith(PREFIX)
+
+            index_start = len(PREFIX)
+            index_end   = line.find(":")
+
+            try:
+                index = int(line[index_start:index_end])
+            except ValueError:
+                print(f"Error in example file {file_path}", file=sys.stderr)
+                print(f"Could not find index: {line}", file=sys.stderr)
+                exit(1)
+
+            title = line[index_end + 1:].strip()
+
+            heading = f"Example {index}: {title}"
+
+            examples.append({
+                'index': index,
+                'heading': heading,
+                'file_path': file_path
+            })
+
+    # Sort examples by index
+    examples.sort(key=lambda x: x['index'])
+
+    # Creat example TOC
+    print("---")
+    for e in examples:
+        h = e['heading'] 
+        l = h.lower()
+        l = l.replace(' ', '-')
+        l = re.sub(r'[^a-zA-Z1-9-]', '', l)
+        print(f"  - [{ h }](#{ l })")
+    print("---")
+
+
+    # Embed examples
+    for e in examples:
+        print(f"### {e['heading']}")
+        print(f"```python")
+        with open(e['file_path'], 'r') as f:
+            print(f.read())
+        print("```\n")
+}

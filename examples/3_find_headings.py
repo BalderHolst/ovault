@@ -1,6 +1,8 @@
+# Example 3: Find all headings in the "Start Here" note in the Obsidian Sandbox vault
+
 import ovault
 
-# Open the vault
+# Open the sandbox vault
 vault = ovault.Vault("./test_vaults/Obsidian Sandbox/")
 
 # Find a note by name

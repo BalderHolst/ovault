@@ -1,8 +1,8 @@
-# Example 3: Generates `dot` code for a connection graph of of the vault
+# Example 4: Generates `dot` code for a connection graph of of the vault
 
 # Usage:
 # 1. Set the `VAULT_PATH` environment variable to your vault path.
-# 2. Run the command: `python3 examples/3_graph_image.py | neato -Tpng > graph.png`
+# 2. Run the command: `python3 examples/4_graph_image.py | neato -Tpng > graph.png`
 
 import ovault
 import os
