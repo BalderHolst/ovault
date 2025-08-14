@@ -1,5 +1,5 @@
 #[cfg(feature = "python")]
-use pyo3::{pymodule, types::{PyModule, PyModuleMethods}, Bound, PyResult};
+use pyo3::prelude::*;
 
 mod vault;
 mod lexer;
@@ -10,9 +10,13 @@ pub use lexer::Token;
 
 #[cfg(feature = "python")]
 #[pymodule]
-fn ovault(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<vault::Vault>()?;
-    m.add_class::<lexer::Token>()?;
-    Ok(())
-}
+mod ovault {
+    use super::*;
 
+    #[pymodule_export] use Vault;
+    #[pymodule_export] use Token;
+
+    #[allow(non_upper_case_globals)]
+    #[pymodule_export]
+    const __version__: &str = env!("CARGO_PKG_VERSION");
+}
