@@ -13,7 +13,7 @@ python = ["pyo3", "syn", "quote"]
 
 [dependencies]
 glob = "0.3.2"
-pyo3 = { version = "0.23.4", optional = true, features = ["extension-module", "abi3-py37"] }
+pyo3 = { version = "0.25.1", optional = true, features = ["extension-module", "abi3-py37"] }
 
 [build-dependencies]
 syn =  { version = "2.0.96", optional = true }
