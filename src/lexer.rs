@@ -3,17 +3,30 @@ use std::collections::VecDeque;
 #[cfg(feature = "python")]
 use pyo3::{pyclass, pymethods};
 
+/// Represents an external link to an external URL.
+///
+/// Example:
+/// ```markdown
+/// ![alt text](https://imageimage--link.domain)
+/// [show_how](https://github.com/BalderHolst)
+/// ```
 #[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExternalLink {
+    /// Whether the link should be rendered as an image or video.
     pub render: bool,
+    /// The URL of the link.
     pub url: String,
+    /// The text that will be displayed for the link.
     pub show_how: String,
+    /// Additional options for the link, such as size or alignment.
     pub options: Option<String>,
+    /// The section in the linked document where the link should point to.
     pub position: Option<String>,
 }
 
 impl ExternalLink {
+    /// Returns the label for the link, which is either the `show_how` text or the URL.
     pub fn label(&self) -> &str {
         if self.show_how.is_empty() {
             self.url.as_str()
@@ -23,17 +36,29 @@ impl ExternalLink {
     }
 }
 
+/// Represents an internal link to another note.
+///
+/// Example:
+/// ```markdown
+/// ![[note_name#position|display text]]
+/// ```
 #[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalLink {
+    /// The destination of the link, which is the name of the note.
     pub dest: String,
+    /// The section in the linked document where the link should point to.
     pub position: Option<String>,
+    /// The text that will be displayed for the link.
     pub show_how: Option<String>,
+    /// Additional options for the link, such as size or alignment.
     pub options: Option<String>,
+    /// Whether the link should be rendered as an image, video or note.
     pub render: bool,
 }
 
 impl InternalLink {
+    /// Returns the label for the link, which is either the `show_how` text or the destination.
     pub fn label(&self) -> String {
         let l = match &self.show_how {
             Some(s) => return s.to_owned(),
@@ -47,19 +72,33 @@ impl InternalLink {
     }
 }
 
+/// Represents a callout block in the document.
+///
+/// Example:
+/// ```markdown
+/// > [!note]- Title
+/// > This is a note callout.
+/// ```
 #[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Callout {
+    /// The kind of callout, such as "note", "tip", "warning", etc.
     pub kind: String,
+    /// The title of the callout.
     pub title: String,
+    /// The contents of the callout, which can be a mix of text and other tokens.
     pub contents: Vec<Token>,
+    /// Whether the callout can be folded or collapsed.
     pub foldable: bool,
 }
 
+/// Represents a span in the source text.
 #[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Span {
+    /// The starting index of the span in the source text.
     pub start: usize,
+    /// The ending index of the span in the source text.
     pub end: usize,
 }
 
@@ -72,27 +111,156 @@ impl Span {
     }
 }
 
+/// Represents a part of a note, such as text, code blocks, links, etc.
+///
+/// ## Example - Token Stream
+/// A note might contain the following:
+///
+/// ```markdown
+/// # Heading
+/// This is a paragraph with a [link](https://example.com).
+/// ```
+///
+/// This would be represented as a sequence of `Token` instances:
+/// ```text
+/// - `Token::Header { level: 1, heading: "Heading" }`
+/// - `Token::Text { text: "This is a paragraph with a " }`
+/// - `Token::ExternalLink { link: ... }`
+/// - `Token::Text { text: "." }`
+/// ```
+///
+/// ## Example - Find Headings
+/// To find all headings in a note, you can iterate over the tokens:
+/// ```python
+#[doc = include_str!("../examples/3_find_headings.py")]
+/// ```
 #[cfg_attr(feature = "python", pyclass)]
 #[derive(Debug, Clone, PartialEq)]
 #[rustfmt::skip]
 pub enum Token   {
-    Frontmatter  { span: Span, yaml: String }, // This can only appear as the first token
-    Text         { span: Span, text: String },
-    Tag          { span: Span, tag: String },
-    Header       { span: Span, level: usize, heading: String },
-    Code         { span: Span, lang: Option<String>, code: String },
-    Quote        { span: Span, contents: Vec<Token> },
-    InlineMath   { span: Span, latex: String },
-    DisplayMath  { span: Span, latex: String },
-    Divider      { span: Span },
-    Callout      { span: Span, callout: Callout },
-    InternalLink { span: Span, link: InternalLink },
-    ExternalLink { span: Span, link: ExternalLink },
+
+    /// Represents the frontmatter of a note, which is typically YAML formatted metadata.
+    ///
+    /// NOTE: This can only appear as the first token in a note.
+    Frontmatter {
+        /// The span of the frontmatter in the source text.
+        span: Span,
+        /// The YAML content of the frontmatter
+        yaml: String
+    },
+
+    /// Represents a block of text in the note.
+    Text {
+        /// The span of the frontmatter in the source text.
+        span: Span,
+        /// The text content of the token.
+        text: String
+    },
+
+    /// Represents a tag in the note
+    Tag {
+        /// The span of the tag in the source text.
+        span: Span,
+        /// The tag name without the leading `#`.
+        ///
+        /// Example: `#tag` would be represented as `tag`.
+        tag: String
+    },
+
+    /// Represents a header in the note, which can be of different levels.
+    ///
+    /// Example:
+    /// ```text
+    /// # First   => level = 1
+    /// ## Second => level = 2
+    /// ### Third => level = 3
+    /// ```
+    Header {
+        /// The span of the tag in the source text.
+        span: Span,
+        /// The level of the header, where `1` is the highest level (e.g., `#`),
+        level: usize,
+        /// The heading text of the header.
+        heading: String
+    },
+
+    /// Represents a code block in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// ```python
+    /// def hello_world():
+    ///     print("Hello, world!")
+    /// ```
+    /// ```
+    Code {
+        /// The span of the code block in the source text.
+        span: Span,
+        /// The programming language of the code block, if specified.
+        lang: Option<String>,
+        /// The code content of the block.
+        code: String
+    },
+
+    /// Represents a block quote in the note.
+    Quote {
+        /// The span of the quote in the source text.
+        span: Span,
+        /// The contents of the quote, which can be a mix of text and other tokens.
+        contents: Vec<Token>
+    },
+
+    /// Represents inline mathematical expressions in the note.
+    InlineMath {
+        /// The span of the inline math in the source text.
+        span: Span,
+        /// The LaTeX representation of the inline math.
+        latex: String
+    },
+
+    /// Represents display mathematical expressions in the note.
+    DisplayMath {
+        /// The span of the display math in the source text.
+        span: Span,
+        /// The LaTeX representation of the display math.
+        latex: String
+    },
+
+    /// Represents a horizontal divider in the note.
+    Divider {
+        /// The span of the divider in the source text.
+        span: Span
+    },
+
+    /// Represents a callout block in the note.
+    Callout {
+        /// The span of the callout in the source text.
+        span: Span,
+        /// The callout object containing its data.
+        callout: Callout
+    },
+
+    /// Represents an internal link to another note within the vault.
+    InternalLink {
+        /// The span of the internal link in the source text.
+        span: Span,
+        /// The internal link object containing its data.
+        link: InternalLink
+    },
+
+    /// Represents an external link to a URL.
+    ExternalLink {
+        /// The span of the external link in the source text.
+        span: Span,
+        /// The external link object containing its data.
+        link: ExternalLink
+    },
 }
 
 #[cfg(feature = "python")]
 #[pymethods]
 impl Token {
+    /// String representation of the token.
     pub fn __repr__(&self) -> String {
         const MAX_LEN: usize = 20;
         fn string(s: &str) -> String {
@@ -142,6 +310,7 @@ impl Token {
 }
 
 impl Token {
+    /// Get the span of the token.
     pub fn span(&self) -> &Span {
         match self {
             Token::Frontmatter { span, .. }
@@ -159,6 +328,7 @@ impl Token {
         }
     }
 
+    /// Get a mutable reference to the span of the token.
     pub fn span_mut(&mut self) -> &mut Span {
         match self {
             Token::Frontmatter { span, .. }
@@ -176,6 +346,7 @@ impl Token {
         }
     }
 
+    /// Check if the token is a whitespace token.
     pub fn is_whitespace(&self) -> bool {
         match self {
             Token::Text { text, .. } => text.chars().all(char::is_whitespace),

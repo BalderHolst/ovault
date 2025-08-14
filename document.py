@@ -2,7 +2,6 @@
 import os
 import subprocess
 import pdoc
-import ovault
 
 OUTPUT_DIR = 'docs'
 
@@ -10,6 +9,7 @@ def build_package():
     subprocess.run(['maturin', 'develop', '--release', '--features', 'python'], check=True)
 
 def document():
+    import ovault
     ctx = pdoc.Context()
     mod = pdoc.Module(ovault, context=ctx)
 

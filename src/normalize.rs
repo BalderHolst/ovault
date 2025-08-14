@@ -2,6 +2,12 @@
 use pyo3::prelude::*;
 
 #[cfg_attr(feature = "python", pyfunction)]
+/// Nomalize a note name to be used in Obsidian links.
+///
+/// Example:
+/// ```python
+/// normalize("My Note") => "my-note"
+/// ```
 pub fn normalize(mut name: String) -> String {
     // TODO: Actually handle multiple files with the same name
     while name.contains('/') {

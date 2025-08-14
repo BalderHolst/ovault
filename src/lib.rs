@@ -1,3 +1,7 @@
+//! A library for managing an [Obsidian](https://obsidian.md/) vault.
+
+#![warn(missing_docs)]
+
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 

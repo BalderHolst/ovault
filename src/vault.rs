@@ -225,6 +225,7 @@ enum VaultItem {
     Attachment { attachment: Attachment },
 }
 
+/// An Obsidian vault containing notes and attachments.
 #[cfg(not(feature = "python"))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vault {
@@ -249,14 +250,20 @@ pub struct Vault {
 /// An Obsidian vault containing notes and attachments. The vault is indexed
 /// on creation and can be re-indexed with the `index` method.
 pub struct Vault {
+
+    /// Path to Obsidian vault directory
     #[pyo3(get)]
     path: PathBuf,
+
+    /// A map of dangling links. The key is the note name and the value is a
+    /// list of links that point to non-existing notes or attachments.
     #[pyo3(get)]
     dangling_links: HashMap<String, Vec<String>>,
 
     /// Paths that were ignored during indexing
     #[pyo3(get)]
     ignored: HashSet<PathBuf>,
+
     items: HashMap<String, VaultItem>,
     tags: HashMap<String, HashSet<String>>,
 }
@@ -269,6 +276,10 @@ impl Vault {
 #[cfg(feature = "python")]
 #[pymethods]
 impl Vault {
+
+    /// Create a new vault from the given path. The path must be an existing directory.
+    ///
+    /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed
     #[new]
     pub fn py_new(path: &str) -> PyResult<Self> {
         let path = PathBuf::from(path);
@@ -287,21 +298,27 @@ impl Vault {
         Ok(v)
     }
 
+    /// Get a list of all notes in the vault. Order is not guaranteed.
     #[pyo3(name = "notes")]
     pub fn py_notes(&self) -> Vec<Note> {
         self.notes().cloned().collect()
     }
 
+    /// Get a list of all attachments in the vault. Order is not guaranteed.
     #[pyo3(name = "attachments")]
     pub fn py_attachments(&self) -> Vec<Attachment> {
         self.attachments().cloned().collect()
     }
 
+    /// Get a list of all tags in the vault. Order is not guaranteed.
     #[pyo3(name = "tags")]
     pub fn tags(&self) -> Vec<String> {
         self.tags.keys().cloned().collect()
     }
 
+    /// Index the vault. This will clear the current index and re-index the vault.
+    ///
+    /// This is useful if you have edited, added or removed notes or attachments from the vault.
     #[pyo3(name = "index")]
     pub fn py_index(&mut self) -> PyResult<()> {
         self.items.clear();
@@ -312,6 +329,7 @@ impl Vault {
         Ok(())
     }
 
+    /// Get all notes that have the given tag.
     #[pyo3(name = "get_notes_by_tag")]
     pub fn py_get_notes_by_tag(&self, tag: &str) -> Vec<Note> {
         let Some(tag) = self.tags.get(tag) else {
@@ -323,6 +341,7 @@ impl Vault {
             .collect()
     }
 
+    /// Get note by its name.
     #[pyo3(name = "get_note_by_name")]
     pub fn py_get_note(&self, name: &str) -> Option<Note> {
         self.get_note(&normalize(name.to_string())).cloned()
@@ -330,6 +349,8 @@ impl Vault {
 }
 
 impl Vault {
+
+    /// Create a new vault from the given path.
     pub fn new(path: &PathBuf) -> Self {
         let ignored = HashSet::from_iter(Self::DEFAULT_IGNORED.iter().map(PathBuf::from));
         Self {
@@ -349,6 +370,7 @@ impl Vault {
         self.items.values_mut()
     }
 
+    /// Get an iterator over all notes in the vault
     pub fn notes(&self) -> impl Iterator<Item = &Note> {
         self.items().filter_map(|item| match item {
             VaultItem::Note { note } => Some(note),
@@ -356,6 +378,7 @@ impl Vault {
         })
     }
 
+    /// Get an iterator over all notes mutably in the vault
     pub fn notes_mut(&mut self) -> impl Iterator<Item = &mut Note> {
         self.items_mut().filter_map(|item| match item {
             VaultItem::Note { note } => Some(note),
@@ -363,6 +386,7 @@ impl Vault {
         })
     }
 
+    /// Get an iterator over all attachments in the vault
     pub fn attachments(&self) -> impl Iterator<Item = &Attachment> {
         self.items().filter_map(|item| match item {
             VaultItem::Attachment { attachment } => Some(attachment),
@@ -370,6 +394,7 @@ impl Vault {
         })
     }
 
+    /// Get an iterator over all attachments mutably in the vault
     pub fn attachments_mut(&mut self) -> impl Iterator<Item = &mut Attachment> {
         self.items_mut().filter_map(|item| match item {
             VaultItem::Attachment { attachment } => Some(attachment),
@@ -377,6 +402,7 @@ impl Vault {
         })
     }
 
+    /// Parse the `.vault-ignore` file in the vault directory.
     pub fn parse_ignore_file(&mut self, path: &PathBuf) -> io::Result<()> {
         if !path.exists() {
             return Ok(());
@@ -441,6 +467,7 @@ impl Vault {
             .insert(name, VaultItem::Attachment { attachment });
     }
 
+    /// Add a directory to the vault. This will recursively add all markdown files as note
     pub fn add_dir(&mut self, path: &PathBuf) -> io::Result<()> {
         let Ok(rel_path) = path.strip_prefix(&self.path) else {
             eprintln!(
@@ -477,6 +504,7 @@ impl Vault {
         Ok(())
     }
 
+    /// Index the vault. This will clear the current index and re-index the vault.
     pub fn index(&mut self) {
         let mut tags = vec![];
         let mut links = vec![];
@@ -537,6 +565,7 @@ impl Vault {
         self.items.get_mut(normalized_name)
     }
 
+    /// Get a note by its normalized name.
     pub fn get_note(&self, normalized_name: &String) -> Option<&Note> {
         match self.get_item(normalized_name) {
             Some(VaultItem::Note { note }) => Some(note),
@@ -551,6 +580,7 @@ impl Vault {
         }
     }
 
+    /// Get an attachment by its normalized name.
     pub fn get_attachment(&self, normalized_name: &String) -> Option<&Attachment> {
         match self.get_item(normalized_name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
