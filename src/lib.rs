@@ -15,6 +15,7 @@ pub use lexer::{
 };
 
 /// Python module for managing an [Obsidian](https://obsidian.md/) vault.
+#[doc = include_str!("../documentation.md")]
 #[cfg(feature = "python")]
 #[pymodule]
 mod ovault {

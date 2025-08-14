@@ -25,7 +25,6 @@
                         })
                         maturin
                         python3
-                        tomlq
                     ];
 
                     shellHook = ''
@@ -36,6 +35,8 @@
 
                         # Activate venv
                         source venv/bin/activate
+
+                        pip install pdoc3
 
                         # Install ovault in editable mode
                         maturin develop --features python
