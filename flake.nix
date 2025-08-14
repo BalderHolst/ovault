@@ -21,7 +21,7 @@
                 devShell = pkgs.mkShell {
                     buildInputs = with pkgs; [
                         (rust-bin.stable.latest.default.override {
-                            extensions = [ "rust-src" "clippy"];
+                            extensions = [ "rust-src" "clippy" "rust-analyzer"];
                         })
                         maturin
                         python3
