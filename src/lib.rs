@@ -9,6 +9,9 @@ mod vault;
 mod lexer;
 mod normalize;
 
+#[cfg(test)]
+mod tests;
+
 pub use vault::Vault;
 pub use lexer::{
     Token,

@@ -1,7 +1,7 @@
 use std::{
     collections::{HashMap, HashSet},
     fs, io,
-    path::PathBuf,
+    path::{Path, PathBuf},
 };
 
 #[cfg(feature = "python")]
@@ -19,14 +19,14 @@ use crate::{
 /// A note in an Obsidian vault.
 pub struct Note {
     /// Path to the vault
-    vault_path: PathBuf,
+    pub vault_path: PathBuf,
     /// Relative path within vault
-    path: PathBuf,
-    name: String,
-    length: usize,
-    tags: HashSet<String>,
-    backlinks: HashSet<String>,
-    links: HashSet<String>,
+    pub path: PathBuf,
+    pub name: String,
+    pub length: usize,
+    pub tags: HashSet<String>,
+    pub backlinks: HashSet<String>,
+    pub links: HashSet<String>,
 }
 
 // Python specific methods
@@ -182,6 +182,7 @@ impl Note {
                 Token::InternalLink { link, .. } => {
                     // if `dest` field is empty, the link points to heading in itself
                     // and we don't have to do anything in that case.
+                    // TODO: Maybe add the link anyway?
                     if link.dest.is_empty() {
                         continue;
                     }
@@ -230,12 +231,12 @@ enum VaultItem {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vault {
     /// Maps normalized note names to notes
-    items: HashMap<String, VaultItem>,
+    pub items: HashMap<String, VaultItem>,
 
     /// Path to Obsidian vault
-    path: PathBuf,
+    pub path: PathBuf,
 
-    ignored: HashSet<PathBuf>,
+    pub ignored: HashSet<PathBuf>,
 
     /// Maps tags to notes with those tags
     tags: HashMap<String, HashSet<String>>,
@@ -250,19 +251,18 @@ pub struct Vault {
 /// An Obsidian vault containing notes and attachments. The vault is indexed
 /// on creation and can be re-indexed with the `index` method.
 pub struct Vault {
-
     /// Path to Obsidian vault directory
     #[pyo3(get)]
-    path: PathBuf,
+    pub path: PathBuf,
 
     /// A map of dangling links. The key is the note name and the value is a
     /// list of links that point to non-existing notes or attachments.
     #[pyo3(get)]
-    dangling_links: HashMap<String, Vec<String>>,
+    pub dangling_links: HashMap<String, Vec<String>>,
 
     /// Paths that were ignored during indexing
     #[pyo3(get)]
-    ignored: HashSet<PathBuf>,
+    pub ignored: HashSet<PathBuf>,
 
     items: HashMap<String, VaultItem>,
     tags: HashMap<String, HashSet<String>>,
@@ -276,7 +276,6 @@ impl Vault {
 #[cfg(feature = "python")]
 #[pymethods]
 impl Vault {
-
     /// Create a new vault from the given path. The path must be an existing directory.
     ///
     /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed
@@ -292,9 +291,6 @@ impl Vault {
         })?;
 
         let mut v = Self::new(&path);
-        v.parse_ignore_file(&path.join(Self::IGNORE_FILE))?;
-        v.add_dir(&path)?;
-        v.index();
         Ok(v)
     }
 
@@ -349,12 +345,24 @@ impl Vault {
 }
 
 impl Vault {
-
     /// Create a new vault from the given path.
-    pub fn new(path: &PathBuf) -> Self {
+    ///
+    /// The path must be an existing directory.
+    ///
+    /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed.
+    pub fn new(path: &Path) -> io::Result<Self> {
+        let mut v = Self::new_raw(path);
+        v.parse_ignore_file(&path.join(Self::IGNORE_FILE))?;
+        v.add_dir(path)?;
+        v.index();
+        Ok(v)
+    }
+
+    /// Create a new vault without parsing the ignore file, adding the vault directory or indexing it.
+    fn new_raw(path: &Path) -> Self {
         let ignored = HashSet::from_iter(Self::DEFAULT_IGNORED.iter().map(PathBuf::from));
         Self {
-            path: path.clone(),
+            path: path.to_path_buf(),
             dangling_links: HashMap::new(),
             items: HashMap::new(),
             tags: HashMap::new(),
@@ -468,7 +476,7 @@ impl Vault {
     }
 
     /// Add a directory to the vault. This will recursively add all markdown files as note
-    pub fn add_dir(&mut self, path: &PathBuf) -> io::Result<()> {
+    pub fn add_dir(&mut self, path: &Path) -> io::Result<()> {
         let Ok(rel_path) = path.strip_prefix(&self.path) else {
             eprintln!(
                 "WARNING: Can not add directory outside of vault: '{}'",
@@ -557,23 +565,23 @@ impl Vault {
         }
     }
 
-    fn get_item(&self, normalized_name: &String) -> Option<&VaultItem> {
+    fn get_item(&self, normalized_name: &str) -> Option<&VaultItem> {
         self.items.get(normalized_name)
     }
 
-    fn get_item_mut(&mut self, normalized_name: &String) -> Option<&mut VaultItem> {
+    fn get_item_mut(&mut self, normalized_name: &str) -> Option<&mut VaultItem> {
         self.items.get_mut(normalized_name)
     }
 
     /// Get a note by its normalized name.
-    pub fn get_note(&self, normalized_name: &String) -> Option<&Note> {
+    pub fn get_note(&self, normalized_name: &str) -> Option<&Note> {
         match self.get_item(normalized_name) {
             Some(VaultItem::Note { note }) => Some(note),
             _ => None,
         }
     }
 
-    fn get_note_mut(&mut self, normalized_name: &String) -> Option<&mut Note> {
+    fn get_note_mut(&mut self, normalized_name: &str) -> Option<&mut Note> {
         match self.get_item_mut(normalized_name) {
             Some(VaultItem::Note { note }) => Some(note),
             _ => None,
@@ -581,14 +589,14 @@ impl Vault {
     }
 
     /// Get an attachment by its normalized name.
-    pub fn get_attachment(&self, normalized_name: &String) -> Option<&Attachment> {
+    pub fn get_attachment(&self, normalized_name: &str) -> Option<&Attachment> {
         match self.get_item(normalized_name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,
         }
     }
 
-    fn get_attachment_mut(&mut self, normalized_name: &String) -> Option<&mut Attachment> {
+    fn get_attachment_mut(&mut self, normalized_name: &str) -> Option<&mut Attachment> {
         match self.get_item_mut(normalized_name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,

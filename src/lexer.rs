@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::{collections::VecDeque, fmt};
 
 #[cfg(feature = "python")]
 use pyo3::{pyclass, pymethods};
@@ -103,11 +103,30 @@ pub struct Span {
 }
 
 impl Span {
-    fn shift(&mut self, offset: isize) {
+    pub fn shift(&mut self, offset: isize) {
         let start = self.start as isize + offset;
         let end = self.end as isize + offset;
         self.start = start as usize;
         self.end = end as usize;
+    }
+
+    pub fn line_col(&self, text: &str) -> (usize, usize) {
+        let mut line = 1;
+        let mut col = 1;
+
+        for (i, c) in text.chars().enumerate() {
+            if i >= self.start && i < self.end {
+                return (line, col);
+            }
+            if c == '\n' {
+                line += 1;
+                col = 1;
+            } else {
+                col += 1;
+            }
+        }
+
+        (line, col)
     }
 }
 
@@ -255,6 +274,26 @@ pub enum Token   {
         /// The external link object containing its data.
         link: ExternalLink
     },
+}
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::fmt::Result {
+        let name = match self {
+            Token::Text { .. } => "Text",
+            Token::Tag { .. } => "Tag",
+            Token::Header { .. } => "Header",
+            Token::InternalLink { .. } => "InternalLink",
+            Token::ExternalLink { .. } => "ExternalLink",
+            Token::Code { .. } => "Code",
+            Token::Callout { .. } => "Callout",
+            Token::Quote { .. } => "Quote",
+            Token::Frontmatter { .. } => "Frontmatter",
+            Token::InlineMath { .. } => "InlineMath",
+            Token::DisplayMath { .. } => "DisplayMath",
+            Token::Divider { .. } => "Divider",
+        };
+        write!(f, "{}", name)
+    }
 }
 
 #[cfg(feature = "python")]
