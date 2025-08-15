@@ -7,10 +7,15 @@ features = ["python"]
 
 [project]
 name = "ovault"
+authors = [{name = "Balder Holst", email = "balderwh@gmail.com"}]
 dynamic = ["version"]
 description = "Library for Managing your Obsidian Vault "
 readme = "README.md"
 license = "MIT"
 license-files = ["LICEN[CS]E.*"]
 keywords = ["Obsidian", "Vault", "Notes"]
+
+
+[project.urls]
+Documentation = "https://balderholst.github.io/ovault/"
 Repository = "https://github.com/BalderHolst/ovault"
