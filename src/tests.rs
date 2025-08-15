@@ -18,7 +18,6 @@ enum TestVaultBase {
     TheJoboReal,
 }
 
-
 impl TestVaultBase {
     fn path(&self) -> PathBuf {
         let dir = PathBuf::from(VAULT_DIR);
@@ -61,7 +60,15 @@ fn copy_dir_all(src: &Path, dst: &Path) {
         if src_path.is_dir() {
             copy_dir_all(&src_path, &dst_path);
         } else {
-            fs::copy(&src_path, &dst_path).expect("Failed to copy file");
+            // Warn in error
+            _ = fs::copy(&src_path, &dst_path).map_err(|e| {
+                eprintln!(
+                    "WARNING: Failed to copy file from {} to {}: {}",
+                    src_path.display(),
+                    dst_path.display(),
+                    e
+                );
+            });
         }
     }
 }
@@ -104,25 +111,37 @@ fn test_open_vaults() {
     let vaults = vec![
         TestVaultBase::Sandbox,
         TestVaultBase::BalderHolst,
-        TestVaultBase::SoRobby,
         TestVaultBase::TheJoboReal,
+        TestVaultBase::SoRobby,
     ];
 
     for base in vaults {
-        println!("Testing vault: {:?}", base);
+        println!("\nTesting vault: {:?}", base);
 
         let test_vault = TestVault::new(base).expect("Failed to create test vault");
         let vault = &test_vault.vault;
 
         // Check if the vault path exists
-        assert!(vault.path.exists(), "Vault path does not exist: {}", vault.path.display());
+        assert!(
+            vault.path.exists(),
+            "Vault path does not exist: {}",
+            vault.path.display()
+        );
 
         // Check if the vault has notes
         let notes: Vec<_> = vault.notes().collect();
-        assert!(!notes.is_empty(), "Vault has no notes: {}", vault.path.display());
+        assert!(
+            !notes.is_empty(),
+            "Vault has no notes: {}",
+            vault.path.display()
+        );
 
         // Print the number of notes found
-        println!("Found {} notes in vault: {}", notes.len(), vault.path.display());
+        println!(
+            "Found {} notes in vault: {}",
+            notes.len(),
+            vault.path.display()
+        );
     }
 }
 

@@ -280,6 +280,19 @@ pub enum Token   {
         /// The external link object containing its data.
         link: ExternalLink
     },
+
+    // Represents a Templater command in the note.
+    //
+    /// Example:
+    /// ```markdown
+    /// <% tp.file.include("path/to/file.md") %>
+    /// ```
+    TemplaterCommand {
+        /// The span of the Templater command in the source text.
+        span: Span,
+        /// The command name.
+        command: String,
+    },
 }
 
 impl fmt::Display for Token {
@@ -297,6 +310,7 @@ impl fmt::Display for Token {
             Token::InlineMath { .. } => "InlineMath",
             Token::DisplayMath { .. } => "DisplayMath",
             Token::Divider { .. } => "Divider",
+            Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
         write!(f, "{}", name)
     }
@@ -350,6 +364,9 @@ impl Token {
             Token::InlineMath { latex, .. } => format!("InlineMath({})", string(latex)),
             Token::DisplayMath { latex, .. } => format!("DisplayMath({})", string(latex)),
             Token::Divider { .. } => format!("Divider"),
+            Token::TemplaterCommand { command, .. } => {
+                format!("TemplaterCommand({})", string(command))
+            }
         }
     }
 }
@@ -369,7 +386,8 @@ impl Token {
             | Token::Divider { span, .. }
             | Token::Callout { span, .. }
             | Token::InternalLink { span, .. }
-            | Token::ExternalLink { span, .. } => span,
+            | Token::ExternalLink { span, .. }
+            | Token::TemplaterCommand { span, .. } => span,
         }
     }
 
@@ -387,7 +405,8 @@ impl Token {
             | Token::Divider { span, .. }
             | Token::Callout { span, .. }
             | Token::InternalLink { span, .. }
-            | Token::ExternalLink { span, .. } => span,
+            | Token::ExternalLink { span, .. }
+            | Token::TemplaterCommand { span, .. } => span,
         }
     }
 
@@ -405,7 +424,8 @@ impl Token {
             | Token::Frontmatter { .. }
             | Token::Divider { .. }
             | Token::InlineMath { .. }
-            | Token::DisplayMath { .. } => false,
+            | Token::DisplayMath { .. }
+            | Token::TemplaterCommand { .. } => false,
         }
     }
 }
@@ -932,37 +952,67 @@ impl Lexer {
 
         Some(Token::InlineMath { span, latex })
     }
+
+    fn try_lex_templater_command(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        self.consume_expected('<')?;
+        self.consume_expected('%')?;
+
+        let command_start = self.mark();
+        self.consume_until(|c| c == '%');
+
+        let command = self.extract(command_start).trim().to_string();
+
+        self.consume_expected('%')?;
+        self.consume_expected('>')?;
+
+        let span = self.extract_span(start);
+
+        Some(Token::TemplaterCommand { span, command })
+    }
 }
 
 impl Iterator for Lexer {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-        // TODO: Tokens should hold their spans in the source text so
-        // we can decouple the temporary enviornment and adding `continue`
-        // if the token is `Some`
-        macro_rules! please {
-            ($method:ident) => {
-                let start = self.cursor;
-                let token = self.$method();
-                if let Some(token) = token {
-                    if self.slow_cursor != start {
-                        let text = self.text[self.slow_cursor..start].iter().collect();
-                        let span = Span {
-                            start: self.slow_cursor,
-                            end: start,
-                        };
-                        self.queue.push_back(Token::Text { span, text });
-                    }
-                    self.queue.push_back(token);
-                    self.slow_cursor = self.cursor;
-                    continue;
-                }
-                self.cursor = start;
-            };
-        }
 
         loop {
+
+            // This macro is used in the loop below and is core to the lexer logic.
+            //
+            // It attempts to lex a token using the specified method.
+            //
+            // If the method returns a token, that token is pushed to the lexer token queue.
+            //
+            // If the method does not return a token, the cursor is restored to the start position.
+            // and the loop continues to try the next lexing method.
+            macro_rules! please {
+                ($method:ident) => {
+                    let start = self.cursor;
+                    let token = self.$method();
+                    if let Some(token) = token {
+                        if self.slow_cursor != start {
+                            let text = self.text[self.slow_cursor..start].iter().collect();
+                            let span = Span {
+                                start: self.slow_cursor,
+                                end: start,
+                            };
+                            self.queue.push_back(Token::Text { span, text });
+                        }
+                        self.queue.push_back(token);
+                        self.slow_cursor = self.cursor;
+
+                        // Jump to beginning of loop
+                        continue;
+                    }
+
+                    // Restore the cursor to the start position if no token was found
+                    self.cursor = start;
+                };
+            }
+
             if let Some(t) = self.queue.pop_front() {
                 return Some(t);
             }
@@ -978,6 +1028,7 @@ impl Iterator for Lexer {
             please!(try_lex_quote);
             please!(try_lex_front_matter);
             please!(try_lex_divider);
+            please!(try_lex_templater_command);
 
             // Check if we are at the end of the file
             if self.current().is_none() {
@@ -1229,6 +1280,17 @@ mod tests {
                         text: "'fun quote!'\n\n- Author".to_string(),
                     },
                 ],
+            }
+        }
+    }
+
+    #[test]
+    fn test_lex_templater_command() {
+        test_lex_token! {
+            "<% tp.file.include('path/to/file.md') %>"
+            => Token::TemplaterCommand {
+                span: Span { start: 0, end: 40 },
+                command: "tp.file.include('path/to/file.md')".to_string(),
             }
         }
     }

@@ -174,10 +174,7 @@ impl Note {
     }
 
     fn index_tokens(&mut self, tokens: impl Iterator<Item = Token>) {
-        // println!("Indexing note: {}", self.name);
-        // let contents = self.contents().unwrap_or_default();
         for token in tokens {
-            // println!("  Token: {} at line {}", token, token.span().line_col(&contents).0);
             match token {
                 Token::Tag { tag, .. } => {
                     self.tags.insert(tag.clone());
@@ -208,7 +205,9 @@ impl Note {
                 | Token::InlineMath { .. }
                 | Token::DisplayMath { .. }
                 | Token::Code { .. }
-                | Token::ExternalLink { .. } => {}
+                | Token::ExternalLink { .. }
+                | Token::TemplaterCommand { .. }
+                => {}
             }
         }
     }
