@@ -5,21 +5,15 @@
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
-mod vault;
 mod lexer;
 mod normalize;
+mod vault;
 
 #[cfg(test)]
 mod tests;
 
+pub use lexer::{Callout, ExternalLink, InternalLink, Span, Token};
 pub use vault::Vault;
-pub use lexer::{
-    Token,
-    Callout,
-    InternalLink,
-    ExternalLink,
-    Span,
-};
 
 #[doc = include_str!("../docs/documentation.md")]
 #[cfg(feature = "python")]
@@ -33,14 +27,21 @@ mod ovault {
         lexer::Lexer::new(text).collect()
     }
 
-    #[pymodule_export] use Vault;
-    #[pymodule_export] use Token;
-    #[pymodule_export] use Callout;
-    #[pymodule_export] use InternalLink;
-    #[pymodule_export] use ExternalLink;
-    #[pymodule_export] use Span;
+    #[pymodule_export]
+    use Callout;
+    #[pymodule_export]
+    use ExternalLink;
+    #[pymodule_export]
+    use InternalLink;
+    #[pymodule_export]
+    use Span;
+    #[pymodule_export]
+    use Token;
+    #[pymodule_export]
+    use Vault;
 
-    #[pymodule_export] use normalize::normalize;
+    #[pymodule_export]
+    use normalize::normalize;
 
     #[allow(non_upper_case_globals)]
     #[pymodule_export]

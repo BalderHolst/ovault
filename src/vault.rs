@@ -193,9 +193,7 @@ impl Note {
                 Token::Callout { callout, .. } => {
                     self.index_tokens(callout.tokens.iter().cloned());
                 }
-                Token::Quote {
-                    tokens, ..
-                } => {
+                Token::Quote { tokens, .. } => {
                     self.index_tokens(tokens.iter().cloned());
                 }
                 Token::Frontmatter { .. }
@@ -206,8 +204,7 @@ impl Note {
                 | Token::DisplayMath { .. }
                 | Token::Code { .. }
                 | Token::ExternalLink { .. }
-                | Token::TemplaterCommand { .. }
-                => {}
+                | Token::TemplaterCommand { .. } => {}
             }
         }
     }
@@ -449,7 +446,7 @@ impl Vault {
     }
 
     /// Add a note to the vault
-    pub fn add_note(&mut self, path: &PathBuf) {
+    pub fn add_note(&mut self, path: &Path) {
         debug_assert_eq!(path.extension().unwrap(), "md");
 
         let name = path.file_stem().unwrap().to_str().unwrap();

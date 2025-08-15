@@ -491,7 +491,7 @@ impl Lexer {
 
     fn consume_until(&mut self, cond: impl Fn(char) -> bool) -> String {
         let start = self.mark();
-        while self.current().map_or(false, |c| !cond(c)) {
+        while self.current().is_some_and(|c| !cond(c)) {
             self.consume();
         }
         self.extract(start)
@@ -499,14 +499,14 @@ impl Lexer {
 
     fn consume_while(&mut self, cond: impl Fn(char) -> bool) -> String {
         let start = self.mark();
-        while self.current().map_or(false, |c| cond(c)) {
+        while self.current().is_some_and(&cond) {
             self.consume();
         }
         self.extract(start)
     }
 
     fn consume_if(&mut self, cond: impl Fn(char) -> bool) -> bool {
-        if self.current().map_or(false, cond) {
+        if self.current().is_some_and(cond) {
             self.consume();
             return true;
         }
@@ -577,7 +577,7 @@ impl Lexer {
 
         self.consume_expected('#')?;
 
-        let tag = self.consume_while(|c| c.is_alphabetic() || c.is_digit(10));
+        let tag = self.consume_while(|c| c.is_alphabetic() || c.is_ascii_digit());
 
         if tag.is_empty() {
             return None;
@@ -692,12 +692,9 @@ impl Lexer {
         }
 
         let dest_fields = dest.split('#').collect::<Vec<_>>();
-        match dest_fields.len() {
-            2 => {
-                position = Some(dest_fields[1].to_string());
-                dest = dest_fields[0].to_string();
-            }
-            1 | _ => dest = dest,
+        if dest_fields.len() == 2 {
+            position = Some(dest_fields[1].to_string());
+            dest = dest_fields[0].to_string();
         }
 
         let span = self.extract_span(start);
@@ -758,7 +755,7 @@ impl Lexer {
         }
 
         let text = lines.join("\n");
-        let tokens = Lexer::new(&text).map(|t| t.into()).collect::<Vec<Token>>();
+        let tokens = Lexer::new(&text).collect::<Vec<Token>>();
 
         Some((text, tokens))
     }
@@ -977,9 +974,7 @@ impl Iterator for Lexer {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-
         loop {
-
             // This macro is used in the loop below and is core to the lexer logic.
             //
             // It attempts to lex a token using the specified method.

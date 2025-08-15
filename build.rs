@@ -15,7 +15,10 @@ fn build_docs() {
         .expect("Failed to run txtx.py");
 
     if !result.status.success() {
-        panic!("Error running txtx.py: {}", String::from_utf8_lossy(&result.stderr));
+        panic!(
+            "Error running txtx.py: {}",
+            String::from_utf8_lossy(&result.stderr)
+        );
     }
 
     std::fs::write(DST, result.stdout).expect("Failed to write documentation.md");

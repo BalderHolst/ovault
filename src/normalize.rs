@@ -15,11 +15,13 @@ pub fn normalize(mut name: String) -> String {
     }
 
     // Replace spaces with hyphens
-    let name = name.chars()
+    let name = name
+        .chars()
         .map(|c| match c {
             ' ' => '-',
             _ => c.to_lowercase().next().unwrap(),
-        }).collect::<String>();
+        })
+        .collect::<String>();
 
     // Remove repeated '-'
     let name = name
@@ -30,14 +32,7 @@ pub fn normalize(mut name: String) -> String {
         .join("-");
 
     // Filter other chars away in name
-    let name = name
-        .chars()
-        .filter(|c| match c {
-            '\'' => false,
-            ',' => false,
-            _ => true,
-        })
-        .collect();
+    let name = name.chars().filter(|c| !matches!(c, '\'' | ',')).collect();
 
     name
 }
@@ -50,7 +45,12 @@ mod tests {
     fn assert_normalize(input: &str, expected: &str) {
         println!("Normalizing input: '{}'", input);
         let result = normalize(input.to_string());
-        assert_eq!(result, expected.to_string(), "Failed for input: '{}'", input);
+        assert_eq!(
+            result,
+            expected.to_string(),
+            "Failed for input: '{}'",
+            input
+        );
     }
 
     #[test]
@@ -137,7 +137,7 @@ mod tests {
     fn test_normalize_complex_case() {
         assert_normalize(
             "  A'nOthEr / CoMplEx   N0tE   wItH 'pUnCtUaTiOn?!.md  ",
-            "complex-n0te-with-punctuation?!.md"
+            "complex-n0te-with-punctuation?!.md",
         );
         assert_normalize("very///deep/path/My Final-Note.md", "my-final-note.md");
     }
