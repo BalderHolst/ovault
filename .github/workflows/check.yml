@@ -1,0 +1,77 @@
+name: Check
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    name: fmt
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust Stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: cargo fmt --check
+        run: cargo fmt --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    name: clippy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          components: clippy
+      - name: cargo clippy
+        run: cargo clippy
+
+  build:
+    runs-on: ubuntu-latest
+    name: build (feature-powerset)
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: cargo install cargo-hack
+        uses: taiki-e/install-action@cargo-hack
+
+      - name: cargo hack
+        run: cargo hack --feature-powerset build
+
+  test:
+    runs-on: ubuntu-latest
+    name: test (feature-powerset)
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull Git Submodules
+        run: git submodule update --init --recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: cargo install cargo-hack
+        uses: taiki-e/install-action@cargo-hack
+
+      - name: cargo hack
+        run: cargo hack --feature-powerset test
