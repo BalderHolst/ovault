@@ -26,40 +26,41 @@ print("tags        :", v.tags())
 #### Vault Management
 
 ##### Indexing
-* **Indexing:** Automatically indexes all notes and attachments within the vault upon initialization.
-* **Ignored Files:** Respects and parses `.vault-ignore` files to exclude specified paths during indexing.
-* **Dangling Links:** Identify and list links within your notes that point to non-existent files.
+- **Indexing:** Automatically indexes all notes and attachments within the vault upon initialization.
+- **Ignored Files:** Respects and parses `.vault-ignore` files to exclude specified paths during indexing.
+- **Dangling Links:** Identify and list links within your notes that point to non-existent files.
 
 #### Note Handling
 
 ##### Access & Properties
-* **Access Notes & Attachments:** Retrieve all notes or attachments in the vault as Python objects.
-* **Note Properties:** Access key information for each note, including its full path, relative path, name, character length, associated tags, internal links, and backlinks.
-* **Content Access:** Read the raw content of any note.
-* **Frontmatter Extraction:** Easily retrieve YAML frontmatter from notes.
+- **Access Notes & Attachments:** Retrieve all notes or attachments in the vault as Python objects.
+- **Note Properties:** Access key information for each note, including its full path, relative path, name, character length, associated tags, internal links, and backlinks.
+- **Content Access:** Read the raw content of any note.
+- **Frontmatter Extraction:** Easily retrieve YAML frontmatter from notes.
 ##### Modification
-* **Dynamic Note Modification:** Programmatically insert text into notes at specific character positions, or intelligently before/after recognized markdown tokens.
+- **Dynamic Note Modification:** Programmatically insert text into notes at specific character positions, or intelligently before/after recognized markdown tokens.
 
 #### Tag Management
 ##### Querying Tags
-* **List All Tags:** Get a complete list of all unique tags present across your entire vault.
-* **Filter by Tag:** Efficiently retrieve all notes associated with a specific tag.
+- **List All Tags:** Get a complete list of all unique tags present across your entire vault.
+- **Filter by Tag:** Efficiently retrieve all notes associated with a specific tag.
 
 #### Markdown Parsing & Tokenization
 ##### Token Representation
-* **Rich Token Representation:** Notes are parsed into a detailed stream of `Token` objects, representing various markdown elements.
-* **Available Tokens**:
-    * **Headers:** (`# Heading`)
-    * **Tags:** (`#tag`)
-    * **Code Blocks:** (fenced code, `inline code`)
-    * **Quotes:** (`> Quote`)
-    * **Math:** (`$inline$` and `$$display$$` LaTeX)
-    * **Dividers:** (`---`)
-    * **Callouts:** (`> [!type] Title`)
-    * **Plain Text:**
-    * **Frontmatter:** (YAML metadata)
-    * **Internal Links:** (`[[Note Name]]`, `![[Image.png]]`)
-    * **External Links:** (`[link text](url)`, `![image alt](url)`)
+- **Rich Token Representation:** Notes are parsed into a detailed stream of `Token` objects, representing various markdown elements.
+- **Available Tokens**:
+    - **Headers:** (`# Heading`)
+    - **Tags:** (`#tag`)
+    - **Code Blocks:** (fenced code, `inline code`)
+    - **Quotes:** (`> Quote`)
+    - **Math:** (`$inline$` and `$$display$$` LaTeX)
+    - **Dividers:** (`---`)
+    - **Callouts:** (`> [!type] Title`)
+    - **Plain Text:**
+    - **Frontmatter:** (YAML metadata)
+    - **Internal Links:** (`[[Note Name]]`, `![[Image.png]]`)
+    - **External Links:** (`[link text](url)`, `![image alt](url)`)
+    - **TemplaterCommand**: (`<% code goes here %>`)
 
 
 ## Development
@@ -67,6 +68,17 @@ print("tags        :", v.tags())
 ### Build for Testing
 ```bash
 maturin develop --release --features python
+```
+
+### Test
+```bash
+./test.sh
+```
+
+### Build Documentation
+```bash
+pip install pdoc3
+./docs/build.py
 ```
 
 ### Release
