@@ -301,3 +301,7 @@ class Vault:
     def get_note_by_name(self, name: str) -> Optional[Note]:
         """Returns a single note by its normalized name, if it exists."""
         ...
+
+def text_to_tokens(text: str) -> List[Token]:
+    """Converts a markdown text string into a list of Token objects."""
+    ...

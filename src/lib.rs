@@ -24,6 +24,12 @@ pub use lexer::{
 mod ovault {
     use super::*;
 
+    /// Tokenize a string to a list of tokens.
+    #[pyfunction]
+    fn text_to_tokens(text: &str) -> Vec<Token> {
+        lexer::Lexer::new(text).collect()
+    }
+
     #[pymodule_export] use Vault;
     #[pymodule_export] use Token;
     #[pymodule_export] use Callout;
