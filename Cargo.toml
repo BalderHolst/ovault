@@ -18,3 +18,6 @@ pyo3 = { version = "0.25.1", optional = true, features = ["extension-module", "a
 [build-dependencies]
 syn =  { version = "2.0.96", optional = true }
 quote = { version = "1.0.38", optional = true }
+
+[dev-dependencies]
+serial_test = "3.2.0"

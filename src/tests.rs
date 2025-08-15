@@ -3,27 +3,44 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use serial_test::serial;
+
 use crate::*;
 
 const VAULT_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/test-vaults");
 const TMP_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/target/tmp-test-vaults");
 
+#[derive(Debug, Clone, Copy)]
 enum TestVaultBase {
     Sandbox,
+    BalderHolst,
+    SoRobby,
+    TheJoboReal,
 }
+
 
 impl TestVaultBase {
     fn path(&self) -> PathBuf {
         let dir = PathBuf::from(VAULT_DIR);
         match self {
             Self::Sandbox => dir.join("Obsidian Sandbox"),
+            Self::BalderHolst => dir.join("BalderHolst_uni-notes"),
+            Self::SoRobby => dir.join("SoRobby_ObsidianStarterVault"),
+            Self::TheJoboReal => dir.join("TheJoboReal_Noter"),
         }
     }
 }
 
-struct TestVault {
-    base: TestVaultBase,
-    vault: Vault,
+fn _pull_submodules() {
+    // Pull submodules if they are not already initialized
+    let status = std::process::Command::new("git")
+        .args(["submodule", "update", "--init", "--recursive"])
+        .status()
+        .expect("Failed to run git submodule update");
+
+    if !status.success() {
+        panic!("Failed to pull submodules");
+    }
 }
 
 fn copy_dir_all(src: &Path, dst: &Path) {
@@ -49,6 +66,10 @@ fn copy_dir_all(src: &Path, dst: &Path) {
     }
 }
 
+struct TestVault {
+    vault: Vault,
+}
+
 impl TestVault {
     fn new(base: TestVaultBase) -> io::Result<Self> {
         let tmp_vault_path = PathBuf::from(TMP_DIR).join(base.path().file_name().unwrap());
@@ -62,7 +83,7 @@ impl TestVault {
 
         let vault = Vault::new(&tmp_vault_path)?;
 
-        Ok(Self { base, vault })
+        Ok(Self { vault })
     }
 }
 
@@ -78,6 +99,35 @@ impl Drop for TestVault {
 }
 
 #[test]
+#[serial]
+fn test_open_vaults() {
+    let vaults = vec![
+        TestVaultBase::Sandbox,
+        TestVaultBase::BalderHolst,
+        TestVaultBase::SoRobby,
+        TestVaultBase::TheJoboReal,
+    ];
+
+    for base in vaults {
+        println!("Testing vault: {:?}", base);
+
+        let test_vault = TestVault::new(base).expect("Failed to create test vault");
+        let vault = &test_vault.vault;
+
+        // Check if the vault path exists
+        assert!(vault.path.exists(), "Vault path does not exist: {}", vault.path.display());
+
+        // Check if the vault has notes
+        let notes: Vec<_> = vault.notes().collect();
+        assert!(!notes.is_empty(), "Vault has no notes: {}", vault.path.display());
+
+        // Print the number of notes found
+        println!("Found {} notes in vault: {}", notes.len(), vault.path.display());
+    }
+}
+
+#[test]
+#[serial]
 fn test_vault() {
     let mut test_vault =
         TestVault::new(TestVaultBase::Sandbox).expect("Failed to create test vault");
