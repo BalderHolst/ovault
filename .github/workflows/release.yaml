@@ -159,3 +159,51 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create ${{ needs.details.outputs.tag_name }} dist/* --title ${{ needs.details.outputs.tag_name }} --generate-notes
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Set up Virtual Enviornment
+        run: python3 -m venv venv
+
+      - name: Install pdoc3 
+        run: source venv/bin/activate && pip install pdoc3
+
+      - name: Install Maturin
+        run: source venv/bin/activate && pip install maturin
+
+      - name: Generate Site
+        run: source venv/bin/activate && python3 docs/build.py
+
+      - name: Upload Documentation Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/html
+
+  deploy-docs:
+    needs: build-docs
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
