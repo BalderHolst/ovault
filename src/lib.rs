@@ -13,7 +13,7 @@ mod vault;
 mod tests;
 
 pub use lexer::{Callout, ExternalLink, InternalLink, Span, Token};
-pub use vault::Vault;
+pub use vault::{Attachment, Note, Vault, VaultItem};
 
 #[doc = include_str!("../docs/documentation.md")]
 #[cfg(feature = "python")]
@@ -28,17 +28,25 @@ mod ovault {
     }
 
     #[pymodule_export]
+    use Attachment;
+    #[pymodule_export]
+    use Note;
+    #[pymodule_export]
+    use Vault;
+    #[pymodule_export]
+    use VaultItem;
+
+    #[pymodule_export]
     use Callout;
     #[pymodule_export]
     use ExternalLink;
     #[pymodule_export]
     use InternalLink;
     #[pymodule_export]
-    use Span;
-    #[pymodule_export]
     use Token;
+
     #[pymodule_export]
-    use Vault;
+    use Span;
 
     #[pymodule_export]
     use normalize::normalize;
