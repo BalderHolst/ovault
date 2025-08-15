@@ -535,8 +535,8 @@ impl Lexer {
             _ => return None,
         }
 
-        let show_how = self.consume_until(|c| c == ']');
-        self.consume_assert_eq(']');
+        let show_how = self.consume_until(|c| matches!(c, ']' | '\n'));
+        self.consume_expected(']')?;
 
         self.consume_expected('(')?;
         let url = self.consume_until(|c| c == ')');
@@ -583,9 +583,15 @@ impl Lexer {
 
         let inner_start = self.mark();
         loop {
-            self.consume_until(|c| c == ']');
+            self.consume_until(|c| matches!(c, ']' | '\n'));
+
             if self.peek(1)? == ']' {
                 break;
+            }
+
+            // If we hit a newline, this is not a valid internal link
+            if self.current()? == '\n' {
+                return None;
             }
         }
 
