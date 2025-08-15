@@ -86,8 +86,10 @@ pub struct Callout {
     pub kind: String,
     /// The title of the callout.
     pub title: String,
-    /// The contents of the callout, which can be a mix of text and other tokens.
-    pub contents: Vec<Token>,
+    /// The tokenized content of the callout, which can include text, code blocks, links, etc.
+    pub tokens: Vec<Token>,
+    /// The text content of the callout.
+    pub text: String,
     /// Whether the callout can be folded or collapsed.
     pub foldable: bool,
 }
@@ -103,7 +105,6 @@ pub struct Span {
 }
 
 impl Span {
-
     /// Shifts the span by a given offset.
     pub fn shift(&mut self, offset: isize) {
         let start = self.start as isize + offset;
@@ -228,8 +229,10 @@ pub enum Token   {
     Quote {
         /// The span of the quote in the source text.
         span: Span,
-        /// The contents of the quote, which can be a mix of text and other tokens.
-        contents: Vec<Token>
+        /// The tokenized contents of the quote.
+        tokens: Vec<Token>,
+        /// The text content of the quote.
+        text: String,
     },
 
     /// Represents inline mathematical expressions in the note.
@@ -334,14 +337,14 @@ impl Token {
                         "{}: {}",
                         callout.kind,
                         callout
-                            .contents
+                            .tokens
                             .first()
                             .map_or("<no contents>".to_string(), |t| string(&t.__repr__()))
                     )
                 )
             }
-            Token::Quote { contents, .. } => {
-                format!("Quote({})", string(&format!("{:?}", contents)))
+            Token::Quote { text, .. } => {
+                format!("Quote({})", string(&format!("{:?}", text)))
             }
             Token::Frontmatter { yaml, .. } => format!("Frontmatter({})", string(yaml)),
             Token::InlineMath { latex, .. } => format!("InlineMath({})", string(latex)),
@@ -709,12 +712,15 @@ impl Lexer {
     }
 
     /// Extract the text contained within a block prefixed with '>'
-    fn try_extract_block(&mut self) -> Option<Vec<Token>> {
+    fn try_extract_block(&mut self) -> Option<(String, Vec<Token>)> {
         self.at_block_start()?;
 
-        let mut tokens = vec![];
+        let mut lines = vec![];
 
         loop {
+            // Allow leading whitespace before the '>'
+            self.consume_whitespace();
+
             if !matches!(self.current(), Some('>')) {
                 break;
             }
@@ -727,25 +733,21 @@ impl Lexer {
             self.consume();
 
             let line = self.extract(line_start);
-            let mut line_tokens: Vec<_> = Self::new(line).collect();
-            line_tokens
-                .iter_mut()
-                .for_each(|t| t.span_mut().shift(line_start.0 as isize));
 
-            tokens.extend(line_tokens);
+            lines.push(line);
         }
 
-        Some(tokens)
+        let text = lines.join("\n");
+        let tokens = Lexer::new(&text).map(|t| t.into()).collect::<Vec<Token>>();
+
+        Some((text, tokens))
     }
 
     fn try_lex_quote(&mut self) -> Option<Token> {
         let start = self.mark();
-        let tokens = self.try_extract_block()?;
+        let (text, tokens) = self.try_extract_block()?;
         let span = self.extract_span(start);
-        Some(Token::Quote {
-            span,
-            contents: tokens,
-        })
+        Some(Token::Quote { span, tokens, text })
     }
 
     fn try_lex_callout(&mut self) -> Option<Token> {
@@ -770,7 +772,7 @@ impl Lexer {
         let title = self.consume_until(|c| c == '\n');
         self.consume_assert_eq('\n');
 
-        let tokens = self.try_extract_block()?;
+        let (text, tokens) = self.try_extract_block()?;
 
         let span = self.extract_span(start);
 
@@ -779,7 +781,8 @@ impl Lexer {
             callout: Callout {
                 kind,
                 title,
-                contents: tokens,
+                text,
+                tokens,
                 foldable,
             },
         })
@@ -1002,10 +1005,17 @@ mod tests {
         ($source:expr => $($token:tt)*) => {
             let mut lexer = Lexer::new($source);
             let token = lexer.next().unwrap();
+            println!("\nToken: {:#?}\n", token);
             assert_eq!(
                 token,
                 $($token)*
             );
+        };
+        ($source:expr) => {
+            let mut lexer = Lexer::new($source);
+            let token = lexer.next();
+            println!("\nToken: {:#?}\n", token);
+            todo!("No token expected");
         };
     }
 
@@ -1212,14 +1222,11 @@ mod tests {
             "> 'fun quote!'\n> - Author"
             => Token::Quote {
                 span: Span { start: 0, end: 25 },
-                contents: vec![
+                text: "'fun quote!'\n\n- Author".to_string(),
+                tokens: vec![
                     Token::Text {
-                        span: Span { start: 2, end: 15 },
-                        text: "'fun quote!'\n".to_string(),
-                    },
-                    Token::Text {
-                        span: Span { start: 17, end: 25 },
-                        text: "- Author".to_string(),
+                        span: Span { start: 0, end: 22 },
+                        text: "'fun quote!'\n\n- Author".to_string(),
                     },
                 ],
             }
@@ -1235,19 +1242,112 @@ mod tests {
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
-                    contents: vec![
+                    text: "this\n\nis contents".to_string(),
+                    tokens: vec![
                         Token::Text {
-                            span: Span { start: 20, end: 25 },
-                            text: "this\n".to_string(),
-                        },
-                        Token::Text {
-                            span: Span { start: 27, end: 38 },
-                            text: "is contents".to_string(),
+                            span: Span { start: 0, end: 17 },
+                            text: "this\n\nis contents".to_string(),
                         },
                     ],
                     foldable: true,
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_callout_with_math() {
+        test_lex_token!(r">[!tip] Useful property
+>$X$s do not have to be intependent.
+>$$
+>\mathbb{E}\left(\sum_{i}a_{i}X_{i} \right) = \sum_{i} a_{i} \mathbb{E}(X_{i})
+>$$" => Token::Callout {
+            span: Span {
+                start: 0,
+                end: 147,
+            },
+            callout: Callout {
+                kind: "tip".to_string(),
+                title: "Useful property".to_string(),
+                text: "$X$s do not have to be intependent.\n\n$$\n\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n\n$$".to_string(),
+                tokens: vec![
+                    Token::InlineMath {
+                        span: Span {
+                            start: 0,
+                            end: 3,
+                        },
+                        latex: "X".to_string(),
+                    },
+                    Token::Text {
+                        span: Span {
+                            start: 3,
+                            end: 37,
+                        },
+                        text: "s do not have to be intependent.\n\n".to_string(),
+                    },
+                    Token::DisplayMath {
+                        span: Span {
+                            start: 37,
+                            end: 122,
+                        },
+                        latex: "\n\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n\n".to_string(),
+                    },
+                ],
+                foldable: false,
+            },
+        }
+        );
+    }
+
+    #[test]
+    fn test_uneven_callout() {
+        #[rustfmt::skip]
+        test_lex_token!(
+            r">[!example]- Example of callout with uneven lines
+>
+>$$
+>A=
+>\left(
+>\begin{array}{cc}
+ >-5 & 2 \\
+ >2 & -2 \\
+>\end{array}
+>\right)
+>$$
+>" => Token::Callout {
+        span: Span {
+            start: 0,
+            end: 138,
+        },
+        callout: Callout {
+            kind: "example".to_string(),
+            title: "Example of callout with uneven lines".to_string(),
+            tokens: vec![
+                Token::Text {
+                    span: Span {
+                        start: 0,
+                        end: 2,
+                    },
+                    text: "\n\n".to_string(),
+                },
+                Token::DisplayMath {
+                    span: Span {
+                        start: 2,
+                        end: 83,
+                    },
+                    latex: "\n\nA=\n\n\\left(\n\n\\begin{array}{cc}\n\n-5 & 2 \\\\\n\n2 & -2 \\\\\n\n\\end{array}\n\n\\right)\n\n".to_string(),
+                },
+                Token::Text {
+                    span: Span {
+                        start: 83,
+                        end: 85,
+                    },
+                    text: "\n\n".to_string(),
+                },
+            ],
+            text: "\n\n$$\n\nA=\n\n\\left(\n\n\\begin{array}{cc}\n\n-5 & 2 \\\\\n\n2 & -2 \\\\\n\n\\end{array}\n\n\\right)\n\n$$\n\n".to_string(),
+            foldable: true,
+        },
+    });
     }
 }

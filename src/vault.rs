@@ -174,7 +174,10 @@ impl Note {
     }
 
     fn index_tokens(&mut self, tokens: impl Iterator<Item = Token>) {
+        // println!("Indexing note: {}", self.name);
+        // let contents = self.contents().unwrap_or_default();
         for token in tokens {
+            // println!("  Token: {} at line {}", token, token.span().line_col(&contents).0);
             match token {
                 Token::Tag { tag, .. } => {
                     self.tags.insert(tag.clone());
@@ -191,10 +194,10 @@ impl Note {
                     self.add_link(to);
                 }
                 Token::Callout { callout, .. } => {
-                    self.index_tokens(callout.contents.iter().cloned());
+                    self.index_tokens(callout.tokens.iter().cloned());
                 }
                 Token::Quote {
-                    contents: tokens, ..
+                    tokens, ..
                 } => {
                     self.index_tokens(tokens.iter().cloned());
                 }
@@ -221,7 +224,7 @@ pub struct Attachment {
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass)]
-enum VaultItem {
+pub enum VaultItem {
     Note { note: Note },
     Attachment { attachment: Attachment },
 }
@@ -236,6 +239,7 @@ pub struct Vault {
     /// Path to Obsidian vault
     pub path: PathBuf,
 
+    /// Paths that were ignored during indexing
     pub ignored: HashSet<PathBuf>,
 
     /// Maps tags to notes with those tags
