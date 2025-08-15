@@ -1,9 +1,6 @@
-#[cfg(not(feature = "python"))]
-fn main() {}
-
 // Generate the documentation file from the MDX source using txtx.py script.
 #[cfg(feature = "python")]
-fn main() {
+fn build_docs() {
     const SRC: &str = "./docs/documentation.mdx";
     const DST: &str = "./docs/documentation.md";
 
@@ -22,4 +19,10 @@ fn main() {
     }
 
     std::fs::write(DST, result.stdout).expect("Failed to write documentation.md");
+}
+
+fn main() {
+    // Build the documentation if the Python feature is enabled
+    #[cfg(feature = "python")]
+    build_docs();
 }

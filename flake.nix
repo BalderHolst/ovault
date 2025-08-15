@@ -23,6 +23,7 @@
                         (rust-bin.stable.latest.default.override {
                             extensions = [ "rust-src" "clippy" "rust-analyzer"];
                         })
+                        cargo-hack
                         maturin
                         python3
                     ];
