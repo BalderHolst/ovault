@@ -1,0 +1,9 @@
+[submodule "test-vaults/BalderHolst_uni-notes"]
+	path = test-vaults/BalderHolst_uni-notes
+	url = https://github.com/BalderHolst/uni-notes
+[submodule "test-vaults/TheJoboReal_Noter"]
+	path = test-vaults/TheJoboReal_Noter
+	url = https://github.com/TheJoboReal/Noter
+[submodule "test-vaults/SoRobby_ObsidianStarterVault"]
+	path = test-vaults/SoRobby_ObsidianStarterVault
+	url = https://github.com/SoRobby/ObsidianStarterVault
