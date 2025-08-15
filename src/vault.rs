@@ -289,9 +289,7 @@ impl Vault {
                 e
             ))
         })?;
-
-        let mut v = Self::new(&path);
-        Ok(v)
+        Ok(Self::new(&path)?)
     }
 
     /// Get a list of all notes in the vault. Order is not guaranteed.

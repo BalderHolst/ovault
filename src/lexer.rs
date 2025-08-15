@@ -103,6 +103,8 @@ pub struct Span {
 }
 
 impl Span {
+
+    /// Shifts the span by a given offset.
     pub fn shift(&mut self, offset: isize) {
         let start = self.start as isize + offset;
         let end = self.end as isize + offset;
@@ -110,11 +112,12 @@ impl Span {
         self.end = end as usize;
     }
 
-    pub fn line_col(&self, text: &str) -> (usize, usize) {
+    /// Calculates the line and column number of the span given the source text.
+    pub fn line_col(&self, source: &str) -> (usize, usize) {
         let mut line = 1;
         let mut col = 1;
 
-        for (i, c) in text.chars().enumerate() {
+        for (i, c) in source.chars().enumerate() {
             if i >= self.start && i < self.end {
                 return (line, col);
             }
