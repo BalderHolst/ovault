@@ -64,6 +64,10 @@ print("tags        :", v.tags())
 
 
 ## Development
+Install `ovault` and development dependencies with
+```bash
+pip install -e ".[dev]"
+```
 
 ### Build for Testing
 ```bash
@@ -77,7 +81,6 @@ maturin develop --release --features python
 
 ### Build Documentation
 ```bash
-pip install pdoc3
 ./docs/build.py
 ```
 

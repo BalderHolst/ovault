@@ -24,7 +24,6 @@
                             extensions = [ "rust-src" "clippy" "rust-analyzer"];
                         })
                         cargo-hack
-                        maturin
                         python3
                     ];
 
@@ -37,7 +36,7 @@
                         # Activate venv
                         source venv/bin/activate
 
-                        pip install pdoc3
+                        pip install ".[dev]"
 
                         # Install ovault in editable mode
                         maturin develop --features python

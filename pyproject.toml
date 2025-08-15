@@ -15,7 +15,12 @@ license = "MIT"
 license-files = ["LICEN[CS]E.*"]
 keywords = ["Obsidian", "Vault", "Notes"]
 
-
 [project.urls]
 Documentation = "https://balderholst.github.io/ovault/"
 Repository = "https://github.com/BalderHolst/ovault"
+
+[project.optional-dependencies]
+dev = [
+  "maturin",
+  "pdoc3",
+]
