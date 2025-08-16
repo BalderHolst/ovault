@@ -28,6 +28,9 @@
                     ];
 
                     shellHook = ''
+                        # Set up git hooks
+                        git config core.hooksPath .hooks
+
                         # Create venv if it doesn't exist
                         if [ ! -d venv ]; then
                             python3 -m venv venv
