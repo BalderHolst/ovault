@@ -99,8 +99,7 @@ impl Drop for TestVault {
         // Clean up the temporary vault directory
         let tmp_vault_path = self.vault.path.as_path();
         if tmp_vault_path.exists() {
-            fs::remove_dir_all(&tmp_vault_path)
-                .expect("Failed to remove temporary vault directory");
+            fs::remove_dir_all(tmp_vault_path).expect("Failed to remove temporary vault directory");
         }
     }
 }

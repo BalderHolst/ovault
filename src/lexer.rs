@@ -328,8 +328,7 @@ impl Token {
                 new_s = format!("{}...", &new_s.chars().take(MAX_LEN).collect::<String>());
                 new_s = new_s.trim_end().to_string();
             }
-            let new_s = new_s.replace("\n", "\\n");
-            new_s
+            new_s.replace("\n", "\\n")
         }
 
         match self {
@@ -363,7 +362,7 @@ impl Token {
             Token::Frontmatter { yaml, .. } => format!("Frontmatter({})", string(yaml)),
             Token::InlineMath { latex, .. } => format!("InlineMath({})", string(latex)),
             Token::DisplayMath { latex, .. } => format!("DisplayMath({})", string(latex)),
-            Token::Divider { .. } => format!("Divider"),
+            Token::Divider { .. } => "Divider".to_string(),
             Token::TemplaterCommand { command, .. } => {
                 format!("TemplaterCommand({})", string(command))
             }

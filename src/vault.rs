@@ -93,7 +93,6 @@ impl Note {
                 self.length
             ))
         })?;
-        let pos = pos as usize;
         self.insert_at(pos, text).map_err(PyErr::from)
     }
 
@@ -521,7 +520,7 @@ impl Vault {
     /// NOTE: Call `index` after adding notes to update the vault state.
     pub fn add_note(&mut self, vault_path: PathBuf, contents: &str) -> io::Result<PathBuf> {
         let abs_path = self.path.join(vault_path).with_extension("md");
-        abs_path.parent().map(|p| fs::create_dir_all(p)).transpose()?;
+        abs_path.parent().map(fs::create_dir_all).transpose()?;
         fs::write(&abs_path, contents)?;
         self.register_note(&abs_path);
         Ok(abs_path)
