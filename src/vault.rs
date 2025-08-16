@@ -22,10 +22,15 @@ pub struct Note {
     pub vault_path: PathBuf,
     /// Relative path within vault
     pub path: PathBuf,
+    /// Name of the note (file name without extension)
     pub name: String,
+    /// Length of the note contents in characters
     pub length: usize,
+    /// Set of tags in the note
     pub tags: HashSet<String>,
+    /// Set of backlinks to this note (links from other notes)
     pub backlinks: HashSet<String>,
+    /// Set of links to other notes or attachments
     pub links: HashSet<String>,
 }
 
@@ -33,14 +38,18 @@ pub struct Note {
 #[cfg(feature = "python")]
 #[pymethods]
 impl Note {
+
+    /// Get a string representation of the note.
     pub fn __repr__(&self) -> String {
         format!("Note({})", self.name)
     }
 
+    /// Get the length of the note in characters.
     pub fn __len__(&self) -> usize {
         self.length
     }
 
+    /// Get contents note as a list of tokens.
     #[pyo3(name = "tokens")]
     pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
         match self.tokens() {
@@ -49,26 +58,31 @@ impl Note {
         }
     }
 
+    /// Get the absolute path to the note file.
     #[pyo3(name = "full_path")]
     pub fn py_full_path(&self) -> PathBuf {
         self.full_path()
     }
 
+    /// Get the frontmatter as a string if it exists
     #[pyo3(name = "frontmatter")]
     pub fn py_frontmatter(&self) -> Option<String> {
         self.frontmatter()
     }
 
+    /// Get the normalized name of the node.
     #[pyo3(name = "normalized_name")]
     pub fn py_normalized_name(&self) -> String {
         normalize(self.name.clone())
     }
 
+    /// Read the contents of the note and return it as a string
     #[pyo3(name = "read")]
     pub fn py_read(&self) -> io::Result<String> {
         self.contents()
     }
 
+    /// Inserts a string at a position in the note.
     #[pyo3(name = "insert_at")]
     pub fn py_insert_at(&mut self, mut pos: isize, text: String) -> PyResult<()> {
         if pos < 0 {
@@ -84,6 +98,12 @@ impl Note {
         self.insert_at(pos, text).map_err(PyErr::from)
     }
 
+
+    /// Insert a string into the note *before* a given token.
+    ///
+    /// NOTE: The token should originate from this note as this
+    /// method used the internal `Span` of the note to determine
+    /// the insertion position.
     #[pyo3(signature = (token, text, offset=0))]
     pub fn insert_before_token(
         &mut self,
@@ -95,6 +115,11 @@ impl Note {
         self.py_insert_at(pos, text)
     }
 
+    /// Insert a string into the note *after* a given token.
+    ///
+    /// NOTE: The token should originate from this note as this
+    /// method used the internal `Span` of the note to determine
+    /// the insertion position.
     #[pyo3(signature = (token, text, offset=0))]
     pub fn insert_after_token(
         &mut self,
@@ -113,6 +138,7 @@ impl Note {
         self.vault_path.join(&self.path)
     }
 
+    /// Get the frontmatter as a string if it exists
     pub fn frontmatter(&self) -> Option<String> {
         match self.tokens().ok()?.next()? {
             Token::Frontmatter { yaml, .. } => Some(yaml),
@@ -120,10 +146,12 @@ impl Note {
         }
     }
 
+    /// Now deep is the note within the vault
     pub fn path_debth(&self) -> usize {
         self.path.components().count()
     }
 
+    /// Read the note contents to a string
     pub fn contents(&self) -> io::Result<String> {
         fs::read_to_string(self.full_path())
     }
@@ -141,6 +169,7 @@ impl Note {
         self.backlinks.insert(from);
     }
 
+    /// Insert a string as a position within the note
     pub fn insert_at(&mut self, pos: usize, text: String) -> io::Result<()> {
         let path = self.full_path();
         let contents = fs::read_to_string(path.clone())?;
@@ -210,19 +239,28 @@ impl Note {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "python", pyclass(get_all))]
 /// An attachment in an Obsidian vault. An attachment is any
 /// file that is not a markdown file.
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "python", pyclass(get_all))]
 pub struct Attachment {
     path: PathBuf,
 }
 
+/// An item in an Obsidian vault can be either a note or an attachment.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass)]
 pub enum VaultItem {
-    Note { note: Note },
-    Attachment { attachment: Attachment },
+    /// A note in the vault (markdown file)
+    Note {
+        /// The note itself
+        note: Note
+    },
+    /// An attachment in the vault
+    Attachment {
+        /// The attachment itself
+        attachment: Attachment
+    },
 }
 
 /// An Obsidian vault containing notes and attachments.
