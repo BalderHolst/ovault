@@ -8,11 +8,14 @@ use std::{
 use pyo3::prelude::*;
 
 use glob::glob;
+use yaml_rust2::{ScanError, Yaml, YamlLoader};
 
 use crate::{
     lexer::{Lexer, Token},
     normalize::normalize,
 };
+
+pub type Frontmatter = HashMap<String, Yaml>;
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
@@ -66,7 +69,7 @@ impl Note {
     /// Get the frontmatter as a string if it exists
     #[pyo3(name = "frontmatter")]
     pub fn py_frontmatter(&self) -> Option<String> {
-        self.frontmatter()
+        todo!()
     }
 
     /// Get the normalized name of the node.
@@ -129,6 +132,38 @@ impl Note {
     }
 }
 
+fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
+    let yaml = YamlLoader::load_from_str(&frontmatter)
+        .map_err(|e| format!("Could not parse frontmatter: {}", e))?;
+
+    if yaml.is_empty() {
+        return Ok(HashMap::new());
+    }
+
+    if yaml.len() > 1 {
+        return Err("Frontmatter must be a single YAML document".to_string());
+    }
+
+    let root = match yaml.into_iter().next().unwrap() {
+        Yaml::Hash(root) => root,
+        other => {
+            return Err(format!(
+                "Frontmatter must be a YAML object, not '{:?}'",
+                other
+            ))
+        }
+    };
+
+    root.into_iter()
+        .map(|(k, v)| {
+            let key = k
+                .as_str()
+                .ok_or_else(|| format!("Frontmatter keys must be a string, not '{:?}'", k))?;
+            Ok((key.to_string(), v))
+        })
+        .collect::<Result<Frontmatter, String>>()
+}
+
 // Rust specific methods
 impl Note {
     fn full_path(&self) -> PathBuf {
@@ -136,11 +171,21 @@ impl Note {
     }
 
     /// Get the frontmatter as a string if it exists
-    pub fn frontmatter(&self) -> Option<String> {
+    pub fn frontmatter_string(&self) -> Option<String> {
         match self.tokens().ok()?.next()? {
             Token::Frontmatter { yaml, .. } => Some(yaml),
             _ => None,
         }
+    }
+
+    pub fn frontmatter(&self) -> Result<Option<Frontmatter>, String> {
+        let raw = match self.frontmatter_string() {
+            Some(s) => s,
+            None => return Ok(None),
+        };
+        let frontmatter = parse_frontmatter(&raw)
+            .map_err(|e| format!("Could not parse frontmatter in note '{}': {}", self.name, e))?;
+        Ok(Some(frontmatter))
     }
 
     /// Now deep is the note within the vault
@@ -202,6 +247,34 @@ impl Note {
     fn index_tokens(&mut self, tokens: impl Iterator<Item = Token>) {
         for token in tokens {
             match token {
+                Token::Frontmatter { yaml, .. } => {
+                    let frontmatter = match parse_frontmatter(&yaml) {
+                        Ok(f) => f,
+                        Err(e) => {
+                            eprintln!(
+                                "WARNING: Could not parse frontmatter in note '{}': {}",
+                                self.name, e
+                            );
+                            continue;
+                        }
+                    };
+                    if let Some(tags) = frontmatter.get("tags").map(|tags| tags.as_vec()).flatten()
+                    {
+                        for tag in tags {
+                            let tag = match tag {
+                                Yaml::String(s) => s,
+                                _ => {
+                                    eprintln!(
+                                        "WARNING: Invalid tag in frontmatter of note '{}': {:?}",
+                                        self.name, tag
+                                    );
+                                    continue;
+                                }
+                            };
+                            self.tags.insert(tag.to_string());
+                        }
+                    };
+                }
                 Token::Tag { tag, .. } => {
                     self.tags.insert(tag.clone());
                 }
@@ -222,8 +295,7 @@ impl Note {
                 Token::Quote { tokens, .. } => {
                     self.index_tokens(tokens.iter().cloned());
                 }
-                Token::Frontmatter { .. }
-                | Token::Text { .. }
+                Token::Text { .. }
                 | Token::Header { .. }
                 | Token::Divider { .. }
                 | Token::InlineMath { .. }
