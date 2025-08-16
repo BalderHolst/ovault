@@ -647,17 +647,16 @@ impl Lexer {
         }
 
         let inner_start = self.mark();
-        loop {
-            self.consume_until(|c| matches!(c, ']' | '\n'));
 
-            if self.peek(1)? == ']' {
-                break;
-            }
+        self.consume_until(|c| matches!(c, ']' | '\n'));
 
-            // If we hit a newline, this is not a valid internal link
-            if self.current()? == '\n' {
-                return None;
-            }
+        if self.peek(1)? != ']' {
+            return None;
+        }
+
+        // If we hit a newline, this is not a valid internal link
+        if self.current()? == '\n' {
+            return None;
         }
 
         let inner = self.extract(inner_start);
