@@ -19,6 +19,8 @@ pub use vault::{Attachment, Note, Vault, VaultItem};
 #[cfg(feature = "python")]
 #[pymodule]
 mod ovault {
+    use crate::vault::yaml_to_python;
+
     use super::*;
 
     /// Tokenize a string to a list of tokens.
@@ -50,6 +52,18 @@ mod ovault {
 
     #[pymodule_export]
     use normalize::normalize;
+
+    #[pyfunction]
+    fn parse_yaml<'py>(py: Python<'py>, source: &str) -> PyResult<Bound<'py, pyo3::types::PyList>> {
+        let yamls = yaml_rust2::YamlLoader::load_from_str(source).map_err(|e| {
+            pyo3::exceptions::PySyntaxError::new_err(format!("Could not parse yaml: {e}"))
+        })?;
+        let list = pyo3::types::PyList::empty(py);
+        for yaml in yamls {
+            list.append(yaml_to_python(py, yaml)?)?
+        }
+        Ok(list)
+    }
 
     #[allow(non_upper_case_globals)]
     #[pymodule_export]

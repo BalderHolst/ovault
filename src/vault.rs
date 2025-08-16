@@ -5,10 +5,10 @@ use std::{
 };
 
 #[cfg(feature = "python")]
-use pyo3::prelude::*;
+use pyo3::{prelude::*, types::*, IntoPyObjectExt};
 
 use glob::glob;
-use yaml_rust2::{ScanError, Yaml, YamlLoader};
+use yaml_rust2::{Yaml, YamlLoader};
 
 use crate::{
     lexer::{Lexer, Token},
@@ -66,10 +66,15 @@ impl Note {
         self.full_path()
     }
 
-    /// Get the frontmatter as a string if it exists
+    /// Get the frontmatter as a python dictionary
     #[pyo3(name = "frontmatter")]
-    pub fn py_frontmatter(&self) -> Option<String> {
-        todo!()
+    pub fn py_frontmatter<'py>(&self, py: Python<'py>) -> PyResult<Option<Bound<'py, PyDict>>> {
+        let frontmatter = match self.frontmatter() {
+            Ok(Some(f)) => f,
+            Ok(None) => return Ok(None),
+            Err(e) => return Err(pyo3::exceptions::PyException::new_err(e)),
+        };
+        frontmatter_to_python(py, frontmatter).map(Some)
     }
 
     /// Get the normalized name of the node.
@@ -133,7 +138,7 @@ impl Note {
 }
 
 fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
-    let yaml = YamlLoader::load_from_str(&frontmatter)
+    let yaml = YamlLoader::load_from_str(frontmatter)
         .map_err(|e| format!("Could not parse frontmatter: {}", e))?;
 
     if yaml.is_empty() {
@@ -141,14 +146,14 @@ fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
     }
 
     if yaml.len() > 1 {
-        return Err("Frontmatter must be a single YAML document".to_string());
+        eprintln!("WARNING: Multiple YAML documents found in frontmatter of note. Only using the first one.")
     }
 
     let root = match yaml.into_iter().next().unwrap() {
         Yaml::Hash(root) => root,
         other => {
             return Err(format!(
-                "Frontmatter must be a YAML object, not '{:?}'",
+                "Frontmatter must be a key-value (Hash) object, not '{:?}'",
                 other
             ))
         }
@@ -162,6 +167,46 @@ fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
             Ok((key.to_string(), v))
         })
         .collect::<Result<Frontmatter, String>>()
+}
+
+/// Convert a `Yaml` object into a python object
+#[cfg(feature = "python")]
+pub fn yaml_to_python<'py>(py: Python<'py>, yaml: Yaml) -> PyResult<Bound<'py, PyAny>> {
+    match yaml {
+        Yaml::Real(_) => yaml.as_f64().unwrap().into_bound_py_any(py),
+        Yaml::Integer(i) => i.into_bound_py_any(py),
+        Yaml::String(s) => s.into_bound_py_any(py),
+        Yaml::Boolean(b) => b.into_bound_py_any(py),
+        Yaml::Array(yamls) => {
+            let list = PyList::empty(py);
+            for yaml in yamls {
+                list.append(yaml_to_python(py, yaml)?)?;
+            }
+            Ok((*list).clone())
+        }
+        Yaml::Hash(map) => {
+            let dict = PyDict::new(py);
+            for (k, v) in map {
+                let k = yaml_to_python(py, k)?;
+                let v = yaml_to_python(py, v)?;
+                dict.set_item(k, v)?;
+            }
+            dict.into_bound_py_any(py)
+        }
+        Yaml::Alias(_) | Yaml::Null | Yaml::BadValue => Ok(PyNone::get(py).as_any().clone()),
+    }
+}
+
+#[cfg(feature = "python")]
+fn frontmatter_to_python<'py>(
+    py: Python<'py>,
+    frontmatter: Frontmatter,
+) -> PyResult<Bound<'py, PyDict>> {
+    let dict = PyDict::new(py);
+    for (k, v) in frontmatter {
+        dict.set_item(k, yaml_to_python(py, v)?)?;
+    }
+    Ok(dict)
 }
 
 // Rust specific methods
@@ -178,6 +223,7 @@ impl Note {
         }
     }
 
+    /// Get the frontmatter of the note as a set of key-value pairs
     pub fn frontmatter(&self) -> Result<Option<Frontmatter>, String> {
         let raw = match self.frontmatter_string() {
             Some(s) => s,
@@ -258,8 +304,7 @@ impl Note {
                             continue;
                         }
                     };
-                    if let Some(tags) = frontmatter.get("tags").map(|tags| tags.as_vec()).flatten()
-                    {
+                    if let Some(tags) = frontmatter.get("tags").and_then(|tags| tags.as_vec()) {
                         for tag in tags {
                             let tag = match tag {
                                 Yaml::String(s) => s,
