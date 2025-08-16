@@ -38,7 +38,6 @@ pub struct Note {
 #[cfg(feature = "python")]
 #[pymethods]
 impl Note {
-
     /// Get a string representation of the note.
     pub fn __repr__(&self) -> String {
         format!("Note({})", self.name)
@@ -97,7 +96,6 @@ impl Note {
         let pos = pos as usize;
         self.insert_at(pos, text).map_err(PyErr::from)
     }
-
 
     /// Insert a string into the note *before* a given token.
     ///
@@ -254,12 +252,12 @@ pub enum VaultItem {
     /// A note in the vault (markdown file)
     Note {
         /// The note itself
-        note: Note
+        note: Note,
     },
     /// An attachment in the vault
     Attachment {
         /// The attachment itself
-        attachment: Attachment
+        attachment: Attachment,
     },
 }
 
@@ -316,10 +314,25 @@ impl Vault {
 impl Vault {
     /// Create a new vault from the given path. The path must be an existing directory.
     ///
+    /// The `create` argument determines whether the vault directory should be created
+    /// if it does not exist.
+    ///
     /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed
     #[new]
-    pub fn py_new(path: &str) -> PyResult<Self> {
+    #[pyo3(signature = (path, create = false))]
+    pub fn py_new(path: &str, create: bool) -> PyResult<Self> {
         let path = PathBuf::from(path);
+
+        if create && !path.exists() {
+            fs::create_dir_all(&path).map_err(|e| {
+                pyo3::exceptions::PyIOError::new_err(format!(
+                    "Could not create vault at '{}': {}",
+                    path.display(),
+                    e
+                ))
+            })?;
+        }
+
         let path = path.canonicalize().map_err(|e| {
             pyo3::exceptions::PyFileNotFoundError::new_err(format!(
                 "Could not find vault at '{}': {}",
@@ -344,7 +357,7 @@ impl Vault {
 
     /// Get a list of all tags in the vault. Order is not guaranteed.
     #[pyo3(name = "tags")]
-    pub fn tags(&self) -> Vec<String> {
+    pub fn py_tags(&self) -> Vec<String> {
         self.tags.keys().cloned().collect()
     }
 
@@ -356,7 +369,7 @@ impl Vault {
         self.items.clear();
         self.tags.clear();
         let path = self.path.clone();
-        self.add_dir(&path).map_err(PyErr::from)?;
+        self.register_dir(&path).map_err(PyErr::from)?;
         self.index();
         Ok(())
     }
@@ -378,6 +391,26 @@ impl Vault {
     pub fn py_get_note(&self, name: &str) -> Option<Note> {
         self.get_note(&normalize(name.to_string())).cloned()
     }
+
+    /// Add a note to the vault.
+    ///
+    /// Call the `index` method to reindex the vault after adding notes.
+    #[pyo3(name = "add_note")]
+    pub fn py_add_note(&mut self, vault_path: &str, contents: &str) -> PyResult<String> {
+        let abs_path = self.add_note(vault_path.into(), contents).map_err(|e| {
+            pyo3::exceptions::PyIOError::new_err(format!("Could not add note '{vault_path}': {e}"))
+        })?;
+
+        let abs_path_string = abs_path
+            .to_str()
+            .ok_or(pyo3::exceptions::PyIOError::new_err(format!(
+                "Could not convert path to string: '{}'",
+                abs_path.display(),
+            )))?
+            .to_string();
+
+        Ok(abs_path_string)
+    }
 }
 
 impl Vault {
@@ -389,7 +422,7 @@ impl Vault {
     pub fn new(path: &Path) -> io::Result<Self> {
         let mut v = Self::new_raw(path);
         v.parse_ignore_file(&path.join(Self::IGNORE_FILE))?;
-        v.add_dir(path)?;
+        v.register_dir(path)?;
         v.index();
         Ok(v)
     }
@@ -483,9 +516,20 @@ impl Vault {
         Ok(())
     }
 
-    /// Add a note to the vault
-    pub fn add_note(&mut self, path: &Path) {
-        debug_assert_eq!(path.extension().unwrap(), "md");
+    /// Add a new note to the vault.
+    ///
+    /// NOTE: Call `index` after adding notes to update the vault state.
+    pub fn add_note(&mut self, vault_path: PathBuf, contents: &str) -> io::Result<PathBuf> {
+        let abs_path = self.path.join(vault_path).with_extension("md");
+        abs_path.parent().map(|p| fs::create_dir_all(p)).transpose()?;
+        fs::write(&abs_path, contents)?;
+        self.register_note(&abs_path);
+        Ok(abs_path)
+    }
+
+    /// Register a new note in the vault
+    fn register_note(&mut self, path: &Path) {
+        assert_eq!(path.extension().unwrap(), "md");
 
         let name = path.file_stem().unwrap().to_str().unwrap();
 
@@ -503,7 +547,7 @@ impl Vault {
         self.items.insert(normalized_name, VaultItem::Note { note });
     }
 
-    fn add_attachment(&mut self, path: PathBuf) {
+    fn register_attachment(&mut self, path: PathBuf) {
         let name = normalize(path.file_name().unwrap().to_str().unwrap().to_string());
         let relpath = path.strip_prefix(&self.path).unwrap().to_path_buf();
         let attachment = Attachment { path: relpath };
@@ -512,7 +556,7 @@ impl Vault {
     }
 
     /// Add a directory to the vault. This will recursively add all markdown files as note
-    pub fn add_dir(&mut self, path: &Path) -> io::Result<()> {
+    pub fn register_dir(&mut self, path: &Path) -> io::Result<()> {
         let Ok(rel_path) = path.strip_prefix(&self.path) else {
             eprintln!(
                 "WARNING: Can not add directory outside of vault: '{}'",
@@ -536,13 +580,13 @@ impl Vault {
 
                 match abs_file_path.extension() {
                     Some(ex) => match ex.to_str() {
-                        Some("md") => self.add_note(&abs_file_path),
-                        _ => self.add_attachment(abs_file_path),
+                        Some("md") => self.register_note(&abs_file_path),
+                        _ => self.register_attachment(abs_file_path),
                     },
-                    None => self.add_attachment(abs_file_path),
+                    None => self.register_attachment(abs_file_path),
                 }
             } else if abs_file_path.is_dir() {
-                self.add_dir(&abs_file_path)?;
+                self.register_dir(&abs_file_path)?;
             }
         }
         Ok(())
