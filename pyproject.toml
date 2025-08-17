@@ -23,4 +23,5 @@ Repository = "https://github.com/BalderHolst/ovault"
 dev = [
   "maturin",
   "pdoc3",
+  "requests",
 ]

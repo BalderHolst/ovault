@@ -3,7 +3,7 @@
 import ovault
 
 # Open the sandbox vault
-vault = ovault.Vault("./test_vaults/Obsidian Sandbox/")
+vault = ovault.Vault("./test-vaults/Obsidian Sandbox/")
 
 # Find a note by name
 note = vault.get_note_by_name("Start Here")
