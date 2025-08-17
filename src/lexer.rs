@@ -210,12 +210,12 @@ pub enum Token   {
     /// Represents a code block in the note.
     ///
     /// Example:
-    /// ```markdown
+    /// ````markdown
     /// ```python
     /// def hello_world():
     ///     print("Hello, world!")
     /// ```
-    /// ```
+    /// ````
     Code {
         /// The span of the code block in the source text.
         span: Span,

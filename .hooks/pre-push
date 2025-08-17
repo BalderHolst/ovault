@@ -11,3 +11,9 @@ cargo clippy --all-targets --all-features -- -D warnings || {
   echo "Linting issues found. Please fix them before committing."
   exit 1
 }
+
+# Check documentation
+RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features || {
+  echo "Documntation issues found. Please fix them before committing."
+  exit 1
+}
