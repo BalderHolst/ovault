@@ -105,7 +105,20 @@ impl Note {
         self.insert_at(pos, text).map_err(PyErr::from)
     }
 
-    /// Insert a string into the note *before* a given token.
+    /// Replaces the text between two positions in the note with the given text.
+    #[pyo3(name = "replace_between")]
+    pub fn py_replace_between(&mut self, start: usize, end: usize, text: String) -> PyResult<()> {
+        self.py_replace_span(Span { start, end }, text)
+    }
+
+    /// Replaces a `Span` in the note with the given text.
+    /// This can be used to replace tokens within the note.
+    #[pyo3(name = "replace_span")]
+    pub fn py_replace_span(&mut self, span: Span, text: String) -> PyResult<()> {
+        self.replace_span(span, text).map_err(PyErr::from)
+    }
+
+    /// Inserts a string into the note *before* a given token.
     ///
     /// NOTE: The token should originate from this note as this
     /// method used the internal `Span` of the note to determine
