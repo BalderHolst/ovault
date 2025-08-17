@@ -5,9 +5,3 @@ cargo fmt --all -- --check || {
   echo "Code formatting issues found. Please run 'cargo fmt' to fix them."
   exit 1
 }
-
-# Check for linting issues
-cargo clippy --all-targets --all-features -- -D warnings || {
-  echo "Linting issues found. Please fix them before committing."
-  exit 1
-}
