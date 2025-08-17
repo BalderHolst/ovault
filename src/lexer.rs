@@ -1041,6 +1041,50 @@ impl Iterator for Lexer {
     }
 }
 
+pub trait ToMarkdown {
+    fn to_markdown(&self) -> String;
+}
+
+impl ToMarkdown for InternalLink {
+    fn to_markdown(&self) -> String {
+        let Self {
+            dest,
+            position,
+            show_how,
+            options,
+            render,
+        } = self;
+
+        let mut s = String::new();
+
+        if *render {
+            s.push('!');
+        }
+
+        s += "[[";
+
+        s += dest;
+
+        if let Some(position) = position {
+            s += "#";
+            s += position;
+        }
+
+        if let Some(options) = options {
+            s += "|";
+            s += options;
+        }
+
+        if let Some(show_how) = show_how {
+            s += "|";
+            s += show_how;
+        }
+
+        s += "]]";
+        s
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

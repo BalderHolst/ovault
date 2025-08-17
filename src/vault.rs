@@ -11,8 +11,9 @@ use glob::glob;
 use yaml_rust2::{Yaml, YamlLoader};
 
 use crate::{
-    lexer::{Lexer, Token},
+    lexer::{Lexer, ToMarkdown, Token},
     normalize::normalize,
+    Span,
 };
 
 pub type Frontmatter = HashMap<String, Yaml>;
@@ -264,6 +265,26 @@ impl Note {
         let contents = format!("{}{}{}", &contents[..pos], text, &contents[pos..]);
         self.index_contents(contents.clone());
         fs::write(path, contents)
+    }
+
+    /// Replace a span of text withing the note with a new string.
+    pub fn replace_span(&mut self, span: Span, text: String) -> io::Result<()> {
+        let path = self.full_path();
+        let contents = fs::read_to_string(path.clone())?;
+        if span.start > span.end || span.end > contents.len() {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("Span {span:?} is out of bounds"),
+            ));
+        }
+        let new_contents = format!(
+            "{}{}{}",
+            &contents[..span.start],
+            text,
+            &contents[span.end..]
+        );
+        self.index_contents(new_contents.clone());
+        fs::write(path, new_contents)
     }
 
     /// Update `tags` and `links` fields from note contents
@@ -527,6 +548,26 @@ impl Vault {
 
         Ok(abs_path_string)
     }
+
+    /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
+    #[pyo3(name = "rename_note")]
+    pub fn py_rename_note(&mut self, old_name: &str, new_name: &str) -> PyResult<Note> {
+        self.rename_note(old_name, new_name).map_err(|e| {
+            pyo3::exceptions::PyIOError::new_err(format!(
+                "Could not rename note from '{}' to '{}': {}",
+                old_name, new_name, e
+            ))
+        })?;
+
+        self.get_note(&normalize(new_name.to_string()))
+            .cloned()
+            .ok_or_else(|| {
+                pyo3::exceptions::PyKeyError::new_err(format!(
+                    "Note '{}' not found after renaming",
+                    new_name
+                ))
+            })
+    }
 }
 
 impl Vault {
@@ -641,6 +682,99 @@ impl Vault {
         fs::write(&abs_path, contents)?;
         self.register_note(&abs_path);
         Ok(abs_path)
+    }
+
+    /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
+    pub fn rename_note(&mut self, old_name: &str, new_name: &str) -> io::Result<()> {
+        let normalized_old = normalize(old_name.to_string());
+        let normalized_new = normalize(new_name.to_string());
+
+        let Some(note) = self.get_note_mut(&normalized_old) else {
+            return Err(io::Error::new(
+                io::ErrorKind::NotFound,
+                format!("Note '{}' not found", old_name),
+            ));
+        };
+
+        let old_path = note.full_path();
+
+        // Update the note's path
+        note.path = note.path.with_file_name(new_name).with_extension("md");
+
+        let new_path = note.full_path();
+
+        if fs::exists(&new_path)? {
+            note.path = old_path; // Restore the old path
+            return Err(io::Error::new(
+                io::ErrorKind::AlreadyExists,
+                format!("Path '{}' already exists", new_name),
+            ));
+        }
+
+        note.name = new_name.to_string();
+
+        // Rename the file on disk
+        fs::rename(&old_path, &new_path).map_err(|e| {
+            io::Error::other(format!(
+                "Could not rename note '{}' to '{}': {}",
+                old_name, new_name, e
+            ))
+        })?;
+
+        let note = note.clone();
+
+        // Update notes that link to this note
+        for backlink in note.backlinks.clone() {
+            let Some(backlink_note) = self.get_note_mut(&backlink) else {
+                eprintln!(
+                    "WARNING: Could not find note '{}' to update backlink",
+                    backlink
+                );
+                continue;
+            };
+
+            let links = backlink_note.tokens()?.filter_map(|token| {
+                if let Token::InternalLink { span, link, .. } = token {
+                    if normalize(link.dest.clone()) == normalized_old {
+                        return Some((span, link));
+                    }
+                }
+                None
+            });
+
+            for (span, mut link) in links {
+                let old_dest = link.dest;
+                if link.show_how.is_none() {
+                    link.show_how = Some(old_dest);
+                }
+                link.dest = new_name.to_string();
+                let text = link.to_markdown();
+                backlink_note.replace_span(span, text)?;
+            }
+        }
+
+        // Update the vault tag index
+        {
+            self.tags.retain(|_, notes| {
+                notes.retain(|note_name| note_name != &normalized_old);
+                !notes.is_empty()
+            });
+
+            for tag in note.tags.iter() {
+                self.tags
+                    .entry(tag.clone())
+                    .or_default()
+                    .insert(normalized_new.clone());
+            }
+        }
+
+        // Update the vault item index
+        {
+            self.items.remove(&normalized_old);
+            self.items.insert(normalized_new, VaultItem::Note { note });
+        }
+
+        Ok(())
     }
 
     /// Register a new note in the vault

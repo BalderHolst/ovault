@@ -7,7 +7,6 @@
 import ovault
 import sys
 import requests
-import urllib.parse
 
 if len(sys.argv) != 2:
     print("Usage: python 4_check_external_links.py <vault_path>")
