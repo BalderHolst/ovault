@@ -581,6 +581,17 @@ impl Vault {
                 ))
             })
     }
+
+    /// Rename a tag in the vault. This will update all notes that have the tag.
+    #[pyo3(name = "rename_tag")]
+    pub fn py_rename_tag(&mut self, old_tag: &str, new_tag: &str) -> PyResult<()> {
+        self.rename_tag(old_tag, new_tag).map_err(|e| {
+            pyo3::exceptions::PyIOError::new_err(format!(
+                "Could not rename tag from '{}' to '{}': {}",
+                old_tag, new_tag, e
+            ))
+        })
+    }
 }
 
 impl Vault {
@@ -786,6 +797,46 @@ impl Vault {
             self.items.remove(&normalized_old);
             self.items.insert(normalized_new, VaultItem::Note { note });
         }
+
+        Ok(())
+    }
+
+    /// Rename a tag in the vault.
+    pub fn rename_tag(&mut self, old_tag: &str, new_tag: &str) -> io::Result<()> {
+        if self.tags.contains_key(new_tag) {
+            return Err(io::Error::new(
+                io::ErrorKind::AlreadyExists,
+                format!("Tag '{}' already exists", new_tag),
+            ));
+        }
+
+        let Some(notes) = self.tags.remove(old_tag) else {
+            return Err(io::Error::new(
+                io::ErrorKind::NotFound,
+                format!("Tag '{}' not found", old_tag),
+            ));
+        };
+
+        for note_name in &notes {
+            let Some(note) = self.get_note_mut(note_name) else {
+                eprintln!("WARNING: Could not find note '{}' to update tag", note_name);
+                continue;
+            };
+
+            // TODO: Update the frontmatter if it exists
+            let text = note.contents().unwrap();
+            for token in note.tokens()? {
+                if let Token::Tag { ref tag, .. } = token {
+                    if tag == old_tag {
+                        let span = *token.span();
+                        println!("[{}] Replacing: {:?}", &note.name, span.extract(&text));
+                        note.replace_span(span, format!("#{}", new_tag).to_string())?;
+                    }
+                }
+            }
+        }
+
+        self.tags.insert(new_tag.to_string(), notes);
 
         Ok(())
     }
