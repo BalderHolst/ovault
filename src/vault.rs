@@ -824,12 +824,10 @@ impl Vault {
             };
 
             // TODO: Update the frontmatter if it exists
-            let text = note.contents().unwrap();
             for token in note.tokens()? {
                 if let Token::Tag { ref tag, .. } = token {
                     if tag == old_tag {
                         let span = *token.span();
-                        println!("[{}] Replacing: {:?}", &note.name, span.extract(&text));
                         note.replace_span(span, format!("#{}", new_tag).to_string())?;
                     }
                 }

@@ -22,6 +22,7 @@ Repository = "https://github.com/BalderHolst/ovault"
 [project.optional-dependencies]
 dev = [
   "maturin",
+  "pytest",
   "pdoc3",
   "requests",
 ]

@@ -36,6 +36,17 @@ impl ExternalLink {
     }
 }
 
+#[cfg(feature = "python")]
+#[pymethods]
+impl ExternalLink {
+    fn __repr__(&self) -> String {
+        format!(
+            "ExternalLink(url: {}, show_how: {}, options: {:?}, position: {:?}, render: {})",
+            self.url, self.show_how, self.options, self.position, self.render
+        )
+    }
+}
+
 /// Represents an internal link to another note.
 ///
 /// Example:
@@ -139,6 +150,16 @@ impl Span {
             return "";
         }
         &source[self.start..self.end]
+    }
+}
+
+#[cfg(feature = "python")]
+#[pymethods]
+impl Span {
+    /// Creates a new `Span` from the given start and end indices.
+    #[new]
+    fn py_new(start: usize, end: usize) -> Self {
+        Span { start, end }
     }
 }
 
