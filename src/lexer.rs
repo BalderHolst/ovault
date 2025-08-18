@@ -528,18 +528,10 @@ impl Lexer {
             return *i;
         }
         if let Some((i, _)) = self.text.last() {
-            return *i + 1;
+            *i + 1
         } else {
             0
         }
-    }
-
-    fn last_index(&self) -> usize {
-        self.text.len()
-    }
-
-    fn last_pos(&self) -> usize {
-        self.index_to_pos(self.last_index())
     }
 
     fn mark(&self) -> Mark {
@@ -562,7 +554,7 @@ impl Lexer {
     fn lexer_span(&self, start: Mark) -> LexerSpan {
         let Mark(start) = start;
         let Mark(end) = self.mark();
-        let max = self.last_index();
+        let max = self.text.len();
         let start = start.min(max);
         let end = end.min(max);
         LexerSpan(Span { start, end })
