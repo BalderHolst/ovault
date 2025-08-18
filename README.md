@@ -8,6 +8,14 @@ Check out the [examples](https://github.com/BalderHolst/ovault/tree/main/example
 pip install ovault
 ```
 
+or locally
+
+```bash
+git pull https://github.com/BalderHolst/ovault
+cd ovault
+pip install .
+```
+
 ## Example
 ```python
 import ovault
