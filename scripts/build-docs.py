@@ -14,8 +14,7 @@ DOCS_DIR = join(ROOT, 'docs')
 OUTPUT_DIR = join(DOCS_DIR, 'html')
 
 def run_txtx():
-    res = subprocess.run(['./txtx.py', './documentation.mdx'],
-                   cwd=DOCS_DIR,
+    res = subprocess.run([f'{ROOT}/scripts/txtx.py', f'{DOCS_DIR}/documentation.mdx'],
                    capture_output=True,
                    text=True)
     if res.returncode != 0:

@@ -4,7 +4,7 @@ fn build_docs() {
     const SRC: &str = "./docs/documentation.mdx";
     const DST: &str = "./docs/documentation.md";
 
-    const TXTX: &str = "./docs/txtx.py";
+    const TXTX: &str = "./scripts/txtx.py";
 
     // Run: ./docs/txtx.py ./docs/documentation.mdx > ./docs/documentation.md
 
@@ -15,10 +15,11 @@ fn build_docs() {
         .expect("Failed to run txtx.py");
 
     if !result.status.success() {
-        panic!(
-            "Error running txtx.py: {}",
+        println!(
+            "cargo::warning=Could not run txtx.py: {}",
             String::from_utf8_lossy(&result.stderr)
         );
+        return;
     }
 
     std::fs::write(DST, result.stdout).expect("Failed to write documentation.md");

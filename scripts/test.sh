@@ -2,6 +2,10 @@
 
 set -e
 
+ROOT=$(git rev-parse --show-toplevel)
+
+cd "$ROOT"
+
 # Pull submodules
 git submodule update --init --recursive
 
