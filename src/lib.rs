@@ -5,21 +5,21 @@
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
-mod lexer;
-mod normalize;
-mod vault;
+pub mod lexer;
+pub mod normalize;
+pub mod vault;
 
 #[cfg(test)]
 mod tests;
 
 pub use lexer::{Callout, ExternalLink, InternalLink, Span, Token};
-pub use vault::{Attachment, Note, Vault, VaultItem};
+pub use vault::{attachment::Attachment, note::Note, Vault, VaultItem};
 
 #[doc = include_str!("../docs/documentation.md")]
 #[cfg(feature = "python")]
 #[pymodule]
 mod ovault {
-    use crate::vault::yaml_to_python;
+    use crate::vault::note::yaml_to_python;
 
     use super::*;
 
