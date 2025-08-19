@@ -1,3 +1,5 @@
+pub mod frontmatter;
+
 use crate::{
     lexer::{Lexer, Span, Token},
     normalize::normalize,
@@ -8,11 +10,11 @@ use std::{
     path::PathBuf,
 };
 
+type Frontmatter = HashMap<String, Yaml>;
+
 #[cfg(feature = "python")]
 use pyo3::{prelude::*, types::*, IntoPyObjectExt};
 use yaml_rust2::{Yaml, YamlLoader};
-
-pub type Frontmatter = HashMap<String, Yaml>;
 
 /// A note in an Obsidian vault.
 #[derive(Debug, Clone, PartialEq)]
