@@ -10,10 +10,6 @@ use std::{collections::HashSet, fs, io, path::PathBuf};
 
 use frontmatter::{Frontmatter, FrontmatterItem};
 
-#[cfg(feature = "python")]
-use pyo3::{prelude::*, types::*, IntoPyObjectExt};
-use yaml_rust2::{Yaml, YamlLoader};
-
 /// A note in an Obsidian vault.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
@@ -32,185 +28,6 @@ pub struct Note {
     pub backlinks: HashSet<String>,
     /// Set of links to other notes or attachments
     pub links: HashSet<String>,
-}
-
-// Python specific methods
-#[cfg(feature = "python")]
-#[pymethods]
-impl Note {
-    /// Get a string representation of the note.
-    pub fn __repr__(&self) -> String {
-        format!("Note({})", self.name)
-    }
-
-    /// Get the length of the note in characters.
-    pub fn __len__(&self) -> usize {
-        self.length
-    }
-
-    /// Get contents note as a list of tokens.
-    #[pyo3(name = "tokens")]
-    pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
-        match self.tokens() {
-            Ok(ts) => Ok(ts.collect()),
-            Err(e) => Err(e.into()),
-        }
-    }
-
-    /// Get the absolute path to the note file.
-    #[pyo3(name = "full_path")]
-    pub fn py_full_path(&self) -> PathBuf {
-        self.full_path()
-    }
-
-    /// Get the frontmatter as a python dictionary
-    #[pyo3(name = "frontmatter")]
-    pub fn py_frontmatter<'py>(
-        &self,
-        py: Python<'py>,
-    ) -> PyResult<Option<Bound<'py, Frontmatter>>> {
-        match self.frontmatter() {
-            Ok(Some(f)) => Ok(Some(Bound::new(py, f)?)),
-            Ok(None) => Ok(None),
-            Err(e) => Err(pyo3::exceptions::PyException::new_err(e)),
-        }
-    }
-
-    /// Get the normalized name of the node.
-    #[pyo3(name = "normalized_name")]
-    pub fn py_normalized_name(&self) -> String {
-        normalize(self.name.clone())
-    }
-
-    /// Read the contents of the note and return it as a string
-    #[pyo3(name = "read")]
-    pub fn py_read(&self) -> io::Result<String> {
-        self.contents()
-    }
-
-    /// Inserts a string at a position in the note.
-    #[pyo3(name = "insert_at")]
-    pub fn py_insert_at(&mut self, mut pos: isize, text: String) -> PyResult<()> {
-        if pos < 0 {
-            pos += self.length as isize;
-        }
-        let pos = usize::try_from(pos).map_err(|_| {
-            pyo3::exceptions::PyIndexError::new_err(format!(
-                "Note position out of range. The note is {} characters long.",
-                self.length
-            ))
-        })?;
-        self.insert_at(pos, text).map_err(PyErr::from)
-    }
-
-    /// Replaces the text between two positions in the note with the given text.
-    #[pyo3(name = "replace_between")]
-    pub fn py_replace_between(&mut self, start: usize, end: usize, text: String) -> PyResult<()> {
-        self.py_replace_span(Span { start, end }, text)
-    }
-
-    /// Replaces a `Span` in the note with the given text.
-    /// This can be used to replace tokens within the note.
-    #[pyo3(name = "replace_span")]
-    pub fn py_replace_span(&mut self, span: Span, text: String) -> PyResult<()> {
-        self.replace_span(span, text).map_err(PyErr::from)
-    }
-
-    /// Inserts a string into the note *before* a given token.
-    ///
-    /// NOTE: The token should originate from this note as this
-    /// method used the internal `Span` of the note to determine
-    /// the insertion position.
-    #[pyo3(signature = (token, text, offset=0))]
-    pub fn insert_before_token(
-        &mut self,
-        token: Token,
-        text: String,
-        offset: isize,
-    ) -> PyResult<()> {
-        let pos = token.span().start as isize + offset;
-        self.py_insert_at(pos, text)
-    }
-
-    /// Insert a string into the note *after* a given token.
-    ///
-    /// NOTE: The token should originate from this note as this
-    /// method used the internal `Span` of the note to determine
-    /// the insertion position.
-    #[pyo3(signature = (token, text, offset=0))]
-    pub fn insert_after_token(
-        &mut self,
-        token: Token,
-        text: String,
-        offset: isize,
-    ) -> PyResult<()> {
-        let pos = token.span().end as isize + offset;
-        self.py_insert_at(pos, text)
-    }
-}
-
-fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
-    let yaml = YamlLoader::load_from_str(frontmatter)
-        .map_err(|e| format!("Could not parse frontmatter: {}", e))?;
-
-    if yaml.is_empty() {
-        return Ok(Frontmatter::new());
-    }
-
-    if yaml.len() > 1 {
-        eprintln!("WARNING: Multiple YAML documents found in frontmatter of note. Only using the first one.")
-    }
-
-    let root = match yaml.into_iter().next().unwrap() {
-        Yaml::Hash(root) => root,
-        other => {
-            return Err(format!(
-                "Frontmatter must be a key-value (Hash) object, not '{:?}'",
-                other
-            ))
-        }
-    };
-
-    let items = root
-        .into_iter()
-        .map(|(k, v)| {
-            let key = k
-                .as_str()
-                .ok_or_else(|| format!("Frontmatter keys must be a string, not '{:?}'", k))?;
-            let value = FrontmatterItem::from(v);
-            Ok((key.to_string(), value))
-        })
-        .collect::<Result<Vec<(String, FrontmatterItem)>, String>>()?;
-
-    Ok(Frontmatter::from(items))
-}
-
-/// Convert a `Yaml` object into a python object
-#[cfg(feature = "python")]
-pub fn yaml_to_python<'py>(py: Python<'py>, yaml: Yaml) -> PyResult<Bound<'py, PyAny>> {
-    match yaml {
-        Yaml::Real(_) => yaml.as_f64().unwrap().into_bound_py_any(py),
-        Yaml::Integer(i) => i.into_bound_py_any(py),
-        Yaml::String(s) => s.into_bound_py_any(py),
-        Yaml::Boolean(b) => b.into_bound_py_any(py),
-        Yaml::Array(yamls) => {
-            let list = PyList::empty(py);
-            for yaml in yamls {
-                list.append(yaml_to_python(py, yaml)?)?;
-            }
-            Ok((*list).clone())
-        }
-        Yaml::Hash(map) => {
-            let dict = PyDict::new(py);
-            for (k, v) in map {
-                let k = yaml_to_python(py, k)?;
-                let v = yaml_to_python(py, v)?;
-                dict.set_item(k, v)?;
-            }
-            dict.into_bound_py_any(py)
-        }
-        Yaml::Alias(_) | Yaml::Null | Yaml::BadValue => Ok(PyNone::get(py).as_any().clone()),
-    }
 }
 
 // Rust specific methods
@@ -237,6 +54,30 @@ impl Note {
         let frontmatter = parse_frontmatter(&raw)
             .map_err(|e| format!("Could not parse frontmatter in note '{}': {}", self.name, e))?;
         Ok(Some(frontmatter))
+    }
+
+    /// Set the frontmatter of the note. If the note already has frontmatter,
+    /// it will be replaced with the new data.
+    pub fn set_frontmatter(&mut self, frontmatter: Frontmatter) -> Result<(), String> {
+        let yaml = frontmatter.to_yaml(2, frontmatter::ListStyle::Dashed)?;
+        let mut contents = self
+            .contents()
+            .map_err(|e| format!("Could not read contents of note '{}': {}", self.name, e))?;
+
+        match self.frontmatter_string() {
+            Some(s) => {
+                contents = format!("---\n{}\n---\n{}", yaml, &contents[s.len()..]);
+                fs::write(self.full_path(), contents).map_err(|e| {
+                    format!("Could not write frontmatter to note '{}': {}", self.name, e)
+                })
+            }
+            None => {
+                contents = format!("---\n{}\n---\n{}", yaml, contents);
+                fs::write(self.full_path(), contents).map_err(|e| {
+                    format!("Could not write frontmatter to note '{}': {}", self.name, e)
+                })
+            }
+        }
     }
 
     /// Now deep is the note within the vault
@@ -376,5 +217,195 @@ impl Note {
                 | Token::TemplaterCommand { .. } => {}
             }
         }
+    }
+}
+
+#[cfg(feature = "python")]
+use pyo3::{prelude::*, types::*, IntoPyObjectExt};
+use yaml_rust2::{Yaml, YamlLoader};
+
+// Python specific methods
+#[cfg(feature = "python")]
+#[pymethods]
+impl Note {
+    /// Get a string representation of the note.
+    pub fn __repr__(&self) -> String {
+        format!("Note({})", self.name)
+    }
+
+    /// Get the length of the note in characters.
+    pub fn __len__(&self) -> usize {
+        self.length
+    }
+
+    /// Get contents note as a list of tokens.
+    #[pyo3(name = "tokens")]
+    pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
+        match self.tokens() {
+            Ok(ts) => Ok(ts.collect()),
+            Err(e) => Err(e.into()),
+        }
+    }
+
+    /// Get the absolute path to the note file.
+    #[pyo3(name = "full_path")]
+    pub fn py_full_path(&self) -> PathBuf {
+        self.full_path()
+    }
+
+    /// Get the frontmatter as a python dictionary
+    #[pyo3(name = "frontmatter")]
+    pub fn py_frontmatter<'py>(
+        &self,
+        py: Python<'py>,
+    ) -> PyResult<Option<Bound<'py, Frontmatter>>> {
+        match self.frontmatter() {
+            Ok(Some(f)) => Ok(Some(Bound::new(py, f)?)),
+            Ok(None) => Ok(None),
+            Err(e) => Err(pyo3::exceptions::PyException::new_err(e)),
+        }
+    }
+
+    /// Set the frontmatter of the note from a python dictionary.
+    #[pyo3(name = "set_frontmatter")]
+    pub fn py_set_frontmatter(&mut self, frontmatter: Frontmatter) -> PyResult<()> {
+        self.set_frontmatter(frontmatter)
+            .map_err(pyo3::exceptions::PyException::new_err)
+    }
+
+    /// Get the normalized name of the node.
+    #[pyo3(name = "normalized_name")]
+    pub fn py_normalized_name(&self) -> String {
+        normalize(self.name.clone())
+    }
+
+    /// Read the contents of the note and return it as a string
+    #[pyo3(name = "read")]
+    pub fn py_read(&self) -> io::Result<String> {
+        self.contents()
+    }
+
+    /// Inserts a string at a position in the note.
+    #[pyo3(name = "insert_at")]
+    pub fn py_insert_at(&mut self, mut pos: isize, text: String) -> PyResult<()> {
+        if pos < 0 {
+            pos += self.length as isize;
+        }
+        let pos = usize::try_from(pos).map_err(|_| {
+            pyo3::exceptions::PyIndexError::new_err(format!(
+                "Note position out of range. The note is {} characters long.",
+                self.length
+            ))
+        })?;
+        self.insert_at(pos, text).map_err(PyErr::from)
+    }
+
+    /// Replaces the text between two positions in the note with the given text.
+    #[pyo3(name = "replace_between")]
+    pub fn py_replace_between(&mut self, start: usize, end: usize, text: String) -> PyResult<()> {
+        self.py_replace_span(Span { start, end }, text)
+    }
+
+    /// Replaces a `Span` in the note with the given text.
+    /// This can be used to replace tokens within the note.
+    #[pyo3(name = "replace_span")]
+    pub fn py_replace_span(&mut self, span: Span, text: String) -> PyResult<()> {
+        self.replace_span(span, text).map_err(PyErr::from)
+    }
+
+    /// Inserts a string into the note *before* a given token.
+    ///
+    /// NOTE: The token should originate from this note as this
+    /// method used the internal `Span` of the note to determine
+    /// the insertion position.
+    #[pyo3(signature = (token, text, offset=0))]
+    pub fn insert_before_token(
+        &mut self,
+        token: Token,
+        text: String,
+        offset: isize,
+    ) -> PyResult<()> {
+        let pos = token.span().start as isize + offset;
+        self.py_insert_at(pos, text)
+    }
+
+    /// Insert a string into the note *after* a given token.
+    ///
+    /// NOTE: The token should originate from this note as this
+    /// method used the internal `Span` of the note to determine
+    /// the insertion position.
+    #[pyo3(signature = (token, text, offset=0))]
+    pub fn insert_after_token(
+        &mut self,
+        token: Token,
+        text: String,
+        offset: isize,
+    ) -> PyResult<()> {
+        let pos = token.span().end as isize + offset;
+        self.py_insert_at(pos, text)
+    }
+}
+
+fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
+    let yaml = YamlLoader::load_from_str(frontmatter)
+        .map_err(|e| format!("Could not parse frontmatter: {}", e))?;
+
+    if yaml.is_empty() {
+        return Ok(Frontmatter::new());
+    }
+
+    if yaml.len() > 1 {
+        eprintln!("WARNING: Multiple YAML documents found in frontmatter of note. Only using the first one.")
+    }
+
+    let root = match yaml.into_iter().next().unwrap() {
+        Yaml::Hash(root) => root,
+        other => {
+            return Err(format!(
+                "Frontmatter must be a key-value (Hash) object, not '{:?}'",
+                other
+            ))
+        }
+    };
+
+    let items = root
+        .into_iter()
+        .map(|(k, v)| {
+            let key = k
+                .as_str()
+                .ok_or_else(|| format!("Frontmatter keys must be a string, not '{:?}'", k))?;
+            let value = FrontmatterItem::from(v);
+            Ok((key.to_string(), value))
+        })
+        .collect::<Result<Vec<(String, FrontmatterItem)>, String>>()?;
+
+    Ok(Frontmatter::from(items))
+}
+
+/// Convert a `Yaml` object into a python object
+#[cfg(feature = "python")]
+pub fn yaml_to_python<'py>(py: Python<'py>, yaml: Yaml) -> PyResult<Bound<'py, PyAny>> {
+    match yaml {
+        Yaml::Real(_) => yaml.as_f64().unwrap().into_bound_py_any(py),
+        Yaml::Integer(i) => i.into_bound_py_any(py),
+        Yaml::String(s) => s.into_bound_py_any(py),
+        Yaml::Boolean(b) => b.into_bound_py_any(py),
+        Yaml::Array(yamls) => {
+            let list = PyList::empty(py);
+            for yaml in yamls {
+                list.append(yaml_to_python(py, yaml)?)?;
+            }
+            Ok((*list).clone())
+        }
+        Yaml::Hash(map) => {
+            let dict = PyDict::new(py);
+            for (k, v) in map {
+                let k = yaml_to_python(py, k)?;
+                let v = yaml_to_python(py, v)?;
+                dict.set_item(k, v)?;
+            }
+            dict.into_bound_py_any(py)
+        }
+        Yaml::Alias(_) | Yaml::Null | Yaml::BadValue => Ok(PyNone::get(py).as_any().clone()),
     }
 }

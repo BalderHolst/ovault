@@ -246,6 +246,71 @@ impl Frontmatter {
     pub fn iter(&self) -> impl Iterator<Item = (&str, &FrontmatterItem)> {
         self.items.iter().map(|(k, v)| (k.as_str(), v))
     }
+
+    // TODO: Maybe use "[]" style for small lists without maps?
+    /// Converts the frontmatter to a YAML string representation.
+    pub fn to_yaml(&self, indent: usize, list_style: ListStyle) -> Result<String, String> {
+        fn to_yaml(
+            indent: usize,
+            list_style: ListStyle,
+            item: FrontmatterItem,
+            level: usize,
+        ) -> Result<String, String> {
+            Ok(match item {
+                FrontmatterItem::Real(f) => f.to_string(),
+                FrontmatterItem::Integer(i) => i.to_string(),
+                FrontmatterItem::String(s) => s,
+                FrontmatterItem::Boolean(b) => b.to_string(),
+                FrontmatterItem::Array(list) => match list_style {
+                    ListStyle::Dashed => {
+                        let mut s = "\n".to_string();
+                        let len = list.len();
+                        for (i, item) in list.into_iter().enumerate() {
+                            s += &" ".repeat(indent * level);
+                            s += "- ";
+                            s += &to_yaml(indent, list_style, item, level + 1)?;
+                            if i < len - 1 {
+                                s += "\n";
+                            }
+                        }
+                        s
+                    }
+                    ListStyle::Bracketed => {
+                        let mut s = "[".to_string();
+                        let len = list.len();
+                        for (i, item) in list.into_iter().enumerate() {
+                            if matches!(item, FrontmatterItem::Hash(_)) {
+                                return Err(
+                                    "Nested hashes (key-value pairs) are not supported in bracketed lists".to_string(),
+                                );
+                            }
+                            s += &to_yaml(indent, list_style, item, level)?;
+                            if i < len - 1 {
+                                s += ", ";
+                            }
+                        }
+                        s += "]";
+                        s
+                    }
+                },
+                FrontmatterItem::Hash(frontmatter) => {
+                    let mut s = String::new();
+                    for (i, (k, v)) in frontmatter.items.iter().enumerate() {
+                        s += &" ".repeat(indent * level);
+                        s += &format!("{}: ", k);
+                        s += &to_yaml(indent, list_style, v.clone(), level + 1)?;
+                        if i < frontmatter.items.len() - 1 {
+                            s += "\n";
+                        }
+                    }
+                    s
+                }
+                FrontmatterItem::Null => "null".to_string(),
+            })
+        }
+
+        to_yaml(indent, list_style, FrontmatterItem::Hash(self.clone()), 0)
+    }
 }
 
 impl IntoIterator for Frontmatter {
@@ -375,64 +440,8 @@ impl Frontmatter {
     #[pyo3(signature = (indent = 2, list_style = ListStyle::default()))]
     #[pyo3(name = "yaml")]
     pub fn py_yaml(&self, indent: usize, list_style: ListStyle) -> PyResult<String> {
-        fn to_yaml(
-            indent: usize,
-            list_style: ListStyle,
-            item: FrontmatterItem,
-            level: usize,
-        ) -> PyResult<String> {
-            Ok(match item {
-                FrontmatterItem::Real(f) => f.to_string(),
-                FrontmatterItem::Integer(i) => i.to_string(),
-                FrontmatterItem::String(s) => s,
-                FrontmatterItem::Boolean(b) => b.to_string(),
-                FrontmatterItem::Array(list) => match list_style {
-                    ListStyle::Dashed => {
-                        let mut s = "\n".to_string();
-                        let len = list.len();
-                        for (i, item) in list.into_iter().enumerate() {
-                            s += &" ".repeat(indent * level);
-                            s += "- ";
-                            s += &to_yaml(indent, list_style, item, level + 1)?;
-                            if i < len - 1 {
-                                s += "\n";
-                            }
-                        }
-                        s
-                    }
-                    ListStyle::Bracketed => {
-                        let mut s = "[".to_string();
-                        let len = list.len();
-                        for (i, item) in list.into_iter().enumerate() {
-                            if matches!(item, FrontmatterItem::Hash(_)) {
-                                return Err(pyo3::exceptions::PyTypeError::new_err(
-                                    "Nested hashes (key-value pairs) are not supported in bracketed lists",
-                                ));
-                            }
-                            s += &to_yaml(indent, list_style, item, level)?;
-                            if i < len - 1 {
-                                s += ", ";
-                            }
-                        }
-                        s += "]";
-                        s
-                    }
-                },
-                FrontmatterItem::Hash(frontmatter) => {
-                    let mut s = String::new();
-                    for (k, v) in frontmatter.items.iter() {
-                        s += &" ".repeat(indent * level);
-                        s += &format!("{}: ", k);
-                        s += &to_yaml(indent, list_style, v.clone(), level + 1)?;
-                        s += "\n";
-                    }
-                    s
-                }
-                FrontmatterItem::Null => "null".to_string(),
-            })
-        }
-
-        to_yaml(indent, list_style, FrontmatterItem::Hash(self.clone()), 0)
+        self.to_yaml(indent, list_style)
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
     }
 
     /// Sets an item in the frontmatter, similar to dictionary assignment.
