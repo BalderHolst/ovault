@@ -1,3 +1,5 @@
+//! This module defines the [Frontmatter] struct, which represents the frontmatter of a note.
+
 #[cfg(feature = "python")]
 use pyo3::{prelude::*, pyclass, pymethods, types::*};
 

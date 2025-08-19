@@ -1,3 +1,5 @@
+//! This module defines the `Lexer` for parsing markdown notes into tokens.
+
 use std::{collections::VecDeque, fmt};
 
 #[cfg(feature = "python")]
@@ -465,6 +467,7 @@ impl Token {
 struct Mark(usize);
 impl Copy for Mark {}
 
+/// A lexer for parsing markdown into tokens.
 pub struct Lexer {
     cursor: usize,
     slow_cursor: usize,
@@ -473,6 +476,7 @@ pub struct Lexer {
 }
 
 impl Lexer {
+    /// Create a new lexer with the given text.
     pub fn new<S: ToString>(text: S) -> Self {
         let text = text.to_string().char_indices().collect::<Vec<_>>();
         Self {
@@ -1101,7 +1105,9 @@ impl Iterator for Lexer {
     }
 }
 
+/// Trait for converting an item into a Markdown string representation.
 pub trait ToMarkdown {
+    /// Converts the item to a Markdown string.
     fn to_markdown(&self) -> String;
 }
 

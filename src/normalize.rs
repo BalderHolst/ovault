@@ -1,3 +1,5 @@
+//! Defines the `normalize` function to normalize note names for Obsidian links.
+
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 

@@ -1,3 +1,5 @@
+//! Module for handling notes in an Obsidian vault.
+
 pub mod frontmatter;
 
 use crate::{
@@ -223,6 +225,7 @@ fn frontmatter_to_python<'py>(
 
 // Rust specific methods
 impl Note {
+    /// Get the full absolute path to the note file
     pub fn full_path(&self) -> PathBuf {
         self.vault_path.join(&self.path)
     }
@@ -256,15 +259,18 @@ impl Note {
         fs::read_to_string(self.full_path())
     }
 
+    /// Get an iterator if tokens from the note contents.
     pub fn tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
         let contents = self.contents()?;
         Ok(Lexer::new(contents))
     }
 
+    /// Add a note to the internal list of linked notes.
     pub fn add_link(&mut self, to: String) {
         self.links.insert(to);
     }
 
+    /// Add a backlink to the note's list of backlinks.
     pub fn add_backlink(&mut self, from: String) {
         self.backlinks.insert(from);
     }

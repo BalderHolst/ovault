@@ -1,3 +1,5 @@
+//! This module provides functionality to work with an Obsidian vault, including indexing notes and attachments, managing tags, and handling dangling links.
+
 pub mod attachment;
 pub mod note;
 
