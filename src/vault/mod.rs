@@ -19,8 +19,11 @@ use crate::{
     normalize::normalize,
 };
 
-use attachment::Attachment;
-use note::Note;
+pub use attachment::Attachment;
+pub use note::{
+    frontmatter::{Frontmatter, ListStyle},
+    Note,
+};
 
 /// An item in an Obsidian vault can be either a note or an attachment.
 #[derive(Debug, Clone, PartialEq)]

@@ -6,13 +6,9 @@ use crate::{
     lexer::{Lexer, Span, Token},
     normalize::normalize,
 };
-use std::{
-    collections::{HashMap, HashSet},
-    fs, io,
-    path::PathBuf,
-};
+use std::{collections::HashSet, fs, io, path::PathBuf};
 
-type Frontmatter = HashMap<String, Yaml>;
+use frontmatter::{Frontmatter, FrontmatterItem};
 
 #[cfg(feature = "python")]
 use pyo3::{prelude::*, types::*, IntoPyObjectExt};
@@ -69,13 +65,15 @@ impl Note {
 
     /// Get the frontmatter as a python dictionary
     #[pyo3(name = "frontmatter")]
-    pub fn py_frontmatter<'py>(&self, py: Python<'py>) -> PyResult<Option<Bound<'py, PyDict>>> {
-        let frontmatter = match self.frontmatter() {
-            Ok(Some(f)) => f,
-            Ok(None) => return Ok(None),
-            Err(e) => return Err(pyo3::exceptions::PyException::new_err(e)),
-        };
-        frontmatter_to_python(py, frontmatter).map(Some)
+    pub fn py_frontmatter<'py>(
+        &self,
+        py: Python<'py>,
+    ) -> PyResult<Option<Bound<'py, Frontmatter>>> {
+        match self.frontmatter() {
+            Ok(Some(f)) => Ok(Some(Bound::new(py, f)?)),
+            Ok(None) => Ok(None),
+            Err(e) => Err(pyo3::exceptions::PyException::new_err(e)),
+        }
     }
 
     /// Get the normalized name of the node.
@@ -156,7 +154,7 @@ fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
         .map_err(|e| format!("Could not parse frontmatter: {}", e))?;
 
     if yaml.is_empty() {
-        return Ok(HashMap::new());
+        return Ok(Frontmatter::new());
     }
 
     if yaml.len() > 1 {
@@ -173,14 +171,18 @@ fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
         }
     };
 
-    root.into_iter()
+    let items = root
+        .into_iter()
         .map(|(k, v)| {
             let key = k
                 .as_str()
                 .ok_or_else(|| format!("Frontmatter keys must be a string, not '{:?}'", k))?;
-            Ok((key.to_string(), v))
+            let value = FrontmatterItem::from(v);
+            Ok((key.to_string(), value))
         })
-        .collect::<Result<Frontmatter, String>>()
+        .collect::<Result<Vec<(String, FrontmatterItem)>, String>>()?;
+
+    Ok(Frontmatter::from(items))
 }
 
 /// Convert a `Yaml` object into a python object
@@ -209,18 +211,6 @@ pub fn yaml_to_python<'py>(py: Python<'py>, yaml: Yaml) -> PyResult<Bound<'py, P
         }
         Yaml::Alias(_) | Yaml::Null | Yaml::BadValue => Ok(PyNone::get(py).as_any().clone()),
     }
-}
-
-#[cfg(feature = "python")]
-fn frontmatter_to_python<'py>(
-    py: Python<'py>,
-    frontmatter: Frontmatter,
-) -> PyResult<Bound<'py, PyDict>> {
-    let dict = PyDict::new(py);
-    for (k, v) in frontmatter {
-        dict.set_item(k, yaml_to_python(py, v)?)?;
-    }
-    Ok(dict)
 }
 
 // Rust specific methods
@@ -342,21 +332,19 @@ impl Note {
                             continue;
                         }
                     };
-                    if let Some(tags) = frontmatter.get("tags").and_then(|tags| tags.as_vec()) {
-                        for tag in tags {
-                            let tag = match tag {
-                                Yaml::String(s) => s,
-                                _ => {
-                                    eprintln!(
-                                        "WARNING: Invalid tag in frontmatter of note '{}': {:?}",
-                                        self.name, tag
-                                    );
-                                    continue;
-                                }
-                            };
-                            self.tags.insert(tag.to_string());
-                        }
+                    let Some(FrontmatterItem::Array(tags)) = frontmatter.get("tags") else {
+                        continue;
                     };
+                    for tag in tags {
+                        let FrontmatterItem::String(tag) = tag else {
+                            eprintln!(
+                                "WARNING: Invalid tag in frontmatter of note '{}': {:?}",
+                                self.name, tag
+                            );
+                            continue;
+                        };
+                        self.tags.insert(tag.clone());
+                    }
                 }
                 Token::Tag { tag, .. } => {
                     self.tags.insert(tag.clone());

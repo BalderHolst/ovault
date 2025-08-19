@@ -2,16 +2,25 @@
 
 #[cfg(feature = "python")]
 use pyo3::{prelude::*, pyclass, pymethods, types::*};
+use yaml_rust2::Yaml;
 
+/// Represents an item in the frontmatter of a note.
 #[derive(Debug, Clone)]
-enum FrontmatterItem {
+pub enum FrontmatterItem {
+    /// A real number (floating point).
     Real(f64),
+    /// An integer number.
     Integer(i64),
+    /// A string value.
     String(String),
+    /// A boolean value.
     Boolean(bool),
+    /// An array of frontmatter items.
     Array(Vec<FrontmatterItem>),
+    /// A hash (key-value pairs) of frontmatter items.
     Hash(Frontmatter),
-    None,
+    /// Represents a `null` YAML value, similar to `None` in Python.
+    Null,
 }
 
 /// Represents the style of lists in frontmatter YAML serialization.
@@ -61,7 +70,46 @@ impl<'py> IntoPyObject<'py> for FrontmatterItem {
                 }
                 list.into_bound_py_any(py)
             }
-            FrontmatterItem::None => PyNone::get(py).into_bound_py_any(py),
+            FrontmatterItem::Null => PyNone::get(py).into_bound_py_any(py),
+        }
+    }
+}
+
+impl From<Vec<FrontmatterItem>> for FrontmatterItem {
+    fn from(items: Vec<FrontmatterItem>) -> Self {
+        FrontmatterItem::Array(items)
+    }
+}
+
+impl From<Vec<(String, FrontmatterItem)>> for FrontmatterItem {
+    fn from(items: Vec<(String, FrontmatterItem)>) -> Self {
+        FrontmatterItem::Hash(Frontmatter { items })
+    }
+}
+
+impl From<Yaml> for FrontmatterItem {
+    fn from(value: Yaml) -> Self {
+        match value {
+            Yaml::Real(_) => Self::Real(value.as_f64().expect("Expected a real number")),
+            Yaml::Integer(i) => Self::Integer(i),
+            Yaml::String(s) => Self::String(s),
+            Yaml::Boolean(b) => Self::Boolean(b),
+            Yaml::Array(yamls) => yamls
+                .into_iter()
+                .map(FrontmatterItem::from)
+                .collect::<Vec<_>>()
+                .into(),
+            Yaml::Hash(map) => map
+                .into_iter()
+                .map(|(k, v)| {
+                    let key = k.as_str().expect("Expected a string key").to_string();
+                    let value = FrontmatterItem::from(v);
+                    (key, value)
+                })
+                .collect::<Vec<_>>()
+                .into(),
+            // Don't know how to handle `Alias` and `BadValue`, so we return None
+            Yaml::Alias(_) | Yaml::Null | Yaml::BadValue => FrontmatterItem::Null,
         }
     }
 }
@@ -96,7 +144,7 @@ impl<'py> FromPyObject<'py> for FrontmatterItem {
                 let map: Frontmatter = obj.extract()?;
                 Ok(FrontmatterItem::Hash(map))
             }
-            obj if obj.is_instance_of::<PyNone>() => Ok(FrontmatterItem::None),
+            obj if obj.is_instance_of::<PyNone>() => Ok(FrontmatterItem::Null),
             other => Err(pyo3::exceptions::PyTypeError::new_err(format!(
                 "Unsupported type for FrontmatterItem: {:?}",
                 other.get_type()
@@ -122,18 +170,10 @@ impl From<Vec<(String, FrontmatterItem)>> for Frontmatter {
     }
 }
 
-#[cfg(feature = "python")]
-#[pymethods]
 impl Frontmatter {
-    /// Creates a new empty `Frontmatter`.
-    #[new]
+    /// Create a new empty [Frontmatter].
     pub fn new() -> Self {
         Frontmatter { items: Vec::new() }
-    }
-
-    /// Creates a copy of this `Frontmatter`.
-    pub fn copy<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, Self>> {
-        Bound::new(py, self.clone())
     }
 
     /// Clears all items
@@ -151,37 +191,26 @@ impl Frontmatter {
         self.items.is_empty()
     }
 
-    /// Checks if the frontmatter contains a specific key.
-    pub fn contains<'py>(&self, key: Bound<'py, PyString>) -> PyResult<bool> {
-        let key: String = key.extract()?;
-        let found = self.items.iter().any(|(k, _)| *k == key);
-        Ok(found)
+    /// Retrieves a reference to the value associated with a specific key.
+    pub fn get(&self, key: &str) -> Option<&FrontmatterItem> {
+        self.items.iter().find(|(k, _)| k == key).map(|(_, v)| v)
     }
 
-    /// Retrieves the value associated with a specific key.
-    pub fn get_item<'py>(
-        &self,
-        py: Python<'py>,
-        key: Bound<'py, PyString>,
-    ) -> PyResult<Option<Bound<'py, PyAny>>> {
-        use pyo3::IntoPyObjectExt;
-        let key: String = key.extract()?;
-        let value = self.items.iter().find(|(k, _)| *k == key).map(|(_, v)| v);
-        match value {
-            Some(v) => Ok(Some(v.clone().into_bound_py_any(py)?)),
-            None => Ok(None),
-        }
+    /// Retrieves a mutable reference to the value associated with a specific key.
+    pub fn get_mut(&mut self, key: &str) -> Option<&mut FrontmatterItem> {
+        self.items
+            .iter_mut()
+            .find(|(k, _)| k == key)
+            .map(|(_, v)| v)
+    }
+
+    /// Checks if the frontmatter contains a specific key.
+    pub fn contains(&self, key: &str) -> bool {
+        self.items.iter().any(|(k, _)| k == key)
     }
 
     /// Sets the value for a specific key, or adds the key-value pair if it does not exist.
-    pub fn set_item<'py>(
-        &mut self,
-        key: Bound<'py, PyString>,
-        value: Bound<'py, PyAny>,
-    ) -> PyResult<()> {
-        let key: String = key.extract()?;
-        let value: FrontmatterItem = value.extract()?;
-
+    pub fn set(&mut self, key: &str, value: FrontmatterItem) {
         let inner_value = self
             .items
             .iter_mut()
@@ -193,44 +222,148 @@ impl Frontmatter {
                 *v = value;
             }
             None => {
-                self.items.push((key, value));
+                self.items.push((key.to_string(), value));
             }
         }
+    }
+
+    /// Deletes a key-value pair from the frontmatter by key.
+    pub fn remove(&mut self, key: &str) {
+        self.items.retain(|(k, _)| *k != key);
+    }
+
+    /// Returns an iterator over the keys in the frontmatter.
+    pub fn keys(&self) -> impl Iterator<Item = &str> {
+        self.items.iter().map(|(k, _)| k.as_str())
+    }
+
+    /// Returns an iterator over the values in the frontmatter.
+    pub fn values(&self) -> impl Iterator<Item = &FrontmatterItem> {
+        self.items.iter().map(|(_, v)| v)
+    }
+
+    /// Returns an iterator over the key-value pairs in the frontmatter.
+    pub fn iter(&self) -> impl Iterator<Item = (&str, &FrontmatterItem)> {
+        self.items.iter().map(|(k, v)| (k.as_str(), v))
+    }
+}
+
+impl IntoIterator for Frontmatter {
+    type Item = (String, FrontmatterItem);
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.items.into_iter()
+    }
+}
+
+#[allow(non_snake_case)]
+#[cfg(feature = "python")]
+#[pymethods]
+impl Frontmatter {
+    /// Creates a new empty `Frontmatter`.
+    #[new]
+    pub fn py_new() -> Self {
+        Self::new()
+    }
+
+    /// Creates a copy of this `Frontmatter`.
+    #[pyo3(name = "copy")]
+    pub fn py_copy<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, Self>> {
+        Bound::new(py, self.clone())
+    }
+
+    /// Clears all items
+    #[pyo3(name = "clear")]
+    pub fn py_clear(&mut self) {
+        self.clear();
+    }
+
+    /// Returns the number of items in the frontmatter.
+    #[pyo3(name = "len")]
+    pub fn py_len(&self) -> usize {
+        self.len()
+    }
+
+    /// Checks if the frontmatter is empty.
+    #[pyo3(name = "is_empty")]
+    pub fn py_is_empty(&self) -> bool {
+        self.is_empty()
+    }
+
+    /// Checks if the frontmatter contains a specific key.
+    #[pyo3(name = "contains")]
+    pub fn py_contains<'py>(&self, key: Bound<'py, PyString>) -> PyResult<bool> {
+        let key: String = key.extract()?;
+        Ok(self.contains(&key))
+    }
+
+    /// Retrieves the value associated with a specific key.
+    #[pyo3(name = "get_item")]
+    pub fn py_get_item<'py>(
+        &self,
+        py: Python<'py>,
+        key: Bound<'py, PyString>,
+    ) -> PyResult<Option<Bound<'py, PyAny>>> {
+        use pyo3::IntoPyObjectExt;
+        let key: String = key.extract()?;
+        let value = self.get(&key);
+        match value {
+            Some(v) => Ok(Some(v.clone().into_bound_py_any(py)?)),
+            None => Ok(None),
+        }
+    }
+
+    /// Sets the value for a specific key, or adds the key-value pair if it does not exist.
+    #[pyo3(name = "set_item")]
+    pub fn py_set_item<'py>(
+        &mut self,
+        key: Bound<'py, PyString>,
+        value: Bound<'py, PyAny>,
+    ) -> PyResult<()> {
+        let key: String = key.extract()?;
+        let value: FrontmatterItem = value.extract()?;
+        self.set(&key, value);
         Ok(())
     }
 
     /// Deletes a key-value pair from the frontmatter by key.
-    pub fn del_item<'py>(&mut self, key: Bound<'py, PyString>) -> PyResult<()> {
+    #[pyo3(name = "del_item")]
+    pub fn py_del_item<'py>(&mut self, key: Bound<'py, PyString>) -> PyResult<()> {
         let key: String = key.to_string();
-        self.items.retain(|(k, _)| *k != key);
+        self.remove(&key);
         Ok(())
     }
 
     /// Returns a list of keys in the frontmatter.
-    pub fn keys<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    #[pyo3(name = "keys")]
+    pub fn py_keys<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
         PyList::new(py, self.items.iter().map(|(k, _)| k.clone()))
     }
 
     /// Returns a list of values in the frontmatter.
-    pub fn values<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    #[pyo3(name = "values")]
+    pub fn py_values<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
         PyList::new(py, self.items.iter().map(|(_, v)| v.clone()))
     }
 
     /// Returns a list of key-value pairs as tuples in the frontmatter.
-    pub fn items<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    #[pyo3(name = "items")]
+    pub fn py_items<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
         let mut py_tuples = Vec::with_capacity(self.items.len());
-        for (k, v) in &self.items {
+        for (k, v) in self.iter() {
             let py_key = PyString::new(py, k);
             let py_value = v.clone().into_pyobject(py)?;
             py_tuples.push((py_key, py_value));
         }
-        PyList::new(py, py_tuples.into_iter())
+        PyList::new(py, py_tuples)
     }
 
     /// Returns a python dictionary representation of the frontmatter.
-    pub fn dict<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
+    #[pyo3(name = "dict")]
+    pub fn py_dict<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
         let dict = PyDict::new(py);
-        for (k, v) in &self.items {
+        for (k, v) in self.iter() {
             let py_key = PyString::new(py, k);
             let py_value = v.clone().into_pyobject(py)?;
             dict.set_item(py_key, py_value)?;
@@ -240,7 +373,8 @@ impl Frontmatter {
 
     /// Converts the frontmatter to a YAML string representation.
     #[pyo3(signature = (indent = 2, list_style = ListStyle::default()))]
-    pub fn yaml(&self, indent: usize, list_style: ListStyle) -> PyResult<String> {
+    #[pyo3(name = "yaml")]
+    pub fn py_yaml(&self, indent: usize, list_style: ListStyle) -> PyResult<String> {
         fn to_yaml(
             indent: usize,
             list_style: ListStyle,
@@ -294,7 +428,7 @@ impl Frontmatter {
                     }
                     s
                 }
-                FrontmatterItem::None => "null".to_string(),
+                FrontmatterItem::Null => "null".to_string(),
             })
         }
 
@@ -302,25 +436,28 @@ impl Frontmatter {
     }
 
     /// Sets an item in the frontmatter, similar to dictionary assignment.
-    pub fn __setitem__<'py>(
+    #[pyo3(name = "__setitem__")]
+    pub fn py___setitem__<'py>(
         &mut self,
         key: Bound<'py, PyString>,
         item: Bound<'py, PyAny>,
     ) -> PyResult<()> {
-        self.set_item(key, item)
+        self.py_set_item(key, item)
     }
 
     /// Gets the value for a specific key, similar to dictionary access.
-    pub fn __getitem__<'py>(
+    #[pyo3(name = "__getitem__")]
+    pub fn py___getitem__<'py>(
         &self,
         py: Python<'py>,
         key: Bound<'py, PyString>,
     ) -> PyResult<Option<Bound<'py, PyAny>>> {
-        self.get_item(py, key)
+        self.py_get_item(py, key)
     }
 
     /// Returns a string representation of the frontmatter, showing its keys.
-    pub fn __repr__<'py>(&self) -> String {
+    #[pyo3(name = "__repr__")]
+    pub fn py___repr__(&self) -> String {
         let keys = self
             .items
             .iter()
@@ -330,12 +467,14 @@ impl Frontmatter {
     }
 
     /// Returns the number of items in the frontmatter
-    pub fn __len__(&self) -> usize {
-        self.len()
+    #[pyo3(name = "__len__")]
+    pub fn py___len__(&self) -> usize {
+        self.py_len()
     }
 
     /// Deletes a key from the frontmatter
-    pub fn __delitem__<'py>(&mut self, key: Bound<'py, PyString>) -> PyResult<()> {
-        self.del_item(key)
+    #[pyo3(name = "__delitem__")]
+    pub fn py___delitem__<'py>(&mut self, key: Bound<'py, PyString>) -> PyResult<()> {
+        self.py_del_item(key)
     }
 }

@@ -51,10 +51,10 @@ mod ovault {
     use Span;
 
     #[pymodule_export]
-    use vault::note::frontmatter::Frontmatter;
+    use vault::Frontmatter;
 
     #[pymodule_export]
-    use vault::note::frontmatter::ListStyle;
+    use vault::ListStyle;
 
     #[pymodule_export]
     use normalize::normalize;
