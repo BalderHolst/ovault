@@ -154,6 +154,7 @@ impl Vault {
         Ok(())
     }
 
+    // TODO: Allow "#tag" syntax for tags
     /// Get all notes that have the given tag.
     #[pyo3(name = "get_notes_by_tag")]
     pub fn py_get_notes_by_tag(&self, tag: &str) -> Vec<Note> {
@@ -431,6 +432,7 @@ impl Vault {
         Ok(())
     }
 
+    // TODO: Allow "#tag" syntax for tags
     /// Rename a tag in the vault.
     pub fn rename_tag(&mut self, old_tag: &str, new_tag: &str) -> io::Result<()> {
         if self.tags.contains_key(new_tag) {

@@ -4,7 +4,6 @@ import shutil
 from pathlib import Path
 
 VAULT_DIR = Path(__file__).parent.parent / "test-vaults"
-TMP_TEST_VAULTS_DIR = Path(__file__).parent / "tmp-test-vaults"
 
 import ovault
 
@@ -18,16 +17,6 @@ def copy_dir_contents(src: Path, dst: Path):
             shutil.copytree(src_path, dst_path, dirs_exist_ok=True)
         elif src_path.is_file():
             shutil.copy2(src_path, dst_path)
-
-@pytest.fixture(scope="session")
-def _cleanup_tmp_vaults():
-    """Session-scoped fixture to clean up the temporary test vaults directory."""
-    if TMP_TEST_VAULTS_DIR.exists():
-        shutil.rmtree(TMP_TEST_VAULTS_DIR)
-    TMP_TEST_VAULTS_DIR.mkdir(parents=True, exist_ok=True)
-    yield
-    if TMP_TEST_VAULTS_DIR.exists():
-        shutil.rmtree(TMP_TEST_VAULTS_DIR)
 
 def get_tmp_vault(tmp_path: Path, vault_name: str) -> ovault.Vault:
     """
