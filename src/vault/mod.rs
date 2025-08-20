@@ -20,10 +20,7 @@ use crate::{
 };
 
 pub use attachment::Attachment;
-pub use note::{
-    frontmatter::{Frontmatter, ListStyle},
-    Note,
-};
+pub use note::{frontmatter::Frontmatter, Note};
 
 /// An item in an Obsidian vault can be either a note or an attachment.
 #[derive(Debug, Clone, PartialEq)]

@@ -4,6 +4,9 @@
 use pyo3::{prelude::*, pyclass, pymethods, types::*};
 use yaml_rust2::Yaml;
 
+/// At what length of an array should we switch to using syntax `-` instead of `[]`?
+const BRACKET_THESHOLD: usize = 3;
+
 /// Represents an item in the frontmatter of a note.
 #[derive(Debug, Clone)]
 pub enum FrontmatterItem {
@@ -21,21 +24,6 @@ pub enum FrontmatterItem {
     Hash(Frontmatter),
     /// Represents a `null` YAML value, similar to `None` in Python.
     Null,
-}
-
-/// Represents the style of lists in frontmatter YAML serialization.
-#[cfg_attr(feature = "python", pyclass)]
-#[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub enum ListStyle {
-    #[default]
-    /// Dashed list style, e.g.:
-    /// - item1
-    /// - item2
-    /// - item3
-    Dashed,
-    /// Bracketed list style, e.g.:
-    /// [item1, item2, item3]
-    Bracketed,
 }
 
 #[cfg(feature = "python")]
@@ -158,8 +146,8 @@ impl<'py> FromPyObject<'py> for FrontmatterItem {
 /// including numbers, strings, booleans, arrays
 ///
 /// The main difference from a standard dictionary is that the order of items is preserved
-#[cfg_attr(feature = "python", pyclass)]
 #[derive(Debug, Default, Clone)]
+#[cfg_attr(feature = "python", pyclass(name = "Frontmatter"))]
 pub struct Frontmatter {
     items: Vec<(String, FrontmatterItem)>,
 }
@@ -249,56 +237,47 @@ impl Frontmatter {
 
     // TODO: Maybe use "[]" style for small lists without maps?
     /// Converts the frontmatter to a YAML string representation.
-    pub fn to_yaml(&self, indent: usize, list_style: ListStyle) -> Result<String, String> {
-        fn to_yaml(
-            indent: usize,
-            list_style: ListStyle,
-            item: FrontmatterItem,
-            level: usize,
-        ) -> Result<String, String> {
-            Ok(match item {
+    pub fn to_yaml(&self, indent: usize) -> String {
+        fn to_yaml(indent: usize, item: FrontmatterItem, level: usize) -> String {
+            match item {
                 FrontmatterItem::Real(f) => f.to_string(),
                 FrontmatterItem::Integer(i) => i.to_string(),
                 FrontmatterItem::String(s) => s,
                 FrontmatterItem::Boolean(b) => b.to_string(),
-                FrontmatterItem::Array(list) => match list_style {
-                    ListStyle::Dashed => {
-                        let mut s = "\n".to_string();
-                        let len = list.len();
-                        for (i, item) in list.into_iter().enumerate() {
-                            s += &" ".repeat(indent * level);
-                            s += "- ";
-                            s += &to_yaml(indent, list_style, item, level + 1)?;
-                            if i < len - 1 {
-                                s += "\n";
-                            }
+                FrontmatterItem::Array(list)
+                    if list.len() <= BRACKET_THESHOLD
+                        && !list.iter().any(|i| matches!(i, FrontmatterItem::Hash(_))) =>
+                {
+                    let mut s = "[".to_string();
+                    let len = list.len();
+                    for (i, item) in list.into_iter().enumerate() {
+                        s += &to_yaml(indent, item, level);
+                        if i < len - 1 {
+                            s += ", ";
                         }
-                        s
                     }
-                    ListStyle::Bracketed => {
-                        let mut s = "[".to_string();
-                        let len = list.len();
-                        for (i, item) in list.into_iter().enumerate() {
-                            if matches!(item, FrontmatterItem::Hash(_)) {
-                                return Err(
-                                    "Nested hashes (key-value pairs) are not supported in bracketed lists".to_string(),
-                                );
-                            }
-                            s += &to_yaml(indent, list_style, item, level)?;
-                            if i < len - 1 {
-                                s += ", ";
-                            }
+                    s += "]";
+                    s
+                }
+                FrontmatterItem::Array(list) => {
+                    let mut s = "\n".to_string();
+                    let len = list.len();
+                    for (i, item) in list.into_iter().enumerate() {
+                        s += &" ".repeat(indent * level);
+                        s += "- ";
+                        s += &to_yaml(indent, item, level + 1);
+                        if i < len - 1 {
+                            s += "\n";
                         }
-                        s += "]";
-                        s
                     }
-                },
+                    s
+                }
                 FrontmatterItem::Hash(frontmatter) => {
                     let mut s = String::new();
                     for (i, (k, v)) in frontmatter.items.iter().enumerate() {
                         s += &" ".repeat(indent * level);
                         s += &format!("{}: ", k);
-                        s += &to_yaml(indent, list_style, v.clone(), level + 1)?;
+                        s += &to_yaml(indent, v.clone(), level + 1);
                         if i < frontmatter.items.len() - 1 {
                             s += "\n";
                         }
@@ -306,10 +285,10 @@ impl Frontmatter {
                     s
                 }
                 FrontmatterItem::Null => "null".to_string(),
-            })
+            }
         }
 
-        to_yaml(indent, list_style, FrontmatterItem::Hash(self.clone()), 0)
+        to_yaml(indent, FrontmatterItem::Hash(self.clone()), 0)
     }
 }
 
@@ -363,6 +342,7 @@ impl Frontmatter {
         Ok(self.contains(&key))
     }
 
+    // TODO: Find a way to return a reference to the item
     /// Retrieves the value associated with a specific key.
     #[pyo3(name = "get_item")]
     pub fn py_get_item<'py>(
@@ -370,11 +350,10 @@ impl Frontmatter {
         py: Python<'py>,
         key: Bound<'py, PyString>,
     ) -> PyResult<Option<Bound<'py, PyAny>>> {
-        use pyo3::IntoPyObjectExt;
         let key: String = key.extract()?;
         let value = self.get(&key);
         match value {
-            Some(v) => Ok(Some(v.clone().into_bound_py_any(py)?)),
+            Some(v) => Ok(Some(v.clone().into_pyobject(py)?)),
             None => Ok(None),
         }
     }
@@ -437,11 +416,10 @@ impl Frontmatter {
     }
 
     /// Converts the frontmatter to a YAML string representation.
-    #[pyo3(signature = (indent = 2, list_style = ListStyle::default()))]
+    #[pyo3(signature = (indent = 2))]
     #[pyo3(name = "yaml")]
-    pub fn py_yaml(&self, indent: usize, list_style: ListStyle) -> PyResult<String> {
-        self.to_yaml(indent, list_style)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+    pub fn py_yaml(&self, indent: usize) -> String {
+        self.to_yaml(indent)
     }
 
     /// Sets an item in the frontmatter, similar to dictionary assignment.

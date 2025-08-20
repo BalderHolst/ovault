@@ -19,13 +19,20 @@ for note in vault.notes():
 
     note_file = Path(note.full_path())
 
-    frontmatter = ovault.Frontmatter()
-    frontmatter['tags'] = ['added-tag', 'this-is-a-frontmatter-tag']
-    frontmatter['created'] = note_file.stat().st_ctime
+    tags = ['added-tag', 'this-is-a-frontmatter-tag']
 
     note_dir = note_file.parent
     if note_dir != vault.path:
-        frontmatter['tags'].append(note_dir.name)
+        print(f"Adding frontmatter to '{note.name}' in directory '{note_dir.name}'")
+        tags = frontmatter['tags']
+        print(f"Current tags: {tags}")
+        tags.append(note_dir.name)
+        print(f"Updated tags: {tags}")
+        print(f"Frontmatter tags: {frontmatter['tags']}")
+
+    frontmatter = ovault.Frontmatter()
+    frontmatter['tags'] = tags
+    frontmatter['created'] = note_file.stat().st_ctime
 
     note.set_frontmatter(frontmatter)
 

@@ -54,9 +54,6 @@ mod ovault {
     use vault::Frontmatter;
 
     #[pymodule_export]
-    use vault::ListStyle;
-
-    #[pymodule_export]
     use normalize::normalize;
 
     #[pyfunction]

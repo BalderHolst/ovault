@@ -58,24 +58,18 @@ impl Note {
 
     /// Set the frontmatter of the note. If the note already has frontmatter,
     /// it will be replaced with the new data.
-    pub fn set_frontmatter(&mut self, frontmatter: Frontmatter) -> Result<(), String> {
-        let yaml = frontmatter.to_yaml(2, frontmatter::ListStyle::Dashed)?;
-        let mut contents = self
-            .contents()
-            .map_err(|e| format!("Could not read contents of note '{}': {}", self.name, e))?;
+    pub fn set_frontmatter(&mut self, frontmatter: Frontmatter) -> io::Result<()> {
+        let yaml = frontmatter.to_yaml(2);
+        let mut contents = self.contents()?;
 
         match self.frontmatter_string() {
             Some(s) => {
                 contents = format!("---\n{}\n---\n{}", yaml, &contents[s.len()..]);
-                fs::write(self.full_path(), contents).map_err(|e| {
-                    format!("Could not write frontmatter to note '{}': {}", self.name, e)
-                })
+                fs::write(self.full_path(), contents)
             }
             None => {
                 contents = format!("---\n{}\n---\n{}", yaml, contents);
-                fs::write(self.full_path(), contents).map_err(|e| {
-                    format!("Could not write frontmatter to note '{}': {}", self.name, e)
-                })
+                fs::write(self.full_path(), contents)
             }
         }
     }
