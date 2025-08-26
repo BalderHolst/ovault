@@ -168,6 +168,14 @@ impl Span {
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 struct LexerSpan(Span);
 
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "python", pyclass(get_all))]
+pub struct ListItem {
+    pub span: Span,
+    pub indent: usize,
+    pub tokens: Vec<Token>,
+}
+
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
 /// ## Example - Token Stream
@@ -194,7 +202,7 @@ struct LexerSpan(Span);
 #[cfg_attr(feature = "python", pyclass)]
 #[derive(Debug, Clone, PartialEq)]
 #[rustfmt::skip]
-pub enum Token   {
+pub enum Token {
 
     /// Represents the frontmatter of a note, which is typically YAML formatted metadata.
     ///
@@ -315,6 +323,11 @@ pub enum Token   {
         link: ExternalLink
     },
 
+    List {
+        span: Span,
+        items: Vec<ListItem>,
+    },
+
     // Represents a Templater command in the note.
     //
     /// Example:
@@ -344,6 +357,7 @@ impl fmt::Display for Token {
             Token::InlineMath { .. } => "InlineMath",
             Token::DisplayMath { .. } => "DisplayMath",
             Token::Divider { .. } => "Divider",
+            Token::List { .. } => "List",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
         write!(f, "{}", name)
@@ -397,6 +411,17 @@ impl Token {
             Token::InlineMath { latex, .. } => format!("InlineMath({})", string(latex)),
             Token::DisplayMath { latex, .. } => format!("DisplayMath({})", string(latex)),
             Token::Divider { .. } => "Divider".to_string(),
+            Token::List { items, .. } => {
+                let item_strs: Vec<String> = items
+                    .iter()
+                    .map(|item| {
+                        let content_strs: Vec<String> =
+                            item.tokens.iter().map(|t| t.__repr__()).collect();
+                        format!("ListItem([{}])", content_strs.join(", "))
+                    })
+                    .collect();
+                format!("List([{}])", item_strs.join(", "))
+            }
             Token::TemplaterCommand { command, .. } => {
                 format!("TemplaterCommand({})", string(command))
             }
@@ -420,6 +445,7 @@ impl Token {
             | Token::Callout { span, .. }
             | Token::InternalLink { span, .. }
             | Token::ExternalLink { span, .. }
+            | Token::List { span, .. }
             | Token::TemplaterCommand { span, .. } => span,
         }
     }
@@ -439,6 +465,7 @@ impl Token {
             | Token::Callout { span, .. }
             | Token::InternalLink { span, .. }
             | Token::ExternalLink { span, .. }
+            | Token::List { span, .. }
             | Token::TemplaterCommand { span, .. } => span,
         }
     }
@@ -458,6 +485,7 @@ impl Token {
             | Token::Divider { .. }
             | Token::InlineMath { .. }
             | Token::DisplayMath { .. }
+            | Token::List { .. }
             | Token::TemplaterCommand { .. } => false,
         }
     }
@@ -1010,6 +1038,56 @@ impl Lexer {
         Some(Token::InlineMath { span, latex })
     }
 
+    fn try_extract_list_item(&mut self) -> Option<ListItem> {
+        self.at_line_start()?;
+
+        let mut indent = 0;
+        while self.consume_if(|c| c == ' ') {
+            indent += 1;
+        }
+
+        self.consume_expected('-')?;
+        self.consume_expected(' ')?;
+
+        let start = self.mark();
+        self.consume_until(|c| c == '\n');
+        self.consume_if(|c| c == '\n');
+        let span = self.span(start);
+        let content = self.extract(start);
+
+        let tokens = Lexer::new(content).collect::<Vec<_>>();
+
+        Some(ListItem {
+            indent,
+            span,
+            tokens,
+        })
+    }
+
+    fn try_lex_list(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        let mut items = Vec::with_capacity(0);
+
+        loop {
+            match self.try_extract_list_item() {
+                Some(item) => {
+                    items.push(item);
+                }
+                None => break,
+            }
+        }
+
+        if items.is_empty() {
+            return None;
+        }
+
+        Some(Token::List {
+            span: self.span(start),
+            items,
+        })
+    }
+
     fn try_lex_templater_command(&mut self) -> Option<Token> {
         let start = self.mark();
 
@@ -1085,6 +1163,7 @@ impl Iterator for Lexer {
             please!(try_lex_quote);
             please!(try_lex_front_matter);
             please!(try_lex_divider);
+            please!(try_lex_list);
             please!(try_lex_templater_command);
 
             // Check if we are at the end of the file
@@ -1514,5 +1593,90 @@ mod tests {
             foldable: true,
         },
     });
+    }
+
+    #[test]
+    fn test_lex_list() {
+        test_lex_token! {
+            "- item 1\n- item 2\n  - subitem\n  - [[link]]"
+            => Token::List {
+                span: Span {
+                    start: 0,
+                    end: 42,
+                },
+                items: vec![
+                    ListItem {
+                        span: Span {
+                            start: 2,
+                            end: 9,
+                        },
+                        indent: 0,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
+                                text: "item 1\n".to_string(),
+                            },
+                        ],
+                    },
+                    ListItem {
+                        span: Span {
+                            start: 11,
+                            end: 18,
+                        },
+                        indent: 0,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
+                                text: "item 2\n".to_string(),
+                            },
+                        ],
+                    },
+                    ListItem {
+                        span: Span {
+                            start: 22,
+                            end: 30,
+                        },
+                        indent: 2,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 8,
+                                },
+                                text: "subitem\n".to_string(),
+                            },
+                        ],
+                    },
+                    ListItem {
+                        span: Span {
+                            start: 34,
+                            end: 42,
+                        },
+                        indent: 2,
+                        tokens: vec![
+                            Token::InternalLink {
+                                span: Span {
+                                    start: 0,
+                                    end: 8,
+                                },
+                                link: InternalLink {
+                                    dest: "link".to_string(),
+                                    position: None,
+                                    show_how: None,
+                                    options: None,
+                                    render: false,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            }
+        };
     }
 }

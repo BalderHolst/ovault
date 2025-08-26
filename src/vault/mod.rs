@@ -336,6 +336,7 @@ impl Vault {
         Ok(abs_path)
     }
 
+    // TODO: Uptate links in inner token lists (e.g. in lists, checklists, blockquotes, etc.)
     /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
     pub fn rename_note(&mut self, old_name: &str, new_name: &str) -> io::Result<()> {
         let normalized_old = normalize(old_name.to_string());
@@ -385,14 +386,19 @@ impl Vault {
                 continue;
             };
 
-            let links = backlink_note.tokens()?.filter_map(|token| {
-                if let Token::InternalLink { span, link, .. } = token {
-                    if normalize(link.dest.clone()) == normalized_old {
-                        return Some((span, link));
+            let mut links = backlink_note
+                .tokens()?
+                .filter_map(|token| {
+                    if let Token::InternalLink { span, link, .. } = token {
+                        if normalize(link.dest.clone()) == normalized_old {
+                            return Some((span, link));
+                        }
                     }
-                }
-                None
-            });
+                    None
+                })
+                .collect::<Vec<_>>();
+
+            links.reverse();
 
             for (span, mut link) in links {
                 let old_dest = link.dest;

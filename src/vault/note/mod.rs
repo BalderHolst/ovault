@@ -201,6 +201,11 @@ impl Note {
                 Token::Quote { tokens, .. } => {
                     self.index_tokens(tokens.iter().cloned());
                 }
+                Token::List { items, .. } => {
+                    for item in items {
+                        self.index_tokens(item.tokens.iter().cloned());
+                    }
+                }
                 Token::Text { .. }
                 | Token::Header { .. }
                 | Token::Divider { .. }
