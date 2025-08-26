@@ -176,6 +176,15 @@ pub struct ListItem {
     pub tokens: Vec<Token>,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "python", pyclass(get_all))]
+pub struct CheckListItem {
+    pub checked: bool,
+    pub span: Span,
+    pub indent: usize,
+    pub tokens: Vec<Token>,
+}
+
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
 /// ## Example - Token Stream
@@ -328,6 +337,11 @@ pub enum Token {
         items: Vec<ListItem>,
     },
 
+    CheckList {
+        span: Span,
+        items: Vec<CheckListItem>,
+    },
+
     // Represents a Templater command in the note.
     //
     /// Example:
@@ -358,6 +372,7 @@ impl fmt::Display for Token {
             Token::DisplayMath { .. } => "DisplayMath",
             Token::Divider { .. } => "Divider",
             Token::List { .. } => "List",
+            Token::CheckList { .. } => "CheckList",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
         write!(f, "{}", name)
@@ -422,6 +437,17 @@ impl Token {
                     .collect();
                 format!("List([{}])", item_strs.join(", "))
             }
+            Token::CheckList { items, .. } => {
+                let item_strs: Vec<String> = items
+                    .iter()
+                    .map(|item| {
+                        let content_strs: Vec<String> =
+                            item.tokens.iter().map(|t| t.__repr__()).collect();
+                        format!("CheckListItem([{}])", content_strs.join(", "))
+                    })
+                    .collect();
+                format!("CheckList([{}])", item_strs.join(", "))
+            }
             Token::TemplaterCommand { command, .. } => {
                 format!("TemplaterCommand({})", string(command))
             }
@@ -446,6 +472,7 @@ impl Token {
             | Token::InternalLink { span, .. }
             | Token::ExternalLink { span, .. }
             | Token::List { span, .. }
+            | Token::CheckList { span, .. }
             | Token::TemplaterCommand { span, .. } => span,
         }
     }
@@ -466,6 +493,7 @@ impl Token {
             | Token::InternalLink { span, .. }
             | Token::ExternalLink { span, .. }
             | Token::List { span, .. }
+            | Token::CheckList { span, .. }
             | Token::TemplaterCommand { span, .. } => span,
         }
     }
@@ -486,6 +514,7 @@ impl Token {
             | Token::InlineMath { .. }
             | Token::DisplayMath { .. }
             | Token::List { .. }
+            | Token::CheckList { .. }
             | Token::TemplaterCommand { .. } => false,
         }
     }
@@ -1038,6 +1067,36 @@ impl Lexer {
         Some(Token::InlineMath { span, latex })
     }
 
+    fn try_extract_checklist_item(&mut self) -> Option<CheckListItem> {
+        self.at_line_start()?;
+
+        let mut indent = 0;
+        while self.consume_if(|c| c == ' ') {
+            indent += 1;
+        }
+
+        self.consume_expected('-')?;
+        self.consume_expected(' ')?;
+        self.consume_expected('[')?;
+        let checked = self.consume()? != ' ';
+        self.consume_expected(']')?;
+
+        let start = self.mark();
+        self.consume_until(|c| c == '\n');
+        self.consume_if(|c| c == '\n');
+        let span = self.span(start);
+        let content = self.extract(start);
+
+        let tokens = Lexer::new(content).collect::<Vec<_>>();
+
+        Some(CheckListItem {
+            checked,
+            indent,
+            span,
+            tokens,
+        })
+    }
+
     fn try_extract_list_item(&mut self) -> Option<ListItem> {
         self.at_line_start()?;
 
@@ -1064,18 +1123,31 @@ impl Lexer {
         })
     }
 
+    fn try_lex_checklist(&mut self) -> Option<Token> {
+        let start = self.mark();
+        let mut items = Vec::with_capacity(0);
+
+        while let Some(item) = self.try_extract_checklist_item() {
+            items.push(item);
+        }
+
+        if items.is_empty() {
+            return None;
+        }
+
+        Some(Token::CheckList {
+            span: self.span(start),
+            items,
+        })
+    }
+
     fn try_lex_list(&mut self) -> Option<Token> {
         let start = self.mark();
 
         let mut items = Vec::with_capacity(0);
 
-        loop {
-            match self.try_extract_list_item() {
-                Some(item) => {
-                    items.push(item);
-                }
-                None => break,
-            }
+        while let Some(item) = self.try_extract_list_item() {
+            items.push(item);
         }
 
         if items.is_empty() {
@@ -1163,6 +1235,7 @@ impl Iterator for Lexer {
             please!(try_lex_quote);
             please!(try_lex_front_matter);
             please!(try_lex_divider);
+            please!(try_lex_checklist);
             please!(try_lex_list);
             please!(try_lex_templater_command);
 
@@ -1664,6 +1737,102 @@ mod tests {
                                 span: Span {
                                     start: 0,
                                     end: 8,
+                                },
+                                link: InternalLink {
+                                    dest: "link".to_string(),
+                                    position: None,
+                                    show_how: None,
+                                    options: None,
+                                    render: false,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            }
+        };
+    }
+
+    #[test]
+    fn test_lex_checklist() {
+        test_lex_token! {
+            "- [x] done item\n- [ ] todo item\n  - [ ] subitem\n  - [X] [[link]]"
+            => Token::CheckList {
+                span: Span {
+                    start: 0,
+                    end: 64,
+                },
+                items: vec![
+                    CheckListItem {
+                        checked: true,
+                        span: Span {
+                            start: 5,
+                            end: 16,
+                        },
+                        indent: 0,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 11,
+                                },
+                                text: " done item\n".to_string(),
+                            },
+                        ],
+                    },
+                    CheckListItem {
+                        checked: false,
+                        span: Span {
+                            start: 21,
+                            end: 32,
+                        },
+                        indent: 0,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 11,
+                                },
+                                text: " todo item\n".to_string(),
+                            },
+                        ],
+                    },
+                    CheckListItem {
+                        checked: false,
+                        span: Span {
+                            start: 39,
+                            end: 48,
+                        },
+                        indent: 2,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 9,
+                                },
+                                text: " subitem\n".to_string(),
+                            },
+                        ],
+                    },
+                    CheckListItem {
+                        checked: true,
+                        span: Span {
+                            start: 55,
+                            end: 64,
+                        },
+                        indent: 2,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 1,
+                                },
+                                text: " ".to_string(),
+                            },
+                            Token::InternalLink {
+                                span: Span {
+                                    start: 1,
+                                    end: 9,
                                 },
                                 link: InternalLink {
                                     dest: "link".to_string(),
