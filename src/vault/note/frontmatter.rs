@@ -344,8 +344,8 @@ impl Frontmatter {
 
     // TODO: Find a way to return a reference to the item
     /// Retrieves the value associated with a specific key.
-    #[pyo3(name = "get_item")]
-    pub fn py_get_item<'py>(
+    #[pyo3(name = "get")]
+    pub fn py_get<'py>(
         &self,
         py: Python<'py>,
         key: Bound<'py, PyString>,
@@ -359,8 +359,8 @@ impl Frontmatter {
     }
 
     /// Sets the value for a specific key, or adds the key-value pair if it does not exist.
-    #[pyo3(name = "set_item")]
-    pub fn py_set_item<'py>(
+    #[pyo3(name = "set")]
+    pub fn py_set<'py>(
         &mut self,
         key: Bound<'py, PyString>,
         value: Bound<'py, PyAny>,
@@ -372,8 +372,8 @@ impl Frontmatter {
     }
 
     /// Deletes a key-value pair from the frontmatter by key.
-    #[pyo3(name = "del_item")]
-    pub fn py_del_item<'py>(&mut self, key: Bound<'py, PyString>) -> PyResult<()> {
+    #[pyo3(name = "remove")]
+    pub fn py_remove<'py>(&mut self, key: Bound<'py, PyString>) -> PyResult<()> {
         let key: String = key.to_string();
         self.remove(&key);
         Ok(())
@@ -422,35 +422,15 @@ impl Frontmatter {
         self.to_yaml(indent)
     }
 
-    /// Sets an item in the frontmatter, similar to dictionary assignment.
-    #[pyo3(name = "__setitem__")]
-    pub fn py___setitem__<'py>(
-        &mut self,
-        key: Bound<'py, PyString>,
-        item: Bound<'py, PyAny>,
-    ) -> PyResult<()> {
-        self.py_set_item(key, item)
-    }
-
-    /// Gets the value for a specific key, similar to dictionary access.
-    #[pyo3(name = "__getitem__")]
-    pub fn py___getitem__<'py>(
-        &self,
-        py: Python<'py>,
-        key: Bound<'py, PyString>,
-    ) -> PyResult<Option<Bound<'py, PyAny>>> {
-        self.py_get_item(py, key)
-    }
-
     /// Returns a string representation of the frontmatter, showing its keys.
     #[pyo3(name = "__repr__")]
     pub fn py___repr__(&self) -> String {
-        let keys = self
+        let pairs = self
             .items
             .iter()
-            .map(|(k, _)| k.as_str())
+            .map(|(k, v)| format!("{}: {:?}", k, v))
             .collect::<Vec<_>>();
-        format!("Frontmatter(keys: {})", keys.join(", "))
+        format!("Frontmatter([{}])", pairs.join(", "))
     }
 
     /// Returns the number of items in the frontmatter
@@ -462,6 +442,6 @@ impl Frontmatter {
     /// Deletes a key from the frontmatter
     #[pyo3(name = "__delitem__")]
     pub fn py___delitem__<'py>(&mut self, key: Bound<'py, PyString>) -> PyResult<()> {
-        self.py_del_item(key)
+        self.py_remove(key)
     }
 }
