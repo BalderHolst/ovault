@@ -110,17 +110,19 @@ impl Note {
     }
 
     /// Replace a span of text withing the note with a new string.
-    pub fn replace_span(&mut self, span: &Span, text: String) -> io::Result<()> {
+    pub fn replace_span(&mut self, span: Span, text: String) -> io::Result<()> {
         let path = self.full_path();
-        let mut contents = fs::read_to_string(path.clone())?;
-
-        let parts = span.byte_indexes(&contents);
-        for (start, end) in parts.into_iter().rev() {
-            contents = format!("{}{}{}", &contents[..start], text, &contents[end..]);
+        let contents = fs::read_to_string(path.clone())?;
+        if span.start > span.end || span.end > contents.len() {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("Span {span:?} is out of bounds"),
+            ));
         }
-
-        self.index_contents(contents.clone());
-        fs::write(path, contents)
+        let (start, end) = span.byte_indexes(&contents);
+        let new_contents = format!("{}{}{}", &contents[..start], text, &contents[end..]);
+        self.index_contents(new_contents.clone());
+        fs::write(path, new_contents)
     }
 
     /// Update `tags` and `links` fields from note contents
@@ -301,14 +303,14 @@ impl Note {
     /// Replaces the text between two positions in the note with the given text.
     #[pyo3(name = "replace_between")]
     pub fn py_replace_between(&mut self, start: usize, end: usize, text: String) -> PyResult<()> {
-        self.py_replace_span(Span::new(start, end), text)
+        self.py_replace_span(Span { start, end }, text)
     }
 
     /// Replaces a `Span` in the note with the given text.
     /// This can be used to replace tokens within the note.
     #[pyo3(name = "replace_span")]
     pub fn py_replace_span(&mut self, span: Span, text: String) -> PyResult<()> {
-        self.replace_span(&span, text).map_err(PyErr::from)
+        self.replace_span(span, text).map_err(PyErr::from)
     }
 
     /// Inserts a string into the note *before* a given token.
@@ -323,8 +325,7 @@ impl Note {
         text: String,
         offset: isize,
     ) -> PyResult<()> {
-        let (start, _) = token.span().start_end();
-        let pos = start as isize + offset;
+        let pos = token.span().start as isize + offset;
         self.py_insert_at(pos, text)
     }
 
@@ -340,8 +341,7 @@ impl Note {
         text: String,
         offset: isize,
     ) -> PyResult<()> {
-        let (_, end) = token.span().start_end();
-        let pos = end as isize + offset;
+        let pos = token.span().end as isize + offset;
         self.py_insert_at(pos, text)
     }
 }

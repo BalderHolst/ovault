@@ -407,7 +407,7 @@ impl Vault {
                 }
                 link.dest = new_name.to_string();
                 let text = link.to_markdown();
-                backlink_note.replace_span(&span, text)?;
+                backlink_note.replace_span(span, text)?;
             }
         }
 
@@ -462,8 +462,8 @@ impl Vault {
             for token in note.tokens()? {
                 if let Token::Tag { ref tag, .. } = token {
                     if tag == old_tag {
-                        let span = token.span();
-                        note.replace_span(&span, format!("#{}", new_tag).to_string())?;
+                        let span = *token.span();
+                        note.replace_span(span, format!("#{}", new_tag).to_string())?;
                     }
                 }
             }

@@ -109,56 +109,21 @@ pub struct Callout {
 
 /// Represents a span in the source text.
 #[cfg_attr(feature = "python", pyclass(get_all))]
-#[derive(Debug, Clone, PartialEq)]
-pub enum Span {
-    Single(usize, usize),
-
-    /// A vector of (start, end) byte index pairs representing parts of the span.
-    ///
-    /// Most spans only have one part, but some spans are only possible to represent as multiple parts.
-    /// For example text blocks spanning multiple lines within a callout or quote.
-    Parts(Vec<(usize, usize)>),
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct Span {
+    /// The starting index of the span in the source text.
+    pub start: usize,
+    /// The ending index of the span in the source text.
+    pub end: usize,
 }
 
 impl Span {
-    pub fn new(start: usize, end: usize) -> Self {
-        Span::Single(start, end)
-    }
-
     /// Shifts the span by a given offset.
     pub fn shift(&mut self, offset: isize) {
-        match self {
-            Span::Single(start, end) => {
-                *start = (*start as isize + offset) as usize;
-                *end = (*end as isize + offset) as usize;
-            }
-            Span::Parts(parts) => {
-                for (start, end) in parts {
-                    *start = (*start as isize + offset) as usize;
-                    *end = (*end as isize + offset) as usize;
-                }
-            }
-        }
-    }
-
-    pub fn start(&self) -> usize {
-        match self {
-            Span::Single(start, _) => *start,
-            Span::Parts(parts) => parts.first().map_or(0, |(start, _)| *start),
-        }
-    }
-
-    pub fn end(&self) -> usize {
-        match self {
-            Span::Single(_, end) => *end,
-            Span::Parts(parts) => parts.last().map_or(0, |(_, end)| *end),
-        }
-    }
-
-    pub fn start_end(&self) -> (usize, usize) {
-        let start = self.start();
-        let end = self.end();
-        (start, end)
+        let start = self.start as isize + offset;
+        let end = self.end as isize + offset;
+        self.start = start as usize;
+        self.end = end as usize;
     }
 
     /// Calculates the line and column number of the span given the source text.
@@ -166,10 +131,8 @@ impl Span {
         let mut line = 1;
         let mut col = 1;
 
-        let start = self.start();
-
         for (i, c) in source.chars().enumerate() {
-            if i >= start {
+            if i >= self.start && i < self.end {
                 return (line, col);
             }
             if c == '\n' {
@@ -183,77 +146,22 @@ impl Span {
         (line, col)
     }
 
-    fn parts_len(&self) -> usize {
-        match self {
-            Span::Single(_, _) => 1,
-            Span::Parts(parts) => parts.len(),
-        }
-    }
-
-    pub fn byte_indexes(&self, source: &str) -> Vec<(usize, usize)> {
-        let mut out = Vec::with_capacity(self.parts_len());
+    pub fn byte_indexes(&self, source: &str) -> (usize, usize) {
         let mut indexes = source.char_indices().map(|(i, _)| i);
-
-        match self {
-            Span::Single(start, end) => {
-                let start = indexes.nth(*start).unwrap_or(source.len());
-                let end = indexes.nth(end - start - 1).unwrap_or(source.len());
-                out.push((start, end));
-            }
-            Span::Parts(parts) => {
-                for (part_start, part_end) in parts {
-                    let start = indexes.nth(*part_start).unwrap_or(source.len());
-                    let end = indexes
-                        .nth(part_end - part_start - 1)
-                        .unwrap_or(source.len());
-                    out.push((start, end));
-                }
-            }
-        }
-
-        out
-    }
-
-    pub fn extract_chars(&self, chars: &[(usize, char)]) -> String {
-        let mut out = String::new();
-
-        match self {
-            Span::Single(start, end) => {
-                if *start >= chars.len() || *end > chars.len() {
-                    return out;
-                }
-                for (_, c) in &chars[*start..*end] {
-                    out.push(*c);
-                }
-            }
-            Span::Parts(parts) => {
-                for (start, end) in parts {
-                    if *start >= chars.len() || *end > chars.len() {
-                        continue;
-                    }
-                    for (_, c) in &chars[*start..*end] {
-                        out.push(*c);
-                    }
-                }
-            }
-        };
-
-        out
+        let start = indexes.nth(self.start).unwrap_or(source.len());
+        let end = indexes
+            .nth(self.end - self.start - 1)
+            .unwrap_or(source.len());
+        (start, end)
     }
 
     /// Extracts the substring from the source text that corresponds to this span.
-    pub fn extract<'a>(&self, source: &'a str) -> String {
-        let mut out = String::new();
-        let byte_idxs = self.byte_indexes(source);
-
-        for (start, end) in byte_idxs {
-            if start >= source.len() || end > source.len() {
-                continue;
-            }
-            out.push_str(&source[start..end]);
+    pub fn extract<'a>(&self, source: &'a str) -> &'a str {
+        let (start, end) = self.byte_indexes(source);
+        if start >= source.len() || end > source.len() {
+            return "";
         }
-
-        out
+        &source[start..end]
     }
 }
 
@@ -263,7 +171,7 @@ impl Span {
     /// Creates a new `Span` from the given start and end indices.
     #[new]
     fn py_new(start: usize, end: usize) -> Self {
-        Span::new(start, end)
+        Span { start, end }
     }
 }
 
@@ -710,11 +618,15 @@ impl Lexer {
 
     /// Get the text between the mark and the cursor
     fn extract(&self, start: Mark) -> String {
-        self.extract_span(&self.span(start))
+        self.extract_span(self.span(start))
     }
 
-    fn extract_span(&self, span: &Span) -> String {
-        span.extract_chars(&self.chars)
+    fn extract_span(&self, span: Span) -> String {
+        let Span { start, end } = span;
+        if start >= self.chars.len() || end > self.chars.len() {
+            return "".to_string();
+        }
+        self.chars[start..end].iter().map(|(_, c)| c).collect()
     }
 
     fn span(&self, start: Mark) -> Span {
@@ -723,7 +635,7 @@ impl Lexer {
         let max = self.chars.len();
         let start = start.min(max);
         let end = end.min(max);
-        Span::new(start, end)
+        Span { start, end }
     }
 }
 
@@ -1271,8 +1183,11 @@ impl Iterator for Lexer {
                     let token = self.$method();
                     if let Some(token) = token {
                         if self.slow_cursor != start {
-                            let span = Span::new(self.slow_cursor, start);
-                            let text = self.extract_span(&span);
+                            let span = Span {
+                                start: self.slow_cursor,
+                                end: start,
+                            };
+                            let text = self.extract_span(span);
                             self.queue.push_back(Token::Text { span, text });
                         }
                         self.queue.push_back(token);
@@ -1398,7 +1313,7 @@ mod tests {
         test_lex_token! {
             "---\nkey: value\n-----\n# this is a heading"
             => Token::Frontmatter {
-                span: Span::new(0, 21),
+                span: Span { start: 0, end: 21 },
                 yaml: "key: value\n".to_string()
             }
         };
@@ -1409,7 +1324,7 @@ mod tests {
         test_lex_token! {
             "# Heading"
             => Token::Header {
-                span: Span::new(0, 9),
+                span: Span { start: 0, end: 9 },
                 level: 1,
                 heading: "Heading".to_string()
             }
@@ -1421,7 +1336,7 @@ mod tests {
         test_lex_token! {
             "#tag"
             => Token::Tag {
-                span: Span::new(0, 4),
+                span: Span { start: 0, end: 4 },
                 tag: "tag".to_string()
             }
         }
@@ -1429,7 +1344,7 @@ mod tests {
         test_lex_token! {
             "#tag4you"
             => Token::Tag {
-                span: Span::new(0, 8),
+                span: Span { start: 0, end: 8 },
                 tag: "tag4you".to_string()
             }
         }
@@ -1440,7 +1355,7 @@ mod tests {
         test_lex_token! {
             "![alt text](https://link.domain)"
             => Token::ExternalLink {
-                span: Span::new(0, 32),
+                span: Span { start: 0, end: 32 },
                 link: ExternalLink {
                     url: "https://link.domain".to_string(),
                     show_how: "alt text".to_string(),
@@ -1454,7 +1369,7 @@ mod tests {
         test_lex_token! {
             "[other alt text|options](https://example.com#pos)"
             => Token::ExternalLink {
-                span: Span::new(0, 49),
+                span: Span { start: 0, end: 49 },
                 link: ExternalLink {
                     url: "https://example.com".to_string(),
                     show_how: "other alt text".to_string(),
@@ -1471,7 +1386,7 @@ mod tests {
         test_lex_token! {
             "![[other_note]]"
             => Token::InternalLink {
-                span: Span::new(0, 15),
+                span: Span { start: 0, end: 15 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
                     position: None,
@@ -1485,7 +1400,7 @@ mod tests {
         test_lex_token! {
             "![[other_note]]."
             => Token::InternalLink {
-                span: Span::new(0, 15),
+                span: Span { start: 0, end: 15 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
                     position: None,
@@ -1499,7 +1414,7 @@ mod tests {
         test_lex_token! {
             "[[other_note|alias]]"
             => Token::InternalLink {
-                span: Span::new(0, 20),
+                span: Span { start: 0, end: 20 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
                     show_how: Some("alias".to_string()),
@@ -1513,7 +1428,7 @@ mod tests {
         test_lex_token! {
             "[[other_note#some-heading]]"
             => Token::InternalLink {
-                span: Span::new(0, 27),
+                span: Span { start: 0, end: 27 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
                     show_how: None,
@@ -1527,7 +1442,7 @@ mod tests {
         test_lex_token! {
             "[[other_note#page=13|center|alias]]"
             => Token::InternalLink {
-                span: Span::new(0, 35),
+                span: Span { start: 0, end: 35 },
                 link: InternalLink {
                     dest: "other_note".to_string(),
                     show_how: Some("alias".to_string()),
@@ -1544,14 +1459,14 @@ mod tests {
         test_lex_token! {
             "---"
             => Token::Divider {
-                span: Span::new(0, 3),
+                span: Span { start: 0, end: 3 },
             }
         }
 
         test_lex_token! {
             "---------"
             => Token::Divider {
-                span: Span::new(0, 9),
+                span: Span { start: 0, end: 9 },
             }
         }
     }
@@ -1561,7 +1476,7 @@ mod tests {
         test_lex_token! {
             "```rust\nthis is some code```"
             => Token::Code {
-                span: Span::new(0, 28),
+                span: Span { start: 0, end: 28 },
                 lang: Some("rust".to_string()),
                 code: "this is some code".to_string()
             }
@@ -1573,7 +1488,7 @@ mod tests {
         test_lex_token! {
             "$a=b$"
             => Token::InlineMath {
-                span: Span::new(0, 5),
+                span: Span { start: 0, end: 5 },
                 latex: "a=b".to_string()
             }
         }
@@ -1584,7 +1499,7 @@ mod tests {
         test_lex_token! {
             "$$a=b$$"
             => Token::DisplayMath {
-                span: Span::new(0, 7),
+                span: Span { start: 0, end: 7 },
                 latex: "a=b".to_string()
             }
         }
@@ -1595,11 +1510,11 @@ mod tests {
         test_lex_token! {
             "> 'fun quote!'\n> \\- Author"
             => Token::Quote {
-                span: Span::new(0, 26),
+                span: Span { start: 0, end: 26 },
                 text: "'fun quote!'\n\n\\- Author".to_string(),
                 tokens: vec![
                     Token::Text {
-                        span: Span::new(0, 23),
+                        span: Span { start: 0, end: 23 },
                         text: "'fun quote!'\n\n\\- Author".to_string(),
                     },
                 ],
@@ -1612,7 +1527,7 @@ mod tests {
         test_lex_token! {
             "<% tp.file.include('path/to/file.md') %>"
             => Token::TemplaterCommand {
-                span: Span::new(0, 40),
+                span: Span { start: 0, end: 40 },
                 command: "tp.file.include('path/to/file.md')".to_string(),
             }
         }
@@ -1623,14 +1538,14 @@ mod tests {
         test_lex_token! {
             "> [!kind]- Title!\n> this\n> is contents"
             => Token::Callout {
-                span: Span::new(0, 38),
+                span: Span { start: 0, end: 38 },
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
                     text: "this\n\nis contents".to_string(),
                     tokens: vec![
                         Token::Text {
-                            span: Span::new(0, 17),
+                            span: Span { start: 0, end: 17 },
                             text: "this\n\nis contents".to_string(),
                         },
                     ],
@@ -1647,22 +1562,34 @@ mod tests {
 >$$
 >\mathbb{E}\left(\sum_{i}a_{i}X_{i} \right) = \sum_{i} a_{i} \mathbb{E}(X_{i})
 >$$" => Token::Callout {
-            span: Span::new(0, 147),
+            span: Span {
+                start: 0,
+                end: 147,
+            },
             callout: Callout {
                 kind: "tip".to_string(),
                 title: "Useful property".to_string(),
                 text: "$X$s do not have to be intependent.\n\n$$\n\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n\n$$".to_string(),
                 tokens: vec![
                     Token::InlineMath {
-                        span: Span::new(0, 3),
+                        span: Span {
+                            start: 0,
+                            end: 3,
+                        },
                         latex: "X".to_string(),
                     },
                     Token::Text {
-                        span: Span::new(3, 37),
+                        span: Span {
+                            start: 3,
+                            end: 37,
+                        },
                         text: "s do not have to be intependent.\n\n".to_string(),
                     },
                     Token::DisplayMath {
-                        span: Span::new(37, 122),
+                        span: Span {
+                            start: 37,
+                            end: 122,
+                        },
                         latex: "\n\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n\n".to_string(),
                     },
                 ],
@@ -1688,21 +1615,33 @@ mod tests {
 >\right)
 >$$
 >" => Token::Callout {
-        span: Span::new(0, 138),
+        span: Span {
+            start: 0,
+            end: 138,
+        },
         callout: Callout {
             kind: "example".to_string(),
             title: "Example of callout with uneven lines".to_string(),
             tokens: vec![
                 Token::Text {
-                    span: Span::new(0, 2),
+                    span: Span {
+                        start: 0,
+                        end: 2,
+                    },
                     text: "\n\n".to_string(),
                 },
                 Token::DisplayMath {
-                    span: Span::new(2, 83),
+                    span: Span {
+                        start: 2,
+                        end: 83,
+                    },
                     latex: "\n\nA=\n\n\\left(\n\n\\begin{array}{cc}\n\n-5 & 2 \\\\\n\n2 & -2 \\\\\n\n\\end{array}\n\n\\right)\n\n".to_string(),
                 },
                 Token::Text {
-                    span: Span::new(83, 85),
+                    span: Span {
+                        start: 83,
+                        end: 85,
+                    },
                     text: "\n\n".to_string(),
                 },
             ],
@@ -1717,44 +1656,71 @@ mod tests {
         test_lex_token! {
             "- item 1\n- item 2\n  - subitem\n  - [[link]]"
             => Token::List {
-                span: Span::new(0, 42),
+                span: Span {
+                    start: 0,
+                    end: 42,
+                },
                 items: vec![
                     ListItem {
-                        span: Span::new(2, 9),
+                        span: Span {
+                            start: 2,
+                            end: 9,
+                        },
                         indent: 0,
                         tokens: vec![
                             Token::Text {
-                                span: Span::new(0, 7),
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
                                 text: "item 1\n".to_string(),
                             },
                         ],
                     },
                     ListItem {
-                        span: Span::new(11, 18),
+                        span: Span {
+                            start: 11,
+                            end: 18,
+                        },
                         indent: 0,
                         tokens: vec![
                             Token::Text {
-                                span: Span::new(0, 7),
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
                                 text: "item 2\n".to_string(),
                             },
                         ],
                     },
                     ListItem {
-                        span: Span::new(22, 30),
+                        span: Span {
+                            start: 22,
+                            end: 30,
+                        },
                         indent: 2,
                         tokens: vec![
                             Token::Text {
-                                span: Span::new(0, 8),
+                                span: Span {
+                                    start: 0,
+                                    end: 8,
+                                },
                                 text: "subitem\n".to_string(),
                             },
                         ],
                     },
                     ListItem {
-                        span: Span::new(34, 42),
+                        span: Span {
+                            start: 34,
+                            end: 42,
+                        },
                         indent: 2,
                         tokens: vec![
                             Token::InternalLink {
-                                span: Span::new(0, 8),
+                                span: Span {
+                                    start: 0,
+                                    end: 8,
+                                },
                                 link: InternalLink {
                                     dest: "link".to_string(),
                                     position: None,
@@ -1775,52 +1741,82 @@ mod tests {
         test_lex_token! {
             "- [x] done item\n- [ ] todo item\n  - [ ] subitem\n  - [X] [[link]]"
             => Token::CheckList {
-                span: Span::new(0, 64),
+                span: Span {
+                    start: 0,
+                    end: 64,
+                },
                 items: vec![
                     CheckListItem {
                         checked: true,
-                        span: Span::new(5, 16),
+                        span: Span {
+                            start: 5,
+                            end: 16,
+                        },
                         indent: 0,
                         tokens: vec![
                             Token::Text {
-                                span: Span::new(0, 11),
+                                span: Span {
+                                    start: 0,
+                                    end: 11,
+                                },
                                 text: " done item\n".to_string(),
                             },
                         ],
                     },
                     CheckListItem {
                         checked: false,
-                        span: Span::new(21, 32),
+                        span: Span {
+                            start: 21,
+                            end: 32,
+                        },
                         indent: 0,
                         tokens: vec![
                             Token::Text {
-                                span: Span::new(0, 11),
+                                span: Span {
+                                    start: 0,
+                                    end: 11,
+                                },
                                 text: " todo item\n".to_string(),
                             },
                         ],
                     },
                     CheckListItem {
                         checked: false,
-                        span: Span::new(39, 48),
+                        span: Span {
+                            start: 39,
+                            end: 48,
+                        },
                         indent: 2,
                         tokens: vec![
                             Token::Text {
-                                span: Span::new(0, 9),
+                                span: Span {
+                                    start: 0,
+                                    end: 9,
+                                },
                                 text: " subitem\n".to_string(),
                             },
                         ],
                     },
                     CheckListItem {
                         checked: true,
-                        span: Span::new(55, 64),
+                        span: Span {
+                            start: 55,
+                            end: 64,
+                        },
                         indent: 2,
                         tokens: vec![
                             Token::Text {
-                                span: Span::new(0, 1),
+                                span: Span {
+                                    start: 0,
+                                    end: 1,
+                                },
                                 text: " ".to_string(),
                             },
                             Token::InternalLink {
-                                span: Span::new(1, 9),
+                                span: Span {
+                                    start: 1,
+                                    end: 9,
+                                },
                                 link: InternalLink {
                                     dest: "link".to_string(),
                                     position: None,
@@ -1848,7 +1844,7 @@ mod tests {
 
         println!("Span: {:?}", span);
 
-        let extracted = lexer.extract_span(&span);
+        let extracted = lexer.extract_span(span);
 
         assert_eq!(extracted, "tæst string");
     }
