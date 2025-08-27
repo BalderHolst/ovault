@@ -146,12 +146,22 @@ impl Span {
         (line, col)
     }
 
+    pub fn byte_indexes(&self, source: &str) -> (usize, usize) {
+        let mut indexes = source.char_indices().map(|(i, _)| i);
+        let start = indexes.nth(self.start).unwrap_or(source.len());
+        let end = indexes
+            .nth(self.end - self.start - 1)
+            .unwrap_or(source.len());
+        (start, end)
+    }
+
     /// Extracts the substring from the source text that corresponds to this span.
     pub fn extract<'a>(&self, source: &'a str) -> &'a str {
-        if self.start >= source.len() || self.end > source.len() {
+        let (start, end) = self.byte_indexes(source);
+        if start >= source.len() || end > source.len() {
             return "";
         }
-        &source[self.start..self.end]
+        &source[start..end]
     }
 }
 
@@ -164,9 +174,6 @@ impl Span {
         Span { start, end }
     }
 }
-
-#[derive(Debug, Clone, Copy, Default, PartialEq)]
-struct LexerSpan(Span);
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
@@ -528,7 +535,7 @@ impl Copy for Mark {}
 pub struct Lexer {
     cursor: usize,
     slow_cursor: usize,
-    text: Vec<(usize, char)>,
+    chars: Vec<(usize, char)>,
     queue: VecDeque<Token>,
 }
 
@@ -539,7 +546,7 @@ impl Lexer {
         Self {
             cursor: 0,
             slow_cursor: 0,
-            text,
+            chars: text,
             queue: Default::default(),
         }
     }
@@ -549,7 +556,7 @@ impl Lexer {
         if index < 0 {
             return None;
         }
-        self.text.get(index as usize).map(|(_, c)| *c)
+        self.chars.get(index as usize).map(|(_, c)| *c)
     }
 
     fn current(&self) -> Option<char> {
@@ -605,53 +612,30 @@ impl Lexer {
         self.consume_until(|c| !c.is_whitespace())
     }
 
-    fn index_to_pos(&self, index: usize) -> usize {
-        if let Some((i, _)) = self.text.get(index) {
-            return *i;
-        }
-        if let Some((i, _)) = self.text.last() {
-            *i + 1
-        } else {
-            0
-        }
-    }
-
     fn mark(&self) -> Mark {
         Mark(self.cursor)
     }
 
     /// Get the text between the mark and the cursor
     fn extract(&self, start: Mark) -> String {
-        self.extract_span(self.lexer_span(start))
+        self.extract_span(self.span(start))
     }
 
-    fn extract_span(&self, span: LexerSpan) -> String {
-        let LexerSpan(Span { start, end }) = span;
-        if start >= self.text.len() || end > self.text.len() {
+    fn extract_span(&self, span: Span) -> String {
+        let Span { start, end } = span;
+        if start >= self.chars.len() || end > self.chars.len() {
             return "".to_string();
         }
-        self.text[start..end].iter().map(|(_, c)| c).collect()
-    }
-
-    fn lexer_span(&self, start: Mark) -> LexerSpan {
-        let Mark(start) = start;
-        let Mark(end) = self.mark();
-        let max = self.text.len();
-        let start = start.min(max);
-        let end = end.min(max);
-        LexerSpan(Span { start, end })
-    }
-
-    fn lexer_span_to_span(&self, span: LexerSpan) -> Span {
-        let LexerSpan(Span { start, end }) = span;
-        Span {
-            start: self.index_to_pos(start),
-            end: self.index_to_pos(end),
-        }
+        self.chars[start..end].iter().map(|(_, c)| c).collect()
     }
 
     fn span(&self, start: Mark) -> Span {
-        self.lexer_span_to_span(self.lexer_span(start))
+        let Mark(start) = start;
+        let Mark(end) = self.mark();
+        let max = self.chars.len();
+        let start = start.min(max);
+        let end = end.min(max);
+        Span { start, end }
     }
 }
 
@@ -1199,12 +1183,11 @@ impl Iterator for Lexer {
                     let token = self.$method();
                     if let Some(token) = token {
                         if self.slow_cursor != start {
-                            let lexer_span = LexerSpan(Span {
+                            let span = Span {
                                 start: self.slow_cursor,
                                 end: start,
-                            });
-                            let text = self.extract_span(lexer_span);
-                            let span = self.lexer_span_to_span(lexer_span);
+                            };
+                            let text = self.extract_span(span);
                             self.queue.push_back(Token::Text { span, text });
                         }
                         self.queue.push_back(token);
@@ -1241,7 +1224,7 @@ impl Iterator for Lexer {
 
             // Check if we are at the end of the file
             if self.current().is_none() {
-                if self.slow_cursor >= self.text.len() {
+                if self.slow_cursor >= self.chars.len() {
                     return None;
                 }
                 let start = Mark(self.slow_cursor);
@@ -1525,14 +1508,14 @@ mod tests {
     #[test]
     fn test_lex_quote() {
         test_lex_token! {
-            "> 'fun quote!'\n> - Author"
+            "> 'fun quote!'\n> \\- Author"
             => Token::Quote {
-                span: Span { start: 0, end: 25 },
-                text: "'fun quote!'\n\n- Author".to_string(),
+                span: Span { start: 0, end: 26 },
+                text: "'fun quote!'\n\n\\- Author".to_string(),
                 tokens: vec![
                     Token::Text {
-                        span: Span { start: 0, end: 22 },
-                        text: "'fun quote!'\n\n- Author".to_string(),
+                        span: Span { start: 0, end: 23 },
+                        text: "'fun quote!'\n\n\\- Author".to_string(),
                     },
                 ],
             }
@@ -1847,5 +1830,22 @@ mod tests {
                 ],
             }
         };
+    }
+
+    #[test]
+    fn test_span_extraction() {
+        let source = "This is å tæst string.";
+        let mut lexer = Lexer::new(source);
+
+        lexer.consume_until(|c| c == 't');
+        let start = lexer.mark();
+        lexer.consume_until(|c| c == '.');
+        let span = lexer.span(start);
+
+        println!("Span: {:?}", span);
+
+        let extracted = lexer.extract_span(span);
+
+        assert_eq!(extracted, "tæst string");
     }
 }

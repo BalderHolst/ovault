@@ -119,12 +119,8 @@ impl Note {
                 format!("Span {span:?} is out of bounds"),
             ));
         }
-        let new_contents = format!(
-            "{}{}{}",
-            &contents[..span.start],
-            text,
-            &contents[span.end..]
-        );
+        let (start, end) = span.byte_indexes(&contents);
+        let new_contents = format!("{}{}{}", &contents[..start], text, &contents[end..]);
         self.index_contents(new_contents.clone());
         fs::write(path, new_contents)
     }
