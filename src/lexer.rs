@@ -616,6 +616,11 @@ impl Lexer {
         Mark(self.cursor)
     }
 
+    fn chars_since(&self, mark: Mark) -> usize {
+        let Mark(pos) = mark;
+        self.cursor.saturating_sub(pos)
+    }
+
     /// Get the text between the mark and the cursor
     fn extract(&self, start: Mark) -> String {
         self.extract_span(self.span(start))
@@ -833,11 +838,16 @@ impl Lexer {
     fn try_extract_block(&mut self) -> Option<(String, Vec<Token>)> {
         self.at_block_start()?;
 
+        let start = self.mark();
+
         let mut lines = vec![];
+        let mut skipped = vec![];
 
         loop {
             // Allow leading whitespace before the '>'
             self.consume_whitespace();
+
+            let prefix_start = self.mark();
 
             if !matches!(self.current(), Some('>')) {
                 break;
@@ -845,6 +855,9 @@ impl Lexer {
 
             self.consume(); // Consume '>'
             self.consume_if(|c| c == ' ');
+
+            let prefix_len = self.chars_since(prefix_start);
+            skipped.push(prefix_len);
 
             let line_start = self.mark();
             self.consume_until(|c| c == '\n');
@@ -855,8 +868,37 @@ impl Lexer {
             lines.push(line);
         }
 
-        let text = lines.join("\n");
-        let tokens = Lexer::new(&text).collect::<Vec<Token>>();
+        assert_eq!(lines.len(), skipped.len());
+
+        let text = lines.join("");
+        let mut tokens = Lexer::new(&text).collect::<Vec<Token>>();
+
+        let text_chars = text.char_indices().collect::<Vec<_>>();
+
+        // Patch token spans
+        for token in &mut tokens {
+            let span = token.span_mut();
+
+            let Mark(offset) = start;
+            span.shift(offset as isize);
+
+            let start_span_lines = text_chars[0..span.start]
+                .iter()
+                .filter(|(_, c)| *c == '\n')
+                .count();
+
+            let start_offset = skipped.iter().take(start_span_lines + 1).sum::<usize>();
+
+            let end_span_lines = text_chars[0..span.end]
+                .iter()
+                .filter(|(_, c)| *c == '\n')
+                .count();
+
+            let end_offset = skipped.iter().take(end_span_lines + 1).sum::<usize>();
+
+            span.start += start_offset;
+            span.end += end_offset;
+        }
 
         Some((text, tokens))
     }
@@ -1847,5 +1889,47 @@ mod tests {
         let extracted = lexer.extract_span(span);
 
         assert_eq!(extracted, "tæst string");
+    }
+
+    #[test]
+    fn test_quote_span_extraction() {
+        let source = "> This is [[å]] tæst string.\n> With inner [[en notææ|link]] lines.";
+
+        println!("Source:\n{}\n", source);
+
+        let mut lexer = Lexer::new(source);
+
+        let token = lexer.next().unwrap();
+
+        println!("{}: {:?}", token, token.span());
+
+        // Test extracting of the link
+        let Token::Quote { tokens, .. } = token else {
+            panic!("Expected quote token");
+        };
+
+        for (i, token) in tokens.iter().enumerate() {
+            let span = token.span();
+            println!(
+                "[{i}]    {}: {:?} => {:?}",
+                token,
+                span,
+                span.extract(source)
+            );
+        }
+
+        let link_spans: Vec<_> = tokens
+            .iter()
+            .filter_map(|t| match t {
+                Token::InternalLink { span, .. } => Some(span),
+                _ => None,
+            })
+            .collect();
+
+        let extracted = lexer.extract_span(*link_spans[0]);
+        assert_eq!(extracted, "[[å]]");
+
+        let extracted = lexer.extract_span(*link_spans[1]);
+        assert_eq!(extracted, "[[en notææ|link]]");
     }
 }
