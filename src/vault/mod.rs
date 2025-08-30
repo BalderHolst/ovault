@@ -86,142 +86,6 @@ impl Vault {
     const DEFAULT_IGNORED: &[&'static str] = &[Self::IGNORE_FILE, ".git", ".obsidian", ".trash"];
 }
 
-#[cfg(feature = "python")]
-#[pymethods]
-impl Vault {
-    /// Create a new vault from the given path. The path must be an existing directory.
-    ///
-    /// The `create` argument determines whether the vault directory should be created
-    /// if it does not exist.
-    ///
-    /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed
-    #[new]
-    #[pyo3(signature = (path, create = false))]
-    pub fn py_new(path: &str, create: bool) -> PyResult<Self> {
-        let path = PathBuf::from(path);
-
-        if create && !path.exists() {
-            fs::create_dir_all(&path).map_err(|e| {
-                pyo3::exceptions::PyIOError::new_err(format!(
-                    "Could not create vault at '{}': {}",
-                    path.display(),
-                    e
-                ))
-            })?;
-        }
-
-        let path = path.canonicalize().map_err(|e| {
-            pyo3::exceptions::PyFileNotFoundError::new_err(format!(
-                "Could not find vault at '{}': {}",
-                path.display(),
-                e
-            ))
-        })?;
-        Ok(Self::new(&path)?)
-    }
-
-    /// Get a list of all notes in the vault. Order is not guaranteed.
-    #[pyo3(name = "notes")]
-    pub fn py_notes(&self) -> Vec<Note> {
-        self.notes().cloned().collect()
-    }
-
-    /// Get a list of all attachments in the vault. Order is not guaranteed.
-    #[pyo3(name = "attachments")]
-    pub fn py_attachments(&self) -> Vec<Attachment> {
-        self.attachments().cloned().collect()
-    }
-
-    /// Get a list of all tags in the vault. Order is not guaranteed.
-    #[pyo3(name = "tags")]
-    pub fn py_tags(&self) -> Vec<String> {
-        self.tags.keys().cloned().collect()
-    }
-
-    /// Index the vault. This will clear the current index and re-index the vault.
-    ///
-    /// This is useful if you have edited, added or removed notes or attachments from the vault.
-    #[pyo3(name = "index")]
-    pub fn py_index(&mut self) -> PyResult<()> {
-        self.items.clear();
-        self.tags.clear();
-        let path = self.path.clone();
-        self.register_dir(&path).map_err(PyErr::from)?;
-        self.index();
-        Ok(())
-    }
-
-    // TODO: Allow "#tag" syntax for tags
-    /// Get all notes that have the given tag.
-    #[pyo3(name = "get_notes_by_tag")]
-    pub fn py_get_notes_by_tag(&self, tag: &str) -> Vec<Note> {
-        let Some(tag) = self.tags.get(tag) else {
-            return vec![];
-        };
-        tag.iter()
-            .filter_map(|name| self.get_note(name))
-            .cloned()
-            .collect()
-    }
-
-    /// Get note by its name.
-    #[pyo3(name = "get_note_by_name")]
-    pub fn py_get_note(&self, name: &str) -> Option<Note> {
-        self.get_note(&normalize(name.to_string())).cloned()
-    }
-
-    /// Add a note to the vault.
-    ///
-    /// Call the `index` method to reindex the vault after adding notes.
-    #[pyo3(name = "add_note")]
-    pub fn py_add_note(&mut self, vault_path: &str, contents: &str) -> PyResult<String> {
-        let abs_path = self.add_note(vault_path.into(), contents).map_err(|e| {
-            pyo3::exceptions::PyIOError::new_err(format!("Could not add note '{vault_path}': {e}"))
-        })?;
-
-        let abs_path_string = abs_path
-            .to_str()
-            .ok_or(pyo3::exceptions::PyIOError::new_err(format!(
-                "Could not convert path to string: '{}'",
-                abs_path.display(),
-            )))?
-            .to_string();
-
-        Ok(abs_path_string)
-    }
-
-    /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
-    #[pyo3(name = "rename_note")]
-    pub fn py_rename_note(&mut self, old_name: &str, new_name: &str) -> PyResult<Note> {
-        self.rename_note(old_name, new_name).map_err(|e| {
-            pyo3::exceptions::PyIOError::new_err(format!(
-                "Could not rename note from '{}' to '{}': {}",
-                old_name, new_name, e
-            ))
-        })?;
-
-        self.get_note(&normalize(new_name.to_string()))
-            .cloned()
-            .ok_or_else(|| {
-                pyo3::exceptions::PyKeyError::new_err(format!(
-                    "Note '{}' not found after renaming",
-                    new_name
-                ))
-            })
-    }
-
-    /// Rename a tag in the vault. This will update all notes that have the tag.
-    #[pyo3(name = "rename_tag")]
-    pub fn py_rename_tag(&mut self, old_tag: &str, new_tag: &str) -> PyResult<()> {
-        self.rename_tag(old_tag, new_tag).map_err(|e| {
-            pyo3::exceptions::PyIOError::new_err(format!(
-                "Could not rename tag from '{}' to '{}': {}",
-                old_tag, new_tag, e
-            ))
-        })
-    }
-}
-
 impl Vault {
     /// Create a new vault from the given path.
     ///
@@ -246,6 +110,11 @@ impl Vault {
             tags: HashMap::new(),
             ignored,
         }
+    }
+
+    // TODO: Implement
+    fn _get_note_by_path(&self, _path: &Path) -> Option<&Note> {
+        unimplemented!()
     }
 
     fn items(&self) -> impl Iterator<Item = &VaultItem> {
@@ -628,5 +497,141 @@ impl Vault {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,
         }
+    }
+}
+
+#[cfg(feature = "python")]
+#[pymethods]
+impl Vault {
+    /// Create a new vault from the given path. The path must be an existing directory.
+    ///
+    /// The `create` argument determines whether the vault directory should be created
+    /// if it does not exist.
+    ///
+    /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed
+    #[new]
+    #[pyo3(signature = (path, create = false))]
+    pub fn py_new(path: &str, create: bool) -> PyResult<Self> {
+        let path = PathBuf::from(path);
+
+        if create && !path.exists() {
+            fs::create_dir_all(&path).map_err(|e| {
+                pyo3::exceptions::PyIOError::new_err(format!(
+                    "Could not create vault at '{}': {}",
+                    path.display(),
+                    e
+                ))
+            })?;
+        }
+
+        let path = path.canonicalize().map_err(|e| {
+            pyo3::exceptions::PyFileNotFoundError::new_err(format!(
+                "Could not find vault at '{}': {}",
+                path.display(),
+                e
+            ))
+        })?;
+        Ok(Self::new(&path)?)
+    }
+
+    /// Get a list of all notes in the vault. Order is not guaranteed.
+    #[pyo3(name = "notes")]
+    pub fn py_notes(&self) -> Vec<Note> {
+        self.notes().cloned().collect()
+    }
+
+    /// Get a list of all attachments in the vault. Order is not guaranteed.
+    #[pyo3(name = "attachments")]
+    pub fn py_attachments(&self) -> Vec<Attachment> {
+        self.attachments().cloned().collect()
+    }
+
+    /// Get a list of all tags in the vault. Order is not guaranteed.
+    #[pyo3(name = "tags")]
+    pub fn py_tags(&self) -> Vec<String> {
+        self.tags.keys().cloned().collect()
+    }
+
+    /// Index the vault. This will clear the current index and re-index the vault.
+    ///
+    /// This is useful if you have edited, added or removed notes or attachments from the vault.
+    #[pyo3(name = "index")]
+    pub fn py_index(&mut self) -> PyResult<()> {
+        self.items.clear();
+        self.tags.clear();
+        let path = self.path.clone();
+        self.register_dir(&path).map_err(PyErr::from)?;
+        self.index();
+        Ok(())
+    }
+
+    // TODO: Allow "#tag" syntax for tags
+    /// Get all notes that have the given tag.
+    #[pyo3(name = "get_notes_by_tag")]
+    pub fn py_get_notes_by_tag(&self, tag: &str) -> Vec<Note> {
+        let Some(tag) = self.tags.get(tag) else {
+            return vec![];
+        };
+        tag.iter()
+            .filter_map(|name| self.get_note(name))
+            .cloned()
+            .collect()
+    }
+
+    /// Get note by its name.
+    #[pyo3(name = "get_note_by_name")]
+    pub fn py_get_note(&self, name: &str) -> Option<Note> {
+        self.get_note(&normalize(name.to_string())).cloned()
+    }
+
+    /// Add a note to the vault.
+    ///
+    /// Call the `index` method to reindex the vault after adding notes.
+    #[pyo3(name = "add_note")]
+    pub fn py_add_note(&mut self, vault_path: &str, contents: &str) -> PyResult<String> {
+        let abs_path = self.add_note(vault_path.into(), contents).map_err(|e| {
+            pyo3::exceptions::PyIOError::new_err(format!("Could not add note '{vault_path}': {e}"))
+        })?;
+
+        let abs_path_string = abs_path
+            .to_str()
+            .ok_or(pyo3::exceptions::PyIOError::new_err(format!(
+                "Could not convert path to string: '{}'",
+                abs_path.display(),
+            )))?
+            .to_string();
+
+        Ok(abs_path_string)
+    }
+
+    /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
+    #[pyo3(name = "rename_note")]
+    pub fn py_rename_note(&mut self, old_name: &str, new_name: &str) -> PyResult<Note> {
+        self.rename_note(old_name, new_name).map_err(|e| {
+            pyo3::exceptions::PyIOError::new_err(format!(
+                "Could not rename note from '{}' to '{}': {}",
+                old_name, new_name, e
+            ))
+        })?;
+
+        self.get_note(&normalize(new_name.to_string()))
+            .cloned()
+            .ok_or_else(|| {
+                pyo3::exceptions::PyKeyError::new_err(format!(
+                    "Note '{}' not found after renaming",
+                    new_name
+                ))
+            })
+    }
+
+    /// Rename a tag in the vault. This will update all notes that have the tag.
+    #[pyo3(name = "rename_tag")]
+    pub fn py_rename_tag(&mut self, old_tag: &str, new_tag: &str) -> PyResult<()> {
+        self.rename_tag(old_tag, new_tag).map_err(|e| {
+            pyo3::exceptions::PyIOError::new_err(format!(
+                "Could not rename tag from '{}' to '{}': {}",
+                old_tag, new_tag, e
+            ))
+        })
     }
 }
