@@ -11,11 +11,15 @@ use tokens::*;
 struct Mark(usize);
 impl Copy for Mark {}
 
+impl Mark {
+    const START: Self = Mark(0);
+}
+
 /// A lexer for parsing markdown into tokens.
 pub struct Lexer {
     cursor: usize,
     slow_cursor: usize,
-    chars: Vec<(usize, char)>,
+    chars: Vec<(usize, char, bool)>, // (position, char, skipped)
     queue: VecDeque<Token>,
     skip_function: fn(&mut Self),
 }
@@ -23,14 +27,22 @@ pub struct Lexer {
 impl Lexer {
     /// Create a new lexer with the given text.
     pub fn new<S: ToString>(text: S) -> Self {
-        let text = text.to_string().char_indices().collect::<Vec<_>>();
+        let chars = text
+            .to_string()
+            .char_indices()
+            .map(|(p, c)| (p, c, false))
+            .collect::<Vec<_>>();
         Self {
             cursor: 0,
             slow_cursor: 0,
-            chars: text,
+            chars,
             queue: Default::default(),
             skip_function: skip_funcs::no_skip,
         }
+    }
+
+    pub fn run(&mut self) -> Vec<Token> {
+        Vec::from_iter(self)
     }
 
     fn peek(&self, offset: isize) -> Option<char> {
@@ -38,17 +50,35 @@ impl Lexer {
         if index < 0 {
             return None;
         }
-        self.chars.get(index as usize).map(|(_, c)| *c)
+        self.chars.get(index as usize).map(|(_, c, _)| *c)
     }
 
     fn current(&self) -> Option<char> {
         self.peek(0)
     }
 
+    fn mark_skipped(&mut self, start: Mark) {
+        let Mark(start) = start;
+        let end = self.cursor;
+        for i in start..end {
+            if let Some((_, c, skipped)) = self.chars.get_mut(i) {
+                println!("Skipping {}: {:?}", i, c);
+                *skipped = true;
+            }
+        }
+    }
+
     // Consume a character
     fn consume(&mut self) -> Option<char> {
         self.cursor += 1;
+
+        let skip_start = self.mark();
+
         (self.skip_function)(self);
+
+        // Mark skipped characters
+        self.mark_skipped(skip_start);
+
         self.peek(-1)
     }
 
@@ -92,14 +122,16 @@ impl Lexer {
         Mark(self.cursor)
     }
 
-    fn chars_since(&self, mark: Mark) -> usize {
-        let Mark(pos) = mark;
-        self.cursor.saturating_sub(pos)
-    }
-
     /// Get the text between the mark and the cursor
     fn extract(&self, start: Mark) -> String {
         self.extract_span(self.span(start))
+    }
+
+    fn extract_all(&self) -> String {
+        self.extract_span(Span {
+            start: 0,
+            end: self.chars.len(),
+        })
     }
 
     fn extract_span(&self, span: Span) -> String {
@@ -107,7 +139,10 @@ impl Lexer {
         if start >= self.chars.len() || end > self.chars.len() {
             return "".to_string();
         }
-        self.chars[start..end].iter().map(|(_, c)| c).collect()
+        self.chars[start..end]
+            .iter()
+            .filter_map(|(_, c, skipped)| (!skipped).then_some(c))
+            .collect()
     }
 
     fn span(&self, start: Mark) -> Span {
@@ -330,7 +365,6 @@ impl Lexer {
         Some(())
     }
 
-    // TODO: Fix "> " in latex tokens
     /// Extract the text contained within a block prefixed with '>'
     fn try_extract_block(&mut self) -> Option<(String, Vec<Token>)> {
         self.at_block_start()?;
@@ -342,21 +376,24 @@ impl Lexer {
             self.consume_expected('\n');
         }
 
-        let text = self.extract(start);
+        let source = self.extract(start);
 
-        let mut lexer = Self::new(&text);
+        let mut lexer = Self::new(&source);
         lexer.skip_function = skip_funcs::skip_block_prefix;
 
         // Skip initial '> ' prefix to prevent infinite recursion
         skip_funcs::skip_block_prefix(&mut lexer);
+        lexer.mark_skipped(Mark::START);
 
-        let mut tokens = lexer.collect::<Vec<_>>();
+        let mut tokens = lexer.run();
 
         // Shift all token spans by the start position
         let Mark(offset) = start;
         for token in &mut tokens {
             token.span_mut().shift(offset as isize);
         }
+
+        let text = lexer.extract_all();
 
         Some((text, tokens))
     }
@@ -1013,11 +1050,11 @@ mod tests {
             "> 'fun quote!'\n> \\- Author"
             => Token::Quote {
                 span: Span { start: 0, end: 26 },
-                text: "> 'fun quote!'\n> \\- Author".to_string(),
+                text: "'fun quote!'\n\\- Author".to_string(),
                 tokens: vec![
                     Token::Text {
                         span: Span { start: 0, end: 26 },
-                        text: "> 'fun quote!'\n> \\- Author".to_string(),
+                        text: "'fun quote!'\n\\- Author".to_string(),
                     },
                 ],
             }
@@ -1044,11 +1081,11 @@ mod tests {
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
-                    text: "> this\n> is contents\n> #callout".to_string(),
+                    text: "this\nis contents\n#callout".to_string(),
                     tokens: vec![
                         Token::Text {
                             span: Span { start: 18, end: 41 },
-                            text: "> this\n> is contents\n> ".to_string(),
+                            text: "this\nis contents\n".to_string(),
                         },
                         Token::Tag {
                             span: Span { start: 41, end: 49 },
@@ -1063,11 +1100,7 @@ mod tests {
 
     #[test]
     fn test_callout_with_math() {
-        test_lex_token!(r">[!tip] Useful property
->$X$s do not have to be intependent.
->$$
->\mathbb{E}\left(\sum_{i}a_{i}X_{i} \right) = \sum_{i} a_{i} \mathbb{E}(X_{i})
->$$" => Token::Callout {
+        test_lex_token!(">[!tip] Useful property\n>$X$s do not have to be intependent.\n>$$\n>\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n>$$" => Token::Callout {
             span: Span {
                 start: 0,
                 end: 147,
@@ -1075,14 +1108,14 @@ mod tests {
             callout: Callout {
                 kind: "tip".to_string(),
                 title: "Useful property".to_string(),
-                text: ">$X$s do not have to be intependent.\n>$$\n>\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n>$$".to_string(),
+                text: "$X$s do not have to be intependent.\n$$\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n$$".to_string(),
                 tokens: vec![
                     Token::Text {
                         span: Span {
                             start: 24,
                             end: 25,
                         },
-                        text: ">".to_string(),
+                        text: "".to_string(),
                     },
                     Token::InlineMath {
                         span: Span {
@@ -1096,14 +1129,14 @@ mod tests {
                             start: 28,
                             end: 62,
                         },
-                        text: "s do not have to be intependent.\n>".to_string(),
+                        text: "s do not have to be intependent.\n".to_string(),
                     },
                     Token::DisplayMath {
                         span: Span {
                             start: 62,
                             end: 147,
                         },
-                        latex: "\n>\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n>".to_string(),
+                        latex: "\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n".to_string(),
                     },
                 ],
                 foldable: false,
@@ -1140,24 +1173,24 @@ mod tests {
                             start: 50,
                             end: 53,
                         },
-                        text: ">\n>".to_string(),
+                        text: "\n".to_string(),
                     },
                     Token::DisplayMath {
                         span: Span {
                             start: 53,
                             end: 143,
                         },
-                        latex:"\n>A=\n>\\left(\n>\\begin{array}{cc}\n >-5 & 2 \\\\\n        >2 & -2 \\\\\n>\\end{array}\n>\\right)\n>".to_string(),
+                        latex:"\nA=\n\\left(\n\\begin{array}{cc}\n-5 & 2 \\\\\n2 & -2 \\\\\n\\end{array}\n\\right)\n".to_string(),
                     },
                     Token::Text {
                         span: Span {
                             start: 143,
                             end: 145,
                         },
-                        text: "\n>".to_string(),
+                        text: "\n".to_string(),
                     },
                 ],
-                text:">\n>$$\n>A=\n>\\left(\n>\\begin{array}{cc}\n >-5 & 2 \\\\\n        >2 & -2 \\\\\n>\\end{array}\n>\\right)\n>$$\n>".to_string(),
+                text:"\n$$\nA=\n\\left(\n\\begin{array}{cc}\n-5 & 2 \\\\\n2 & -2 \\\\\n\\end{array}\n\\right)\n$$\n".to_string(),
                 foldable: true,
             },
         });
