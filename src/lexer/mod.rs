@@ -41,6 +41,7 @@ impl Lexer {
         }
     }
 
+    /// Run the lexer and return all tokens.
     pub fn run(&mut self) -> Vec<Token> {
         Vec::from_iter(self)
     }

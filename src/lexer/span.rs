@@ -40,6 +40,7 @@ impl Span {
         (line, col)
     }
 
+    /// Converts the character indices of the span to byte indices in the source text.
     pub fn byte_indexes(&self, source: &str) -> (usize, usize) {
         let mut indexes = source.char_indices().map(|(i, _)| i);
         let start = indexes.nth(self.start).unwrap_or(source.len());

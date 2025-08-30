@@ -1,3 +1,5 @@
+//! This module defines the `Token` enum and related structs to represent different parts of a note.
+
 use std::fmt;
 
 #[cfg(feature = "python")]
@@ -152,13 +154,33 @@ pub enum Token {
         link: ExternalLink
     },
 
+    // TODO: Numerated lists
+    /// Represents a bulleted or numbered list in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// - Item 1
+    /// - Item 2
+    ///   - Subitem 2.1
+    /// ```
     List {
+        /// The span of the list in the source text.
         span: Span,
+        /// The items in the list.
         items: Vec<ListItem>,
     },
 
+    /// Represents a checklist in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// - [x] Completed item
+    /// - [ ] Incomplete item
+    /// ```
     CheckList {
+        /// The span of the checklist in the source text.
         span: Span,
+        /// The items in the checklist.
         items: Vec<CheckListItem>,
     },
 
@@ -442,19 +464,28 @@ pub struct Callout {
     pub foldable: bool,
 }
 
+/// Represents a single item in a list.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
 pub struct ListItem {
+    /// The span of the list item in the source text.
     pub span: Span,
+    /// The indentation level of the list item, which indicates its nesting level.
     pub indent: usize,
+    /// The tokenized content of the list item
     pub tokens: Vec<Token>,
 }
 
+/// Represents a single item in a checklist.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
 pub struct CheckListItem {
+    /// Whether the checklist item is checked or not.
     pub checked: bool,
+    /// The span of the checklist item in the source text.
     pub span: Span,
+    /// The indentation level of the checklist item, which indicates its nesting level.
     pub indent: usize,
+    /// The tokenized content of the checklist item
     pub tokens: Vec<Token>,
 }
