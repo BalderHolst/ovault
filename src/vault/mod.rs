@@ -15,7 +15,7 @@ use pyo3::prelude::*;
 use glob::glob;
 
 use crate::{
-    lexer::{ToMarkdown, Token},
+    lexer::{tokens::Token, ToMarkdown},
     normalize::normalize,
 };
 

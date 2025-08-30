@@ -3,7 +3,7 @@
 pub mod frontmatter;
 
 use crate::{
-    lexer::{Lexer, Span, Token},
+    lexer::{tokens::*, Lexer, Span},
     normalize::normalize,
 };
 use std::{collections::HashSet, fs, io, path::PathBuf};

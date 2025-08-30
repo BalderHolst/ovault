@@ -12,7 +12,7 @@ pub mod vault;
 #[cfg(test)]
 mod tests;
 
-pub use lexer::{Callout, ExternalLink, InternalLink, Span, Token};
+pub use lexer::{tokens::*, Span};
 pub use vault::{attachment::Attachment, note::Note, Vault, VaultItem};
 
 #[doc = include_str!("../docs/documentation.md")]
