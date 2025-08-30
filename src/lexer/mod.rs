@@ -62,8 +62,7 @@ impl Lexer {
         let Mark(start) = start;
         let end = self.cursor;
         for i in start..end {
-            if let Some((_, c, skipped)) = self.chars.get_mut(i) {
-                println!("Skipping {}: {:?}", i, c);
+            if let Some((_, _, skipped)) = self.chars.get_mut(i) {
                 *skipped = true;
             }
         }
