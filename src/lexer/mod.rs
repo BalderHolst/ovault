@@ -17,6 +17,7 @@ pub struct Lexer {
     slow_cursor: usize,
     chars: Vec<(usize, char)>,
     queue: VecDeque<Token>,
+    skip_function: fn(&mut Self),
 }
 
 impl Lexer {
@@ -28,6 +29,7 @@ impl Lexer {
             slow_cursor: 0,
             chars: text,
             queue: Default::default(),
+            skip_function: skip_funcs::no_skip,
         }
     }
 
@@ -46,14 +48,8 @@ impl Lexer {
     // Consume a character
     fn consume(&mut self) -> Option<char> {
         self.cursor += 1;
+        (self.skip_function)(self);
         self.peek(-1)
-    }
-
-    fn consume_assert_eq(&mut self, expected: char) -> Option<char> {
-        self.cursor += 1;
-        let c = self.peek(-1);
-        debug_assert_eq!(c, Some(expected));
-        c
     }
 
     fn consume_expect(&mut self, expect: impl FnOnce(char) -> bool) -> Option<char> {
@@ -121,6 +117,20 @@ impl Lexer {
         let start = start.min(max);
         let end = end.min(max);
         Span { start, end }
+    }
+}
+
+mod skip_funcs {
+    use super::*;
+    pub fn no_skip(_: &mut Lexer) {}
+    pub fn skip_block_prefix(lexer: &mut Lexer) {
+        (|| {
+            lexer.at_block_start()?;
+            lexer.consume_while(|c| c == ' ');
+            lexer.consume(); // Consume '>'
+            lexer.consume_if(|c| c == ' ');
+            Some(())
+        })();
     }
 }
 
@@ -192,7 +202,7 @@ impl Lexer {
 
         self.consume_expected('(')?;
         let url = self.consume_until(|c| c == ')');
-        self.consume_assert_eq(')')?;
+        self.consume_expected(')')?;
 
         let (show_how, options) = match show_how.split_once('|') {
             Some((show_how, options)) => (show_how.to_string(), Some(options.to_string())),
@@ -248,8 +258,8 @@ impl Lexer {
 
         let inner = self.extract(inner_start);
 
-        self.consume_assert_eq(']');
-        self.consume_assert_eq(']');
+        self.consume_expected(']')?;
+        self.consume_expected(']')?;
 
         let mut dest;
         let mut position = None;
@@ -307,77 +317,45 @@ impl Lexer {
     fn at_block_start(&self) -> Option<()> {
         self.at_line_start()?;
 
-        if !matches!(self.current(), Some('>')) {
+        let mut pos = 0;
+
+        while self.peek(pos) == Some(' ') {
+            pos += 1;
+        }
+
+        if !matches!(self.peek(pos), Some('>')) {
             return None;
         }
 
         Some(())
     }
 
+    // TODO: Fix "> " in latex tokens
     /// Extract the text contained within a block prefixed with '>'
     fn try_extract_block(&mut self) -> Option<(String, Vec<Token>)> {
         self.at_block_start()?;
 
         let start = self.mark();
 
-        let mut lines = vec![];
-        let mut skipped = vec![];
-
-        loop {
-            // Allow leading whitespace before the '>'
-            self.consume_whitespace();
-
-            let prefix_start = self.mark();
-
-            if !matches!(self.current(), Some('>')) {
-                break;
-            }
-
-            self.consume(); // Consume '>'
-            self.consume_if(|c| c == ' ');
-
-            let prefix_len = self.chars_since(prefix_start);
-            skipped.push(prefix_len);
-
-            let line_start = self.mark();
+        while self.at_block_start().is_some() {
             self.consume_until(|c| c == '\n');
-            self.consume();
-
-            let line = self.extract(line_start);
-
-            lines.push(line);
+            self.consume_expected('\n');
         }
 
-        assert_eq!(lines.len(), skipped.len());
+        let text = self.extract(start);
 
-        let text = lines.join("");
-        let mut tokens = Lexer::new(&text).collect::<Vec<Token>>();
+        let mut lexer = Self::new(&text);
+        lexer.skip_function = skip_funcs::skip_block_prefix;
 
-        let text_chars = text.char_indices().collect::<Vec<_>>();
+        // Skip initial '> ' prefix to prevent infinite recursion
+        skip_funcs::skip_block_prefix(&mut lexer);
 
-        // Patch token spans
+        let mut tokens = lexer.collect::<Vec<_>>();
+
+        // Shift all token spans by the start position
+        let Mark(offset) = start;
         for token in &mut tokens {
-            let span = token.span_mut();
-
-            let Mark(offset) = start;
-            span.shift(offset as isize);
-
-            let start_span_lines = text_chars[0..span.start]
-                .iter()
-                .filter(|(_, c)| *c == '\n')
-                .count();
-
-            let start_offset = skipped.iter().take(start_span_lines + 1).sum::<usize>();
-
-            let end_span_lines = text_chars[0..span.end]
-                .iter()
-                .filter(|(_, c)| *c == '\n')
-                .count();
-
-            let end_offset = skipped.iter().take(end_span_lines + 1).sum::<usize>();
-
-            span.start += start_offset;
-            span.end += end_offset;
+            token.span_mut().shift(offset as isize);
         }
 
         Some((text, tokens))
@@ -395,13 +373,13 @@ impl Lexer {
 
         let start = self.mark();
 
-        self.consume_assert_eq('>');
+        self.consume_expected('>')?;
         self.consume_until(|c| !c.is_whitespace() || c == '\n');
 
         self.consume_expected('[')?;
         self.consume_expected('!')?;
         let kind = self.consume_until(|c| c == ']');
-        self.consume_assert_eq(']');
+        self.consume_expected(']')?;
 
         let mut foldable = false;
         if self.consume_if(|c| c == '-') {
@@ -410,7 +388,7 @@ impl Lexer {
 
         self.consume_until(|c| c != ' ');
         let title = self.consume_until(|c| c == '\n');
-        self.consume_assert_eq('\n');
+        self.consume_expected('\n')?;
 
         let (text, tokens) = self.try_extract_block()?;
 
@@ -816,6 +794,8 @@ mod tests {
         ($source:expr => $($token:tt)*) => {
             let mut lexer = Lexer::new($source);
             let token = lexer.next().unwrap();
+            println!("\nRaw Source:\n{:?}", $source);
+            println!("\nSource:\n{}", $source);
             println!("\nToken: {:#?}\n", token);
             assert_eq!(
                 token,
@@ -1033,11 +1013,11 @@ mod tests {
             "> 'fun quote!'\n> \\- Author"
             => Token::Quote {
                 span: Span { start: 0, end: 26 },
-                text: "'fun quote!'\n\n\\- Author".to_string(),
+                text: "> 'fun quote!'\n> \\- Author".to_string(),
                 tokens: vec![
                     Token::Text {
-                        span: Span { start: 0, end: 23 },
-                        text: "'fun quote!'\n\n\\- Author".to_string(),
+                        span: Span { start: 0, end: 26 },
+                        text: "> 'fun quote!'\n> \\- Author".to_string(),
                     },
                 ],
             }
@@ -1058,18 +1038,22 @@ mod tests {
     #[test]
     fn test_lex_callout() {
         test_lex_token! {
-            "> [!kind]- Title!\n> this\n> is contents"
+            "> [!kind]- Title!\n> this\n> is contents\n> #callout"
             => Token::Callout {
-                span: Span { start: 0, end: 38 },
+                span: Span { start: 0, end: 49 },
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
-                    text: "this\n\nis contents".to_string(),
+                    text: "> this\n> is contents\n> #callout".to_string(),
                     tokens: vec![
                         Token::Text {
-                            span: Span { start: 0, end: 17 },
-                            text: "this\n\nis contents".to_string(),
+                            span: Span { start: 18, end: 41 },
+                            text: "> this\n> is contents\n> ".to_string(),
                         },
+                        Token::Tag {
+                            span: Span { start: 41, end: 49 },
+                            tag: "callout".to_string(),
+                        }
                     ],
                     foldable: true,
                 }
@@ -1091,28 +1075,35 @@ mod tests {
             callout: Callout {
                 kind: "tip".to_string(),
                 title: "Useful property".to_string(),
-                text: "$X$s do not have to be intependent.\n\n$$\n\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n\n$$".to_string(),
+                text: ">$X$s do not have to be intependent.\n>$$\n>\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n>$$".to_string(),
                 tokens: vec![
+                    Token::Text {
+                        span: Span {
+                            start: 24,
+                            end: 25,
+                        },
+                        text: ">".to_string(),
+                    },
                     Token::InlineMath {
                         span: Span {
-                            start: 0,
-                            end: 3,
+                            start: 25,
+                            end: 28,
                         },
                         latex: "X".to_string(),
                     },
                     Token::Text {
                         span: Span {
-                            start: 3,
-                            end: 37,
+                            start: 28,
+                            end: 62,
                         },
-                        text: "s do not have to be intependent.\n\n".to_string(),
+                        text: "s do not have to be intependent.\n>".to_string(),
                     },
                     Token::DisplayMath {
                         span: Span {
-                            start: 37,
-                            end: 122,
+                            start: 62,
+                            end: 147,
                         },
-                        latex: "\n\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n\n".to_string(),
+                        latex: "\n>\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n>".to_string(),
                     },
                 ],
                 foldable: false,
@@ -1123,54 +1114,53 @@ mod tests {
 
     #[test]
     fn test_uneven_callout() {
-        #[rustfmt::skip]
         test_lex_token!(
-            r">[!example]- Example of callout with uneven lines
+                r">[!example]- Example of callout with uneven lines
 >
 >$$
 >A=
 >\left(
 >\begin{array}{cc}
  >-5 & 2 \\
- >2 & -2 \\
+        >2 & -2 \\
 >\end{array}
 >\right)
 >$$
 >" => Token::Callout {
-        span: Span {
-            start: 0,
-            end: 138,
-        },
-        callout: Callout {
-            kind: "example".to_string(),
-            title: "Example of callout with uneven lines".to_string(),
-            tokens: vec![
-                Token::Text {
-                    span: Span {
-                        start: 0,
-                        end: 2,
+            span: Span {
+                start: 0,
+                end: 145,
+            },
+            callout: Callout {
+                kind: "example".to_string(),
+                title: "Example of callout with uneven lines".to_string(),
+                tokens: vec![
+                    Token::Text {
+                        span: Span {
+                            start: 50,
+                            end: 53,
+                        },
+                        text: ">\n>".to_string(),
                     },
-                    text: "\n\n".to_string(),
-                },
-                Token::DisplayMath {
-                    span: Span {
-                        start: 2,
-                        end: 83,
+                    Token::DisplayMath {
+                        span: Span {
+                            start: 53,
+                            end: 143,
+                        },
+                        latex:"\n>A=\n>\\left(\n>\\begin{array}{cc}\n >-5 & 2 \\\\\n        >2 & -2 \\\\\n>\\end{array}\n>\\right)\n>".to_string(),
                     },
-                    latex: "\n\nA=\n\n\\left(\n\n\\begin{array}{cc}\n\n-5 & 2 \\\\\n\n2 & -2 \\\\\n\n\\end{array}\n\n\\right)\n\n".to_string(),
-                },
-                Token::Text {
-                    span: Span {
-                        start: 83,
-                        end: 85,
+                    Token::Text {
+                        span: Span {
+                            start: 143,
+                            end: 145,
+                        },
+                        text: "\n>".to_string(),
                     },
-                    text: "\n\n".to_string(),
-                },
-            ],
-            text: "\n\n$$\n\nA=\n\n\\left(\n\n\\begin{array}{cc}\n\n-5 & 2 \\\\\n\n2 & -2 \\\\\n\n\\end{array}\n\n\\right)\n\n$$\n\n".to_string(),
-            foldable: true,
-        },
-    });
+                ],
+                text:">\n>$$\n>A=\n>\\left(\n>\\begin{array}{cc}\n >-5 & 2 \\\\\n        >2 & -2 \\\\\n>\\end{array}\n>\\right)\n>$$\n>".to_string(),
+                foldable: true,
+            },
+        });
     }
 
     #[test]
