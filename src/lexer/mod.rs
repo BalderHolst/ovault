@@ -120,6 +120,18 @@ impl Lexer {
         self.consume_until(|c| !c.is_whitespace())
     }
 
+    fn consume_integer(&mut self) -> Option<u32> {
+        let start = self.mark();
+        let s = self.consume_while(|c| c.is_ascii_digit());
+        match s.parse() {
+            Ok(i) => Some(i),
+            Err(_) => {
+                self.cursor = start.0;
+                None
+            }
+        }
+    }
+
     fn mark(&self) -> Mark {
         Mark(self.cursor)
     }
@@ -590,6 +602,99 @@ impl Lexer {
         Some(Token::InlineMath { span, latex })
     }
 
+    fn try_extract_list_item(&mut self) -> Option<ListItem> {
+        self.at_line_start()?;
+
+        let mut indent = 0;
+        while self.consume_if(|c| c == ' ') {
+            indent += 1;
+        }
+
+        self.consume_expected('-')?;
+        self.consume_expected(' ')?;
+
+        let start = self.mark();
+        self.consume_until(|c| c == '\n');
+        self.consume_if(|c| c == '\n');
+        let span = self.span(start);
+        let content = self.extract(start);
+
+        let tokens = Lexer::new(content).collect::<Vec<_>>();
+
+        Some(ListItem {
+            indent,
+            span,
+            tokens,
+        })
+    }
+
+    fn try_lex_list(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        let mut items = Vec::with_capacity(0);
+
+        while let Some(item) = self.try_extract_list_item() {
+            items.push(item);
+        }
+
+        if items.is_empty() {
+            return None;
+        }
+
+        Some(Token::List {
+            span: self.span(start),
+            items,
+        })
+    }
+
+    fn try_extract_numeric_list_item(&mut self) -> Option<NumericListItem> {
+        self.at_line_start()?;
+
+        let mut indent = 0;
+        while self.consume_if(|c| c == ' ') {
+            indent += 1;
+        }
+
+        let number = self.consume_integer()?;
+
+        self.consume_expected('.')?;
+        self.consume_if(|c| c == ' ');
+
+        let start = self.mark();
+        self.consume_until(|c| c == '\n');
+        self.consume_if(|c| c == '\n');
+        let span = self.span(start);
+        let content = self.extract(start);
+
+        let tokens = Lexer::new(content).collect::<Vec<_>>();
+
+        Some(NumericListItem {
+            span,
+            number,
+            indent,
+            tokens,
+        })
+    }
+
+    fn try_lex_numeric_list(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        let mut items = Vec::with_capacity(0);
+
+        while let Some(item) = self.try_extract_numeric_list_item() {
+            items.push(item);
+        }
+
+        if items.is_empty() {
+            return None;
+        }
+
+        Some(Token::NumericList {
+            span: self.span(start),
+            items,
+        })
+    }
+
     fn try_extract_checklist_item(&mut self) -> Option<CheckListItem> {
         self.at_line_start()?;
 
@@ -620,32 +725,6 @@ impl Lexer {
         })
     }
 
-    fn try_extract_list_item(&mut self) -> Option<ListItem> {
-        self.at_line_start()?;
-
-        let mut indent = 0;
-        while self.consume_if(|c| c == ' ') {
-            indent += 1;
-        }
-
-        self.consume_expected('-')?;
-        self.consume_expected(' ')?;
-
-        let start = self.mark();
-        self.consume_until(|c| c == '\n');
-        self.consume_if(|c| c == '\n');
-        let span = self.span(start);
-        let content = self.extract(start);
-
-        let tokens = Lexer::new(content).collect::<Vec<_>>();
-
-        Some(ListItem {
-            indent,
-            span,
-            tokens,
-        })
-    }
-
     fn try_lex_checklist(&mut self) -> Option<Token> {
         let start = self.mark();
         let mut items = Vec::with_capacity(0);
@@ -659,25 +738,6 @@ impl Lexer {
         }
 
         Some(Token::CheckList {
-            span: self.span(start),
-            items,
-        })
-    }
-
-    fn try_lex_list(&mut self) -> Option<Token> {
-        let start = self.mark();
-
-        let mut items = Vec::with_capacity(0);
-
-        while let Some(item) = self.try_extract_list_item() {
-            items.push(item);
-        }
-
-        if items.is_empty() {
-            return None;
-        }
-
-        Some(Token::List {
             span: self.span(start),
             items,
         })
@@ -759,6 +819,7 @@ impl Iterator for Lexer {
             please!(try_lex_divider);
             please!(try_lex_checklist);
             please!(try_lex_list);
+            please!(try_lex_numeric_list);
             please!(try_lex_templater_command);
 
             // Check if we are at the end of the file
@@ -1235,6 +1296,95 @@ mod tests {
                 ],
             }
         };
+    }
+
+    #[test]
+    fn test_lex_numeric_list() {
+        test_lex_token! {
+        "1. item 1\n2. item 2\n  1. subitem\n  2. [[link]]"
+        => Token::NumericList {
+            span: Span {
+                start: 0,
+                end: 46,
+            },
+            items: vec![
+                NumericListItem {
+                    span: Span {
+                        start: 3,
+                        end: 10,
+                    },
+                    number: 1,
+                    indent: 0,
+                    tokens: vec![
+                        Token::Text {
+                            span: Span {
+                                start: 0,
+                                end: 7,
+                            },
+                            text: "item 1\n".to_string(),
+                        },
+                    ],
+                },
+                NumericListItem {
+                    span: Span {
+                        start: 13,
+                        end: 20,
+                    },
+                    number: 2,
+                    indent: 0,
+                    tokens: vec![
+                        Token::Text {
+                            span: Span {
+                                start: 0,
+                                end: 7,
+                            },
+                            text: "item 2\n".to_string(),
+                        },
+                    ],
+                },
+                NumericListItem {
+                    span: Span {
+                        start: 25,
+                        end: 33,
+                    },
+                    number: 1,
+                    indent: 2,
+                    tokens: vec![
+                        Token::Text {
+                            span: Span {
+                                start: 0,
+                                end: 8,
+                            },
+                            text: "subitem\n".to_string(),
+                        },
+                    ],
+                },
+                NumericListItem {
+                    span: Span {
+                        start: 38,
+                        end: 46,
+                    },
+                    number: 2,
+                    indent: 2,
+                    tokens: vec![
+                        Token::InternalLink {
+                            span: Span {
+                                start: 0,
+                                end: 8,
+                            },
+                            link: InternalLink {
+                                dest: "link".to_string(),
+                                position: None,
+                                show_how: None,
+                                options: None,
+                                render: false,
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+            };
     }
 
     #[test]

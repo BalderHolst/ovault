@@ -202,6 +202,11 @@ impl Note {
                         self.index_tokens(item.tokens.iter().cloned());
                     }
                 }
+                Token::NumericList { items, .. } => {
+                    for item in items {
+                        self.index_tokens(item.tokens.iter().cloned());
+                    }
+                }
                 Token::CheckList { items, .. } => {
                     for item in items {
                         self.index_tokens(item.tokens.iter().cloned());

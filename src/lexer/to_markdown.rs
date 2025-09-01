@@ -1,4 +1,3 @@
-#[cfg(feature = "python")]
 use super::tokens::*;
 
 /// Trait for converting an item into a Markdown string representation.
@@ -10,7 +9,7 @@ pub trait ToMarkdown {
 }
 
 fn tokens_to_markdown(tokens: &[Token]) -> String {
-    tokens.iter().map(|t| t.to_markdown()).collect()
+    tokens.iter().map(ToMarkdown::to_markdown).collect()
 }
 
 impl ToMarkdown for Token {
@@ -46,6 +45,11 @@ impl ToMarkdown for Token {
             Token::List { span: _, items } => items
                 .iter()
                 .map(ListItem::to_markdown)
+                .collect::<Vec<_>>()
+                .join(""),
+            Token::NumericList { span: _, items } => items
+                .iter()
+                .map(NumericListItem::to_markdown)
                 .collect::<Vec<_>>()
                 .join(""),
             Token::CheckList { span: _, items } => items
@@ -159,6 +163,17 @@ impl ToMarkdown for ListItem {
         format!(
             "{}- {}\n",
             " ".repeat(self.indent),
+            tokens_to_markdown(&self.tokens)
+        )
+    }
+}
+
+impl ToMarkdown for NumericListItem {
+    fn to_markdown(&self) -> String {
+        format!(
+            "{}{}. {}\n",
+            " ".repeat(self.indent),
+            self.number,
             tokens_to_markdown(&self.tokens)
         )
     }

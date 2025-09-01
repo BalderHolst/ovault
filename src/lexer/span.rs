@@ -63,9 +63,12 @@ impl Span {
 #[cfg(feature = "python")]
 #[pymethods]
 impl Span {
-    /// Creates a new `Span` from the given start and end indices.
     #[new]
     fn py_new(start: usize, end: usize) -> Self {
         Span { start, end }
+    }
+
+    fn __repr__(&self) -> String {
+        format!("Span(start={}, end={})", self.start, self.end)
     }
 }

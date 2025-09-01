@@ -5,8 +5,10 @@ use std::fmt;
 #[cfg(feature = "python")]
 use pyo3::{pyclass, pymethods};
 
-use super::Span;
+#[cfg(feature = "python")]
 use super::ToMarkdown;
+
+use super::Span;
 
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
@@ -155,7 +157,6 @@ pub enum Token {
         link: ExternalLink
     },
 
-    // TODO: Numerated lists
     /// Represents a bulleted or numbered list in the note.
     ///
     /// Example:
@@ -169,6 +170,22 @@ pub enum Token {
         span: Span,
         /// The items in the list.
         items: Vec<ListItem>,
+    },
+
+    /// Represents a numerated list in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// 1. First item
+    /// 2. Second item
+    ///   1. Subitem 2.1
+    ///   2. Subitem 2.2
+    /// ```
+    NumericList {
+        /// The span of the numerated list in the source text.
+        span: Span,
+        /// The items in the numerated list.
+        items: Vec<NumericListItem>,
     },
 
     /// Represents a checklist in the note.
@@ -215,6 +232,7 @@ impl fmt::Display for Token {
             Token::DisplayMath { .. } => "DisplayMath",
             Token::Divider { .. } => "Divider",
             Token::List { .. } => "List",
+            Token::NumericList { .. } => "NumericList",
             Token::CheckList { .. } => "CheckList",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
@@ -280,6 +298,17 @@ impl Token {
                     .collect();
                 format!("List([{}])", item_strs.join(", "))
             }
+            Token::NumericList { items, .. } => {
+                let item_strs: Vec<String> = items
+                    .iter()
+                    .map(|item| {
+                        let content_strs: Vec<String> =
+                            item.tokens.iter().map(|t| t.__repr__()).collect();
+                        format!("NumericListItem([{}])", content_strs.join(", "))
+                    })
+                    .collect();
+                format!("NumericList([{}])", item_strs.join(", "))
+            }
             Token::CheckList { items, .. } => {
                 let item_strs: Vec<String> = items
                     .iter()
@@ -321,6 +350,7 @@ impl Token {
             | Token::InternalLink { span, .. }
             | Token::ExternalLink { span, .. }
             | Token::List { span, .. }
+            | Token::NumericList { span, .. }
             | Token::CheckList { span, .. }
             | Token::TemplaterCommand { span, .. } => span,
         }
@@ -342,6 +372,7 @@ impl Token {
             | Token::InternalLink { span, .. }
             | Token::ExternalLink { span, .. }
             | Token::List { span, .. }
+            | Token::NumericList { span, .. }
             | Token::CheckList { span, .. }
             | Token::TemplaterCommand { span, .. } => span,
         }
@@ -363,6 +394,7 @@ impl Token {
             | Token::InlineMath { .. }
             | Token::DisplayMath { .. }
             | Token::List { .. }
+            | Token::NumericList { .. }
             | Token::CheckList { .. }
             | Token::TemplaterCommand { .. } => false,
         }
@@ -454,6 +486,7 @@ impl InternalLink {
     }
 }
 
+#[cfg(feature = "python")]
 #[pymethods]
 impl InternalLink {
     #[pyo3(name = "to_markdown")]
@@ -484,6 +517,7 @@ pub struct Callout {
     pub foldable: bool,
 }
 
+#[cfg(feature = "python")]
 #[pymethods]
 impl Callout {
     /// Returns the markdown representation of the callout.
@@ -505,9 +539,34 @@ pub struct ListItem {
     pub tokens: Vec<Token>,
 }
 
+#[cfg(feature = "python")]
 #[pymethods]
 impl ListItem {
     /// Convert the list item to a Markdown string.
+    #[pyo3(name = "to_markdown")]
+    pub fn py_to_markdown(&self) -> String {
+        self.to_markdown()
+    }
+}
+
+/// Represents a single item in a numerated list.
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "python", pyclass(get_all))]
+pub struct NumericListItem {
+    /// The span of the list item in the source text.
+    pub span: Span,
+    /// The item number, parsed from the source text.
+    pub number: u32,
+    /// The indentation level of the list item, which indicates its nesting level.
+    pub indent: usize,
+    /// The tokenized content of the list item
+    pub tokens: Vec<Token>,
+}
+
+#[cfg(feature = "python")]
+#[pymethods]
+impl NumericListItem {
+    /// Convert the numeric list item to a Markdown string.
     #[pyo3(name = "to_markdown")]
     pub fn py_to_markdown(&self) -> String {
         self.to_markdown()
@@ -528,6 +587,7 @@ pub struct CheckListItem {
     pub tokens: Vec<Token>,
 }
 
+#[cfg(feature = "python")]
 #[pymethods]
 impl CheckListItem {
     /// Convert the checklist item to a Markdown string.
