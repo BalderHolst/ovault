@@ -205,7 +205,6 @@ impl Vault {
         Ok(abs_path)
     }
 
-    // TODO: Uptate links in inner token lists (e.g. in lists, checklists, blockquotes, etc.)
     /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
     pub fn rename_note(&mut self, old_name: &str, new_name: &str) -> io::Result<()> {
         let normalized_old = normalize(old_name.to_string());
@@ -304,9 +303,11 @@ impl Vault {
         Ok(())
     }
 
-    // TODO: Allow "#tag" syntax for tags
     /// Rename a tag in the vault.
     pub fn rename_tag(&mut self, old_tag: &str, new_tag: &str) -> io::Result<()> {
+        let old_tag = old_tag.strip_prefix('#').unwrap_or(&old_tag);
+        let new_tag = new_tag.strip_prefix('#').unwrap_or(&new_tag);
+
         if self.tags.contains_key(new_tag) {
             return Err(io::Error::new(
                 io::ErrorKind::AlreadyExists,
@@ -330,7 +331,7 @@ impl Vault {
             // TODO: Update the frontmatter if it exists
             for token in note.tokens()? {
                 if let Token::Tag { ref tag, .. } = token {
-                    if tag == old_tag {
+                    if *tag == old_tag {
                         let span = *token.span();
                         note.replace_span(span, format!("#{}", new_tag).to_string())?;
                     }
