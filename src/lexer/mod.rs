@@ -2,9 +2,11 @@
 use std::collections::VecDeque;
 
 mod span;
+mod to_markdown;
 pub mod tokens;
 
 pub use span::Span;
+pub use to_markdown::ToMarkdown;
 use tokens::*;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -774,52 +776,6 @@ impl Iterator for Lexer {
             // Consume a text character
             self.consume();
         }
-    }
-}
-
-/// Trait for converting an item into a Markdown string representation.
-pub trait ToMarkdown {
-    /// Converts the item to a Markdown string.
-    fn to_markdown(&self) -> String;
-}
-
-impl ToMarkdown for InternalLink {
-    fn to_markdown(&self) -> String {
-        let Self {
-            dest,
-            position,
-            show_how,
-            options,
-            render,
-        } = self;
-
-        let mut s = String::new();
-
-        if *render {
-            s.push('!');
-        }
-
-        s += "[[";
-
-        s += dest;
-
-        if let Some(position) = position {
-            s += "#";
-            s += position;
-        }
-
-        if let Some(options) = options {
-            s += "|";
-            s += options;
-        }
-
-        if let Some(show_how) = show_how {
-            s += "|";
-            s += show_how;
-        }
-
-        s += "]]";
-        s
     }
 }
 
