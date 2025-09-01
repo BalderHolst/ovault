@@ -38,7 +38,7 @@ impl ToMarkdown for Token {
             ),
             Token::InlineMath { span: _, latex } => format!("${latex}$"),
             Token::DisplayMath { span: _, latex } => format!("$${latex}$$"),
-            Token::Divider { span: _ } => format!("---\n"),
+            Token::Divider { span: _ } => "---\n".to_string(),
             Token::Callout { span: _, callout } => callout.to_markdown(),
             Token::InternalLink { span: _, link } => link.to_markdown(),
             Token::ExternalLink { span: _, link } => link.to_markdown(),

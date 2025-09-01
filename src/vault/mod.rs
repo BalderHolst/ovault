@@ -305,8 +305,8 @@ impl Vault {
 
     /// Rename a tag in the vault.
     pub fn rename_tag(&mut self, old_tag: &str, new_tag: &str) -> io::Result<()> {
-        let old_tag = old_tag.strip_prefix('#').unwrap_or(&old_tag);
-        let new_tag = new_tag.strip_prefix('#').unwrap_or(&new_tag);
+        let old_tag = old_tag.strip_prefix('#').unwrap_or(old_tag);
+        let new_tag = new_tag.strip_prefix('#').unwrap_or(new_tag);
 
         if self.tags.contains_key(new_tag) {
             return Err(io::Error::new(
