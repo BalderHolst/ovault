@@ -6,6 +6,7 @@ use std::fmt;
 use pyo3::{pyclass, pymethods};
 
 use super::Span;
+use super::ToMarkdown;
 
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
@@ -295,6 +296,12 @@ impl Token {
             }
         }
     }
+
+    /// Convert the token to a Markdown string.
+    #[pyo3(name = "to_markdown")]
+    pub fn py_to_markdown(&self) -> String {
+        self.to_markdown()
+    }
 }
 
 impl Token {
@@ -404,6 +411,11 @@ impl ExternalLink {
             self.url, self.show_how, self.options, self.position, self.render
         )
     }
+
+    #[pyo3(name = "to_markdown")]
+    fn py_to_markdown(&self) -> String {
+        self.to_markdown()
+    }
 }
 
 /// Represents an internal link to another note.
@@ -442,6 +454,14 @@ impl InternalLink {
     }
 }
 
+#[pymethods]
+impl InternalLink {
+    #[pyo3(name = "to_markdown")]
+    fn py_to_markdown(&self) -> String {
+        self.to_markdown()
+    }
+}
+
 /// Represents a callout block in the document.
 ///
 /// Example:
@@ -464,6 +484,15 @@ pub struct Callout {
     pub foldable: bool,
 }
 
+#[pymethods]
+impl Callout {
+    /// Returns the markdown representation of the callout.
+    #[pyo3(name = "to_markdown")]
+    pub fn py_to_markdown(&self) -> String {
+        self.to_markdown()
+    }
+}
+
 /// Represents a single item in a list.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
@@ -474,6 +503,15 @@ pub struct ListItem {
     pub indent: usize,
     /// The tokenized content of the list item
     pub tokens: Vec<Token>,
+}
+
+#[pymethods]
+impl ListItem {
+    /// Convert the list item to a Markdown string.
+    #[pyo3(name = "to_markdown")]
+    pub fn py_to_markdown(&self) -> String {
+        self.to_markdown()
+    }
 }
 
 /// Represents a single item in a checklist.
@@ -488,4 +526,13 @@ pub struct CheckListItem {
     pub indent: usize,
     /// The tokenized content of the checklist item
     pub tokens: Vec<Token>,
+}
+
+#[pymethods]
+impl CheckListItem {
+    /// Convert the checklist item to a Markdown string.
+    #[pyo3(name = "to_markdown")]
+    pub fn py_to_markdown(&self) -> String {
+        self.to_markdown()
+    }
 }
