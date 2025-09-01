@@ -328,7 +328,6 @@ impl Vault {
                 continue;
             };
 
-            // TODO: Update the frontmatter if it exists
             for token in note.tokens()? {
                 if let Token::Tag { ref tag, .. } = token {
                     if *tag == old_tag {
@@ -337,6 +336,32 @@ impl Vault {
                     }
                 }
             }
+
+            let Ok(Some(mut frontmatter)) = note.frontmatter() else {
+                continue;
+            };
+
+            let Some(note::frontmatter::FrontmatterItem::Array(tags_list)) =
+                frontmatter.get_mut("tags")
+            else {
+                continue;
+            };
+
+            for tag in tags_list {
+                let note::frontmatter::FrontmatterItem::String(ref mut tag) = tag else {
+                    continue;
+                };
+                if tag == old_tag {
+                    *tag = new_tag.to_string();
+                }
+            }
+
+            _ = note.set_frontmatter(frontmatter).map_err(|e| {
+                eprintln!(
+                    "[WARNING]: Could not update frontmatter for note '{}': {}",
+                    note.name, e
+                );
+            });
         }
 
         self.tags.insert(new_tag.to_string(), notes);
@@ -566,10 +591,10 @@ impl Vault {
         Ok(())
     }
 
-    // TODO: Allow "#tag" syntax for tags
     /// Get all notes that have the given tag.
     #[pyo3(name = "get_notes_by_tag")]
     pub fn py_get_notes_by_tag(&self, tag: &str) -> Vec<Note> {
+        let tag = tag.strip_prefix('#').unwrap_or(tag);
         let Some(tag) = self.tags.get(tag) else {
             return vec![];
         };

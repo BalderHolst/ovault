@@ -7,7 +7,7 @@ def test_open_all_test_vaults(vaults: list[ovault.Vault]):
     for vault in vaults:
         print(vault.path)
 
-def test_rename_tag(uni_notes_vault: ovault.Vault):
+def test_rename_tag_uni_vault(uni_notes_vault: ovault.Vault):
     vault = uni_notes_vault
 
     old_tag = "matematik"
@@ -17,6 +17,27 @@ def test_rename_tag(uni_notes_vault: ovault.Vault):
     assert old_tag in vault.tags()
 
     tagged_notes = vault.get_notes_by_tag(old_tag)
+
+    vault.rename_tag(old_tag, new_tag)
+
+    # Old tag should not exist anymore
+    assert old_tag not in vault.tags()
+    assert len(vault.get_notes_by_tag(old_tag)) == 0
+
+    # New tag should exist
+    assert new_tag in vault.tags()
+    assert len(vault.get_notes_by_tag(new_tag)) == len(tagged_notes)
+
+def test_rename_tag_simple_vault(simple_vault: ovault.Vault):
+    vault = simple_vault
+
+    old_tag = "#frontmatter-tag2"
+    new_tag = "RENAMED"
+
+    tagged_notes = vault.get_notes_by_tag(old_tag)
+
+    # Old tag should exist
+    assert len(tagged_notes) > 0
 
     vault.rename_tag(old_tag, new_tag)
 
