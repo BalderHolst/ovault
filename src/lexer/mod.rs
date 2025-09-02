@@ -448,7 +448,7 @@ impl Lexer {
     }
 
     /// Extract the text contained within a block prefixed with '>'
-    fn try_extract_block(&mut self) -> Option<(String, Vec<Token>)> {
+    fn try_extract_block(&mut self) -> Option<Vec<Token>> {
         self.at_block_start()?;
 
         let start = self.mark();
@@ -471,18 +471,14 @@ impl Lexer {
             token.span_mut().shift(offset as isize);
         }
 
-        let text = lexer.extract_all();
-
-        let text = text.strip_suffix('\n').unwrap_or(&text).to_string();
-
-        Some((text, tokens))
+        Some(tokens)
     }
 
     fn try_lex_quote(&mut self) -> Option<Token> {
         let start = self.mark();
-        let (text, tokens) = self.try_extract_block()?;
+        let tokens = self.try_extract_block()?;
         let span = self.span(start);
-        Some(Token::Quote { span, tokens, text })
+        Some(Token::Quote { span, tokens })
     }
 
     fn try_lex_callout(&mut self) -> Option<Token> {
@@ -507,7 +503,7 @@ impl Lexer {
         let title = self.consume_until(|c| c == '\n');
         self.consume_expected('\n')?;
 
-        let (text, tokens) = self.try_extract_block()?;
+        let tokens = self.try_extract_block()?;
 
         let span = self.span(start);
 
@@ -516,7 +512,6 @@ impl Lexer {
             callout: Callout {
                 kind,
                 title,
-                text,
                 tokens,
                 foldable,
             },
@@ -1223,7 +1218,6 @@ mod tests {
             "> 'fun quote!'\n> \\- Author"
             => Token::Quote {
                 span: Span { start: 0, end: 26 },
-                text: "'fun quote!'\n\\- Author".to_string(),
                 tokens: vec![
                     Token::Text {
                         span: Span { start: 0, end: 26 },
@@ -1272,7 +1266,6 @@ mod tests {
                             tag: "quote".to_string(),
                         }
                     ],
-                    text: "Inner #quote".to_string(),
                 },
                 Token::Text {
                     span: Span {
@@ -1282,7 +1275,6 @@ mod tests {
                     text: "Back to outer".to_string(),
                 },
             ],
-            text: "Outer quote\n> Inner #quote\nBack to outer".to_string(),
         }
             }
     }
@@ -1307,7 +1299,6 @@ mod tests {
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
-                    text: "this\nis content\n#callout".to_string(),
                     tokens: vec![
                         Token::Text {
                             span: Span { start: 18, end: 40 },
@@ -1374,7 +1365,6 @@ mod tests {
                                         },
                                     },
                                 ],
-                                text: "[[Some link]]".to_string(),
                                 foldable: true,
                             },
                         },
@@ -1386,7 +1376,6 @@ mod tests {
                             text: "Back to outer".to_string(),
                         },
                     ],
-                    text: "> [!link]- Inner callout\n> [[Some link]]\nBack to outer".to_string(),
                     foldable: false,
                 },
             }
@@ -1440,12 +1429,10 @@ mod tests {
                                         code: "".to_string(),
                                     },
                                 ],
-                                text: "```dataviewjs\n```".to_string(),
                                 foldable: false,
                             },
                         },
                     ],
-                    text: ">[!blank-container]\n>```dataviewjs\n>```".to_string(),
                     foldable: false,
                 },
             }
@@ -1462,7 +1449,6 @@ mod tests {
             callout: Callout {
                 kind: "tip".to_string(),
                 title: "Useful property".to_string(),
-                text: "$X$s do not have to be intependent.\n$$\n\\mathbb{E}\\left(\\sum_{i}a_{i}X_{i} \\right) = \\sum_{i} a_{i} \\mathbb{E}(X_{i})\n$$".to_string(),
                 tokens: vec![
                     Token::Text {
                         span: Span {
@@ -1544,7 +1530,6 @@ mod tests {
                         text: "\n".to_string(),
                     },
                 ],
-                text:"\n$$\nA=\n\\left(\n\\begin{array}{cc}\n-5 & 2 \\\\\n2 & -2 \\\\\n\\end{array}\n\\right)\n$$".to_string(),
                 foldable: true,
             },
         });

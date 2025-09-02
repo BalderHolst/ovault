@@ -28,11 +28,7 @@ impl ToMarkdown for Token {
                 lang,
                 code,
             } => format!("```{}\n{}```\n", lang.as_deref().unwrap_or(""), code),
-            Token::Quote {
-                span: _,
-                tokens,
-                text: _,
-            } => format!(
+            Token::Quote { span: _, tokens } => format!(
                 "> {content}\n",
                 content = tokens_to_markdown(tokens).replace('\n', "\n> ")
             ),
@@ -147,7 +143,6 @@ impl ToMarkdown for Callout {
             kind,
             title,
             tokens,
-            text: _,
             foldable,
         } = self;
         format!(

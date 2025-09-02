@@ -107,8 +107,6 @@ pub enum Token {
         span: Span,
         /// The tokenized content of the quote.
         tokens: Vec<Token>,
-        /// The text content of the quote.
-        text: String,
     },
 
     /// Represents inline mathematical expressions in the note.
@@ -511,8 +509,6 @@ pub struct Callout {
     pub title: String,
     /// The tokenized content of the callout, which can include text, code blocks, links, etc.
     pub tokens: Vec<Token>,
-    /// The text content of the callout.
-    pub text: String,
     /// Whether the callout can be folded or collapsed.
     pub foldable: bool,
 }
