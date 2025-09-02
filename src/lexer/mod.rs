@@ -45,12 +45,7 @@ impl Lexer {
     pub fn new_with_skip_function<S: ToString>(text: S, skip_function: fn(&mut Self)) -> Self {
         let mut lexer = Self::new(text);
 
-        println!("Initial text:\n{}", lexer.extract_all());
-
-        println!("Marking skipped characters...");
         lexer.mark_skipped(skip_function);
-
-        println!("Text after skipping:\n{}", lexer.extract_all());
 
         // Skip initial '> ' prefix to prevent infinite recursion
         skip_funcs::skip_block_prefix(&mut lexer);
@@ -242,7 +237,6 @@ impl Lexer {
 
 mod skip_funcs {
     use super::*;
-    pub fn no_skip(_: &mut Lexer) {}
     pub fn skip_block_prefix(lexer: &mut Lexer) {
         (|| {
             lexer.at_block_start()?;
@@ -288,35 +282,16 @@ impl Lexer {
 
     fn try_lex_tag(&mut self) -> Option<Token> {
         // Whitespace must lead a tag
-        println!("Trying to lex tag at cursor: {}", self.cursor);
         let prev = self.peek(-1);
         if prev.is_some() && !matches!(prev, Some(c) if c.is_whitespace()) {
-            println!(
-                "Failed to lex tag: previous char is not whitespace: {:?}",
-                prev
-            );
             return None;
         }
 
         let start = self.mark();
 
-        println!("Pound sign: {:?}, cursor: {}", self.current(), self.cursor);
+        self.consume_expected('#')?;
 
-        let c = self.consume_expected('#')?;
-        println!("{c}");
-
-        println!(
-            "After pound sign: {:?}, cursor: {}",
-            self.current(),
-            self.cursor
-        );
-
-        let tag = self.consume_while(|c| {
-            println!("tag char: {:?}", c);
-            c.is_alphabetic() || c.is_ascii_digit()
-        });
-
-        println!("Found tag: {:?} - ({:?}, {:?})", tag, start, self.mark());
+        let tag = self.consume_while(|c| c.is_alphabetic() || c.is_ascii_digit());
 
         if tag.is_empty() {
             return None;
@@ -469,25 +444,6 @@ impl Lexer {
             return None;
         }
 
-        // println!("At block start:");
-        // println!(
-        //     "{:?}",
-        //     self.chars.iter().map(|(_, c, _)| *c).collect::<String>()
-        // );
-
-        // let p = self.cursor + pos as usize;
-        // println!(
-        //     " {}^",
-        //     " ".repeat(
-        //         p + self
-        //             .chars
-        //             .iter()
-        //             .take(p)
-        //             .filter(|(_, c, _)| *c == '\n')
-        //             .count()
-        //     )
-        // );
-
         Some(())
     }
 
@@ -505,13 +461,9 @@ impl Lexer {
         let source = self.extract(start);
         let source = source.strip_suffix('\n').unwrap_or(&source);
 
-        println!("====================  START INNER LEXER  ====================");
-
         let mut lexer = Self::new_with_skip_function(&source, skip_funcs::skip_block_prefix);
 
         let mut tokens = lexer.run();
-
-        println!("====================  END INNER LEXER  ====================");
 
         // Shift all token spans by the start position
         let Mark(offset) = start;
@@ -522,12 +474,6 @@ impl Lexer {
         let text = lexer.extract_all();
 
         let text = text.strip_suffix('\n').unwrap_or(&text).to_string();
-
-        println!("Main Lexer:\n{}", self.extract_all());
-        println!();
-        println!("Inner Lexer:\n{}", lexer.extract_all());
-        println!();
-        println!("Inner tokens:\n{:#?}", tokens);
 
         Some((text, tokens))
     }
@@ -655,8 +601,6 @@ impl Lexer {
         self.consume_until_sequence("```");
 
         let code = self.extract(code_start);
-
-        let code = code.strip_suffix('\n').unwrap_or(&code).to_string();
 
         self.consume_expected('`')?;
         self.consume_expected('`')?;
@@ -1378,6 +1322,134 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_lex_nested_callout() {
+        test_lex_token! {
+            "> [!note] Outer callout\n> > [!link]- Inner callout\n> > [[Some link]]\n> Back to outer"
+                => Token::Callout {
+                span: Span {
+                    start: 0,
+                    end: 84,
+                },
+                callout: Callout {
+                    kind: "note".to_string(),
+                    title: "Outer callout".to_string(),
+                    tokens: vec![
+                        Token::Text {
+                            span: Span {
+                                start: 24,
+                                end: 26,
+                            },
+                            text: "".to_string(),
+                        },
+                        Token::Callout {
+                            span: Span {
+                                start: 26,
+                                end: 71,
+                            },
+                            callout: Callout {
+                                kind: "link".to_string(),
+                                title: "Inner callout".to_string(),
+                                tokens: vec![
+                                    Token::Text {
+                                        span: Span {
+                                            start: 29,
+                                            end: 31,
+                                        },
+                                        text: "".to_string(),
+                                    },
+                                    Token::InternalLink {
+                                        span: Span {
+                                            start: 31,
+                                            end: 44,
+                                        },
+                                        link: InternalLink {
+                                            dest: "Some link".to_string(),
+                                            position: None,
+                                            show_how: None,
+                                            options: None,
+                                            render: false,
+                                        },
+                                    },
+                                ],
+                                text: "[[Some link]]".to_string(),
+                                foldable: true,
+                            },
+                        },
+                        Token::Text {
+                            span: Span {
+                                start: 71,
+                                end: 84,
+                            },
+                            text: "Back to outer".to_string(),
+                        },
+                    ],
+                    text: "> [!link]- Inner callout\n> [[Some link]]\nBack to outer".to_string(),
+                    foldable: false,
+                },
+            }
+        }
+    }
+
+    #[test]
+    fn test_nested_callout_with_code() {
+        test_lex_token! {
+            ">[!multi-column]\n>>[!blank-container]\n>>```dataviewjs\n>>```"
+            => Token::Callout {
+                span: Span {
+                    start: 0,
+                    end: 59,
+                },
+                callout: Callout {
+                    kind: "multi-column".to_string(),
+                    title: "".to_string(),
+                    tokens: vec![
+                        Token::Text {
+                            span: Span {
+                                start: 17,
+                                end: 18,
+                            },
+                            text: "".to_string(),
+                        },
+                        Token::Callout {
+                            span: Span {
+                                start: 18,
+                                end: 59,
+                            },
+                            callout: Callout {
+                                kind: "blank-container".to_string(),
+                                title: "".to_string(),
+                                tokens: vec![
+                                    Token::Text {
+                                        span: Span {
+                                            start: 22,
+                                            end: 23,
+                                        },
+                                        text: "".to_string(),
+                                    },
+                                    Token::Code {
+                                        span: Span {
+                                            start: 23,
+                                            end: 41,
+                                        },
+                                        lang: Some(
+                                            "dataviewjs".to_string(),
+                                        ),
+                                        code: "".to_string(),
+                                    },
+                                ],
+                                text: "```dataviewjs\n```".to_string(),
+                                foldable: false,
+                            },
+                        },
+                    ],
+                    text: ">[!blank-container]\n>```dataviewjs\n>```".to_string(),
+                    foldable: false,
+                },
+            }
+        };
     }
 
     #[test]

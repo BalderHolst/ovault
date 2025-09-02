@@ -27,7 +27,7 @@ impl ToMarkdown for Token {
                 span: _,
                 lang,
                 code,
-            } => format!("```{}\n{}\n```\n", lang.as_deref().unwrap_or(""), code),
+            } => format!("```{}\n{}```\n", lang.as_deref().unwrap_or(""), code),
             Token::Quote {
                 span: _,
                 tokens,
