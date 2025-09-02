@@ -16,6 +16,12 @@ pub fn normalize(mut name: String) -> String {
         name = name.split_once('/').unwrap().1.to_string();
     }
 
+    // Trim leading and trailing whitespace
+    let name = name.trim();
+
+    // Strip ".md" suffix if present
+    let name = name.strip_suffix(".md").unwrap_or(&name);
+
     // Replace spaces with hyphens
     let name = name
         .chars()
@@ -129,9 +135,9 @@ mod tests {
     fn test_normalize_with_path_components() {
         // This is crucial for how Obsidian handles links.
         // It should extract the "file name" part and then normalize it.
-        assert_normalize("path/to/My Document.md", "my-document.md");
+        assert_normalize("path/to/My Document.md", "my-document");
         assert_normalize("another/dir/Note with Spaces.txt", "note-with-spaces.txt");
-        assert_normalize("/absolute/path/File.md", "file.md");
+        assert_normalize("/absolute/path/File.md", "file");
         assert_normalize("no/extension/file", "file");
     }
 
@@ -139,8 +145,8 @@ mod tests {
     fn test_normalize_complex_case() {
         assert_normalize(
             "  A'nOthEr / CoMplEx   N0tE   wItH 'pUnCtUaTiOn?!.md  ",
-            "complex-n0te-with-punctuation?!.md",
+            "complex-n0te-with-punctuation?!",
         );
-        assert_normalize("very///deep/path/My Final-Note.md", "my-final-note.md");
+        assert_normalize("very///deep/path/My Final-Note.md", "my-final-note");
     }
 }

@@ -146,6 +146,34 @@ fn test_open_vaults() {
 
 #[test]
 #[serial]
+fn test_get_note_by_path() {
+    let vaults = vec![TestVaultBase::Sandbox, TestVaultBase::BalderHolst];
+
+    for base in vaults {
+        println!("\nTesting vault: {:?}", base);
+
+        let test_vault = TestVault::new(base).expect("Failed to create test vault");
+        let vault = &test_vault.vault;
+
+        for note in vault.notes() {
+            let abs_path = note.full_path();
+            let rel_path = note.path.clone();
+
+            let note_by_abs = vault
+                .get_note_by_path(&abs_path)
+                .expect("Failed to get note by absolute path");
+
+            let note_by_rel = vault
+                .get_note_by_path(&rel_path)
+                .expect("Failed to get note by relative path");
+
+            assert_eq!(note, note_by_abs);
+            assert_eq!(note, note_by_rel);
+        }
+    }
+}
+#[test]
+#[serial]
 fn test_vault() {
     let mut test_vault =
         TestVault::new(TestVaultBase::Sandbox).expect("Failed to create test vault");
