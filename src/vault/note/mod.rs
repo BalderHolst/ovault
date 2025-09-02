@@ -5,6 +5,7 @@ pub mod frontmatter;
 use crate::{
     lexer::{tokens::*, Lexer, Span},
     normalize::normalize,
+    vault::IntoNoteContents,
 };
 use std::{collections::HashSet, fs, io, path::PathBuf};
 
@@ -101,7 +102,10 @@ impl Note {
     }
 
     /// Insert a string as a position within the note
-    pub fn insert_at(&mut self, pos: usize, text: String) -> io::Result<()> {
+    ///
+    /// The vault may need to be re-indexed after this operation.
+    pub fn insert_at<C: IntoNoteContents>(&mut self, pos: usize, text: C) -> io::Result<()> {
+        let text = text.into_contents();
         let path = self.full_path();
         let contents = fs::read_to_string(path.clone())?;
         let contents = format!("{}{}{}", &contents[..pos], text, &contents[pos..]);
@@ -110,7 +114,10 @@ impl Note {
     }
 
     /// Replace a span of text withing the note with a new string.
-    pub fn replace_span(&mut self, span: Span, text: String) -> io::Result<()> {
+    ///
+    /// The vault may need to be re-indexed after this operation.
+    pub fn replace_span<C: IntoNoteContents>(&mut self, span: Span, text: C) -> io::Result<()> {
+        let text = text.into_contents();
         let path = self.full_path();
         let contents = fs::read_to_string(path.clone())?;
         if span.start > span.end || span.end > contents.len() {
@@ -123,6 +130,16 @@ impl Note {
         let new_contents = format!("{}{}{}", &contents[..start], text, &contents[end..]);
         self.index_contents(new_contents.clone());
         fs::write(path, new_contents)
+    }
+
+    /// Set the entire contents of the note to a new string.
+    ///
+    /// The vault may need to be re-indexed after this operation.
+    pub fn set_contents<C: IntoNoteContents>(&mut self, contents: C) -> io::Result<()> {
+        let contents = contents.into_contents();
+        let path = self.full_path();
+        self.index_contents(contents.clone());
+        fs::write(path, contents)
     }
 
     /// Update `tags` and `links` fields from note contents

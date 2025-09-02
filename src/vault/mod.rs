@@ -212,10 +212,14 @@ impl Vault {
     /// Add a new note to the vault.
     ///
     /// NOTE: Call `index` after adding notes to update the vault state.
-    pub fn add_note(&mut self, vault_path: PathBuf, contents: &str) -> io::Result<PathBuf> {
+    pub fn add_note<C: IntoNoteContents>(
+        &mut self,
+        vault_path: PathBuf,
+        contents: C,
+    ) -> io::Result<PathBuf> {
         let abs_path = self.path.join(vault_path).with_extension("md");
         abs_path.parent().map(fs::create_dir_all).transpose()?;
-        fs::write(&abs_path, contents)?;
+        fs::write(&abs_path, contents.into_contents())?;
         self.register_note(&abs_path);
         Ok(abs_path)
     }
@@ -689,5 +693,29 @@ impl Vault {
                 old_tag, new_tag, e
             ))
         })
+    }
+}
+
+/// A trait for types that can be converted into note contents.
+pub trait IntoNoteContents {
+    /// Convert into a string that can be used as note contents.
+    fn into_contents(self) -> String;
+}
+
+impl IntoNoteContents for String {
+    fn into_contents(self) -> String {
+        self
+    }
+}
+
+impl IntoNoteContents for &str {
+    fn into_contents(self) -> String {
+        self.to_string()
+    }
+}
+
+impl IntoNoteContents for Vec<Token> {
+    fn into_contents(self) -> String {
+        self.into_iter().map(|t| t.to_markdown()).collect()
     }
 }
