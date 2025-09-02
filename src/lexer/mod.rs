@@ -1290,12 +1290,58 @@ mod tests {
         }
     }
 
-    // #[test]
-    // fn test_lex_nested_quote() {
-    //     test_lex_token! {
-    //         "> Outer quote\n> > Inner quote\n> Back to outer"
-    //     }
-    // }
+    #[test]
+    fn test_lex_nested_quote() {
+        test_lex_token! {
+            "> Outer quote\n> > Inner #quote\n> Back to outer"
+            => Token::Quote {
+            span: Span {
+                start: 0,
+                end: 46,
+            },
+            tokens: vec![
+                Token::Text {
+                    span: Span {
+                        start: 0,
+                        end: 16,
+                    },
+                    text: "Outer quote\n".to_string(),
+                },
+                Token::Quote {
+                    span: Span {
+                        start: 16,
+                        end: 33,
+                    },
+                    tokens: vec![
+                        Token::Text {
+                            span: Span {
+                                start: 16,
+                                end: 24,
+                            },
+                            text: "Inner ".to_string(),
+                        },
+                        Token::Tag {
+                            span: Span {
+                                start: 24,
+                                end: 30,
+                            },
+                            tag: "quote".to_string(),
+                        }
+                    ],
+                    text: "Inner #quote".to_string(),
+                },
+                Token::Text {
+                    span: Span {
+                        start: 33,
+                        end: 46,
+                    },
+                    text: "Back to outer".to_string(),
+                },
+            ],
+            text: "Outer quote\n> Inner #quote\nBack to outer".to_string(),
+        }
+            }
+    }
 
     #[test]
     fn test_lex_templater_command() {
