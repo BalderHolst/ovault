@@ -17,6 +17,7 @@ use glob::glob;
 use crate::{
     lexer::{tokens::Token, ToMarkdown},
     normalize::normalize,
+    warn,
 };
 
 pub use attachment::Attachment;
@@ -193,8 +194,8 @@ impl Vault {
             };
 
             let Ok(ignored_paths) = glob(&gstr) else {
-                eprintln!(
-                    "WARNING: Could not parse line {} in ignore file '{}'",
+                warn!(
+                    "Could not parse line {} in ignore file '{}'",
                     i + 1,
                     path.display()
                 );
@@ -266,10 +267,7 @@ impl Vault {
         // Update notes that link to this note
         for backlink in note.backlinks.clone() {
             let Some(backlink_note) = self.get_note_mut(&backlink) else {
-                eprintln!(
-                    "WARNING: Could not find note '{}' to update backlink",
-                    backlink
-                );
+                warn!("Could not find note '{}' to update backlink", backlink);
                 continue;
             };
 
@@ -343,7 +341,7 @@ impl Vault {
 
         for note_name in &notes {
             let Some(note) = self.get_note_mut(note_name) else {
-                eprintln!("WARNING: Could not find note '{}' to update tag", note_name);
+                warn!("Could not find note '{}' to update tag", note_name);
                 continue;
             };
 
@@ -376,8 +374,8 @@ impl Vault {
             }
 
             _ = note.set_frontmatter(frontmatter).map_err(|e| {
-                eprintln!(
-                    "[WARNING]: Could not update frontmatter for note '{}': {}",
+                warn!(
+                    "Could not update frontmatter for note '{}': {}",
                     note.name, e
                 );
             });
@@ -419,8 +417,8 @@ impl Vault {
     /// Add a directory to the vault. This will recursively add all markdown files as note
     pub fn register_dir(&mut self, path: &Path) -> io::Result<()> {
         let Ok(rel_path) = path.strip_prefix(&self.path) else {
-            eprintln!(
-                "WARNING: Can not add directory outside of vault: '{}'",
+            warn!(
+                "Can not add directory outside of vault: '{}'",
                 path.display()
             );
             return Ok(());
@@ -479,7 +477,7 @@ impl Vault {
             // Link
             {
                 let Some(from_note) = self.get_note_mut(&from) else {
-                    eprintln!("WARNING: Could not find note: '{}'", from);
+                    warn!("Could not find note: '{}'", from);
                     continue;
                 };
 

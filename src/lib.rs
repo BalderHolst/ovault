@@ -9,6 +9,7 @@ pub mod lexer;
 pub mod normalize;
 pub mod vault;
 
+mod logging;
 #[cfg(test)]
 mod tests;
 

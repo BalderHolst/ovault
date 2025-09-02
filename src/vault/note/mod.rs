@@ -6,6 +6,7 @@ use crate::{
     lexer::{tokens::*, Lexer, Span},
     normalize::normalize,
     vault::IntoNoteContent,
+    warn,
 };
 use std::{collections::HashSet, fs, io, path::PathBuf};
 
@@ -147,8 +148,8 @@ impl Note {
         let content = match self.content() {
             Ok(ts) => ts,
             Err(e) => {
-                eprintln!(
-                    "WARNING: Could not read file '{}': {}",
+                warn!(
+                    "Could not read file '{}': {}",
                     self.full_path().display(),
                     e
                 );
@@ -173,10 +174,7 @@ impl Note {
                     let frontmatter = match parse_frontmatter(&yaml) {
                         Ok(f) => f,
                         Err(e) => {
-                            eprintln!(
-                                "WARNING: Could not parse frontmatter in note '{}': {}",
-                                self.name, e
-                            );
+                            warn!("Could not parse frontmatter in note '{}': {}", self.name, e);
                             continue;
                         }
                     };
@@ -185,8 +183,8 @@ impl Note {
                     };
                     for tag in tags {
                         let FrontmatterItem::String(tag) = tag else {
-                            eprintln!(
-                                "WARNING: Invalid tag in frontmatter of note '{}': {:?}",
+                            warn!(
+                                "Invalid tag in frontmatter of note '{}': {:?}",
                                 self.name, tag
                             );
                             continue;
@@ -377,7 +375,7 @@ fn parse_frontmatter(frontmatter: &str) -> Result<Frontmatter, String> {
     }
 
     if yaml.len() > 1 {
-        eprintln!("WARNING: Multiple YAML documents found in frontmatter of note. Only using the first one.")
+        warn!("Multiple YAML documents found in frontmatter of note. Only using the first one.")
     }
 
     let root = match yaml.into_iter().next().unwrap() {
