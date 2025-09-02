@@ -612,12 +612,21 @@ impl Vault {
 
     /// Add a note to the vault.
     ///
-    /// Call the `index` method to reindex the vault after adding notes.
-    #[pyo3(name = "add_note")]
-    pub fn py_add_note(&mut self, vault_path: &str, contents: &str) -> PyResult<String> {
+    /// Use the `reindex` flag or call the `index` method to reindex the vault after adding notes.
+    #[pyo3(name = "add_note", signature = (vault_path, contents, reindex = false))]
+    pub fn py_add_note(
+        &mut self,
+        vault_path: &str,
+        contents: &str,
+        reindex: bool,
+    ) -> PyResult<String> {
         let abs_path = self.add_note(vault_path.into(), contents).map_err(|e| {
             pyo3::exceptions::PyIOError::new_err(format!("Could not add note '{vault_path}': {e}"))
         })?;
+
+        if reindex {
+            self.index();
+        }
 
         let abs_path_string = abs_path
             .to_str()
