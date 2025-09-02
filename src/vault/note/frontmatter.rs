@@ -235,7 +235,6 @@ impl Frontmatter {
         self.items.iter().map(|(k, v)| (k.as_str(), v))
     }
 
-    // TODO: Maybe use "[]" style for small lists without maps?
     /// Converts the frontmatter to a YAML string representation.
     pub fn to_yaml(&self, indent: usize) -> String {
         fn to_yaml(indent: usize, item: FrontmatterItem, level: usize) -> String {

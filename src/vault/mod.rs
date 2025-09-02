@@ -112,9 +112,24 @@ impl Vault {
         }
     }
 
-    // TODO: Implement
-    fn _get_note_by_path(&self, _path: &Path) -> Option<&Note> {
-        unimplemented!()
+    fn path_to_norm_name(&self, mut path: &Path) -> Option<String> {
+        if path.is_absolute() {
+            path = path.strip_prefix(&self.path).ok()?;
+        }
+        let path_str = path.to_str()?.to_string();
+        Some(normalize(path_str))
+    }
+
+    /// Get a note by its path in the vault. Either absolute or relative to the vault path.
+    pub fn get_note_by_path(&self, path: &Path) -> Option<&Note> {
+        let norm_name = self.path_to_norm_name(&path)?;
+        self.get_note(&norm_name)
+    }
+
+    /// Get a mutable reference to a note by its path in the vault. Either absolute or relative to the vault path.
+    pub fn get_note_by_path_mut(&mut self, path: &Path) -> Option<&mut Note> {
+        let norm_name = self.path_to_norm_name(&path)?;
+        self.get_note_mut(&norm_name)
     }
 
     fn items(&self) -> impl Iterator<Item = &VaultItem> {
@@ -608,6 +623,12 @@ impl Vault {
     #[pyo3(name = "get_note_by_name")]
     pub fn py_get_note(&self, name: &str) -> Option<Note> {
         self.get_note(&normalize(name.to_string())).cloned()
+    }
+
+    /// Get note by its path in the vault. Either absolute or relative to the vault path.
+    #[pyo3(name = "get_note_by_path")]
+    pub fn py_get_note_by_path(&self, path: &str) -> Option<Note> {
+        self.get_note_by_path(&PathBuf::from(path)).cloned()
     }
 
     /// Add a note to the vault.
