@@ -48,6 +48,7 @@ impl Lexer {
         Vec::from_iter(self)
     }
 
+    // TODO: Skip skipped characters
     fn peek(&self, offset: isize) -> Option<char> {
         let index = self.cursor as isize + offset;
         if index < 0 {
@@ -444,6 +445,12 @@ impl Lexer {
         let text = lexer.extract_all();
 
         let text = text.strip_suffix('\n').unwrap_or(&text).to_string();
+
+        println!("Main Lexer:\n{}", self.extract_all());
+        println!();
+        println!("Inner Lexer:\n{}", lexer.extract_all());
+        println!();
+        println!("Inner tokens:\n{:#?}", tokens);
 
         Some((text, tokens))
     }
@@ -1152,6 +1159,13 @@ mod tests {
     }
 
     #[test]
+    fn test_lex_nested_quote() {
+        test_lex_token! {
+            "> Outer quote\n> > Inner quote\n> Back to outer"
+        }
+    }
+
+    #[test]
     fn test_lex_templater_command() {
         test_lex_token! {
             "<% tp.file.include('path/to/file.md') %>"
@@ -1280,7 +1294,7 @@ mod tests {
                         text: "\n".to_string(),
                     },
                 ],
-                text:"\n$$\nA=\n\\left(\n\\begin{array}{cc}\n-5 & 2 \\\\\n2 & -2 \\\\\n\\end{array}\n\\right)\n$$\n".to_string(),
+                text:"\n$$\nA=\n\\left(\n\\begin{array}{cc}\n-5 & 2 \\\\\n2 & -2 \\\\\n\\end{array}\n\\right)\n$$".to_string(),
                 foldable: true,
             },
         });
@@ -1384,7 +1398,7 @@ mod tests {
                 NumericListItem {
                     span: Span {
                         start: 3,
-                        end: 10,
+                        end: 9,
                     },
                     number: 1,
                     indent: 0,
@@ -1392,16 +1406,16 @@ mod tests {
                         Token::Text {
                             span: Span {
                                 start: 0,
-                                end: 7,
+                                end: 6,
                             },
-                            text: "item 1\n".to_string(),
+                            text: "item 1".to_string(),
                         },
                     ],
                 },
                 NumericListItem {
                     span: Span {
                         start: 13,
-                        end: 20,
+                        end: 19,
                     },
                     number: 2,
                     indent: 0,
@@ -1409,16 +1423,16 @@ mod tests {
                         Token::Text {
                             span: Span {
                                 start: 0,
-                                end: 7,
+                                end: 6,
                             },
-                            text: "item 2\n".to_string(),
+                            text: "item 2".to_string(),
                         },
                     ],
                 },
                 NumericListItem {
                     span: Span {
                         start: 25,
-                        end: 33,
+                        end: 32,
                     },
                     number: 1,
                     indent: 2,
@@ -1426,9 +1440,9 @@ mod tests {
                         Token::Text {
                             span: Span {
                                 start: 0,
-                                end: 8,
+                                end: 7,
                             },
-                            text: "subitem\n".to_string(),
+                            text: "subitem".to_string(),
                         },
                     ],
                 },
@@ -1473,73 +1487,66 @@ mod tests {
                     CheckListItem {
                         checked: true,
                         span: Span {
-                            start: 5,
-                            end: 16,
+                            start: 6,
+                            end: 15,
                         },
                         indent: 0,
-                        tokens: vec![
-                            Token::Text {
-                                span: Span {
-                                    start: 0,
-                                    end: 11,
-                                },
-                                text: " done item\n".to_string(),
-                            },
-                        ],
-                    },
-                    CheckListItem {
-                        checked: false,
-                        span: Span {
-                            start: 21,
-                            end: 32,
-                        },
-                        indent: 0,
-                        tokens: vec![
-                            Token::Text {
-                                span: Span {
-                                    start: 0,
-                                    end: 11,
-                                },
-                                text: " todo item\n".to_string(),
-                            },
-                        ],
-                    },
-                    CheckListItem {
-                        checked: false,
-                        span: Span {
-                            start: 39,
-                            end: 48,
-                        },
-                        indent: 2,
                         tokens: vec![
                             Token::Text {
                                 span: Span {
                                     start: 0,
                                     end: 9,
                                 },
-                                text: " subitem\n".to_string(),
+                                text: "done item".to_string(),
+                            },
+                        ],
+                    },
+                    CheckListItem {
+                        checked: false,
+                        span: Span {
+                            start: 22,
+                            end: 31,
+                        },
+                        indent: 0,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 9,
+                                },
+                                text: "todo item".to_string(),
+                            },
+                        ],
+                    },
+                    CheckListItem {
+                        checked: false,
+                        span: Span {
+                            start: 40,
+                            end: 47,
+                        },
+                        indent: 2,
+                        tokens: vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
+                                text: "subitem".to_string(),
                             },
                         ],
                     },
                     CheckListItem {
                         checked: true,
                         span: Span {
-                            start: 55,
+                            start: 56,
                             end: 64,
                         },
                         indent: 2,
                         tokens: vec![
-                            Token::Text {
-                                span: Span {
-                                    start: 0,
-                                    end: 1,
-                                },
-                                text: " ".to_string(),
-                            },
                             Token::InternalLink {
                                 span: Span {
-                                    start: 1,
-                                    end: 9,
+                                    start: 0,
+                                    end: 8,
                                 },
                                 link: InternalLink {
                                     dest: "link".to_string(),
