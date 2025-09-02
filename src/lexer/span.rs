@@ -12,6 +12,10 @@ pub struct Span {
 }
 
 impl Span {
+    /// A span that represents an empty range at the start of the text.
+    #[allow(unused)]
+    pub const ZERO: Self = Span { start: 0, end: 0 };
+
     /// Shifts the span by a given offset.
     pub fn shift(&mut self, offset: isize) {
         let start = self.start as isize + offset;

@@ -3,6 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use pretty_assertions::assert_eq;
 use serial_test::serial;
 
 use crate::*;
@@ -13,16 +14,28 @@ const TMP_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/target/tmp-test-vaul
 #[derive(Debug, Clone, Copy)]
 enum TestVaultBase {
     Sandbox,
+    SimpleVault,
     BalderHolst,
     SoRobby,
     TheJoboReal,
 }
 
 impl TestVaultBase {
+    fn all() -> &'static [Self] {
+        &[
+            Self::Sandbox,
+            Self::SimpleVault,
+            Self::BalderHolst,
+            Self::SoRobby,
+            Self::TheJoboReal,
+        ]
+    }
+
     fn path(&self) -> PathBuf {
         let dir = PathBuf::from(VAULT_DIR);
         match self {
             Self::Sandbox => dir.join("Obsidian Sandbox"),
+            Self::SimpleVault => dir.join("simple_vault"),
             Self::BalderHolst => dir.join("BalderHolst_uni-notes"),
             Self::SoRobby => dir.join("SoRobby_ObsidianStarterVault"),
             Self::TheJoboReal => dir.join("TheJoboReal_Noter"),
@@ -104,20 +117,54 @@ impl Drop for TestVault {
     }
 }
 
+fn zero_tokens(tokens: Vec<Token>) -> Vec<Token> {
+    tokens.into_iter().map(zero_span).collect()
+}
+
+fn zero_span(mut token: Token) -> Token {
+    let span = token.span_mut();
+    *span = Span::ZERO;
+
+    match token {
+        Token::Quote { ref mut tokens, .. } => {
+            *tokens = zero_tokens(tokens.clone());
+        }
+        Token::Callout {
+            ref mut callout, ..
+        } => {
+            callout.tokens = zero_tokens(callout.tokens.clone());
+        }
+        Token::List { ref mut items, .. } => {
+            for item in items {
+                item.span = Span::ZERO;
+                item.tokens = zero_tokens(item.tokens.clone());
+            }
+        }
+        Token::NumericList { ref mut items, .. } => {
+            for item in items {
+                item.span = Span::ZERO;
+                item.tokens = zero_tokens(item.tokens.clone());
+            }
+        }
+        Token::CheckList { ref mut items, .. } => {
+            for item in items {
+                item.span = Span::ZERO;
+                item.tokens = zero_tokens(item.tokens.clone());
+            }
+        }
+        _ => {}
+    }
+
+    token
+}
+
 #[test]
 #[serial]
 fn test_open_vaults() {
-    let vaults = vec![
-        TestVaultBase::Sandbox,
-        TestVaultBase::BalderHolst,
-        TestVaultBase::TheJoboReal,
-        TestVaultBase::SoRobby,
-    ];
-
-    for base in vaults {
+    for base in TestVaultBase::all() {
         println!("\nTesting vault: {:?}", base);
 
-        let test_vault = TestVault::new(base).expect("Failed to create test vault");
+        let test_vault = TestVault::new(*base).expect("Failed to create test vault");
         let vault = &test_vault.vault;
 
         // Check if the vault path exists
@@ -172,9 +219,90 @@ fn test_get_note_by_path() {
         }
     }
 }
+
 #[test]
 #[serial]
-fn test_vault() {
+fn test_to_markdown() {
+    let bases = &[
+        TestVaultBase::Sandbox,
+        TestVaultBase::SimpleVault,
+        TestVaultBase::BalderHolst,
+        TestVaultBase::SoRobby,
+        TestVaultBase::TheJoboReal,
+    ];
+
+    for base in bases {
+        println!("\nTesting vault: {:?}", base);
+
+        let test_vault = TestVault::new(*base).expect("Failed to create test vault");
+        let vault = &test_vault.vault;
+
+        let mut notes = vault.notes().collect::<Vec<_>>();
+
+        // Sort to make output consistent
+        notes.sort_by_key(|note| &note.name);
+
+        for note in notes {
+            info!("========== Testing note: '{}' ==========", note.name);
+            let tokens: Vec<_> = note
+                .tokens()
+                .expect("Failed to tokenize note")
+                .map(zero_span)
+                .collect();
+
+            println!("Original tokens:");
+            for token in &tokens {
+                println!("  - {:?}", token);
+            }
+
+            let text = tokens
+                .iter()
+                .map(lexer::ToMarkdown::to_markdown)
+                .collect::<String>();
+
+            println!("New text:\n{text}\n");
+
+            let new_tokens = lexer::Lexer::new(&text).collect::<Vec<_>>();
+
+            for (old, new) in tokens.iter().zip(new_tokens.iter()) {
+                println!(
+                    "New token ({}) source: {:?}",
+                    new,
+                    new.span().extract(&text)
+                );
+                let new = zero_span(new.clone());
+                assert_eq!(old, &new);
+            }
+
+            assert_eq!(
+                tokens.len(),
+                new_tokens.len(),
+                "Token count mismatch in note '{}'",
+                note.name
+            );
+        }
+    }
+}
+
+#[test]
+fn test_nested_callout_to_markdown() {
+    let source = ">>[!blank-container]\n>>```dataviewjs\n>>```";
+
+    let original_tokens: Vec<_> = lexer::Lexer::new(source).map(zero_span).collect();
+    let new_source = original_tokens
+        .iter()
+        .map(lexer::ToMarkdown::to_markdown)
+        .collect::<String>();
+    let new_tokens = lexer::Lexer::new(&new_source)
+        .map(zero_span)
+        .collect::<Vec<_>>();
+
+    assert_eq!(original_tokens, new_tokens);
+}
+
+#[test]
+#[serial]
+fn test_vault_links() {
     let mut test_vault =
         TestVault::new(TestVaultBase::Sandbox).expect("Failed to create test vault");
 

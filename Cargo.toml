@@ -21,4 +21,5 @@ syn =  { version = "2.0.96", optional = true }
 quote = { version = "1.0.38", optional = true }
 
 [dev-dependencies]
+pretty_assertions = "1.4.1"
 serial_test = "3.2.0"

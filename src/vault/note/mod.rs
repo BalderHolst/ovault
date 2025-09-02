@@ -86,6 +86,7 @@ impl Note {
         fs::read_to_string(self.full_path())
     }
 
+    // TODO: Maybe unfold recursive tokens?
     /// Get an iterator if tokens from the note content.
     pub fn tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
         let content = self.content()?;

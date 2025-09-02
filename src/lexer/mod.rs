@@ -96,12 +96,37 @@ impl Lexer {
         self.consume_expect(|c| c == expected)
     }
 
+    fn consume_expected_sequence(&mut self, seq: &str) -> Option<()> {
+        for expected in seq.chars() {
+            self.consume_expected(expected)?;
+        }
+        Some(())
+    }
+
     fn consume_until(&mut self, cond: impl Fn(char) -> bool) -> String {
         let start = self.mark();
         while self.current().is_some_and(|c| !cond(c)) {
             self.consume();
         }
         self.extract(start)
+    }
+
+    fn at_sequence(&self, seq: &str) -> bool {
+        let mut found = true;
+        for (i, c) in seq.chars().enumerate() {
+            if self.peek(i as isize) != Some(c) {
+                found = false;
+                break;
+            }
+        }
+        found
+    }
+
+    fn consume_until_sequence(&mut self, seq: &str) -> Option<()> {
+        while !self.at_sequence(seq) {
+            self.consume()?;
+        }
+        Some(())
     }
 
     fn consume_while(&mut self, cond: impl Fn(char) -> bool) -> String {
@@ -134,6 +159,11 @@ impl Lexer {
 
     fn mark(&self) -> Mark {
         Mark(self.cursor)
+    }
+
+    fn rewind(&mut self, mark: Mark) {
+        let Mark(pos) = mark;
+        self.cursor = pos;
     }
 
     /// Get the text between the mark and the cursor
@@ -204,6 +234,9 @@ impl Lexer {
             self.consume();
         }
         let heading = self.extract(heading_start);
+
+        self.consume_if(|c| c == '\n');
+
         let span = self.span(start);
         Some(Token::Header {
             span,
@@ -391,6 +424,7 @@ impl Lexer {
         }
 
         let source = self.extract(start);
+        let source = source.strip_suffix('\n').unwrap_or(&source);
 
         let mut lexer = Self::new(&source);
         lexer.skip_function = skip_funcs::skip_block_prefix;
@@ -408,6 +442,8 @@ impl Lexer {
         }
 
         let text = lexer.extract_all();
+
+        let text = text.strip_suffix('\n').unwrap_or(&text).to_string();
 
         Some((text, tokens))
     }
@@ -532,21 +568,16 @@ impl Lexer {
         };
 
         let code_start = self.mark();
-        loop {
-            self.consume_until(|c| c == '`');
-            if self.peek(1) == Some('`') && self.peek(2) == Some('`') {
-                break;
-            }
-
-            // consume the "`" we found
-            self.consume()?;
-        }
+        self.consume_until_sequence("```");
 
         let code = self.extract(code_start);
 
+        let code = code.strip_suffix('\n').unwrap_or(&code).to_string();
+
         self.consume_expected('`')?;
         self.consume_expected('`')?;
         self.consume_expected('`')?;
+        self.consume_if(|c| c == '\n');
 
         let span = self.span(start);
 
@@ -604,20 +635,26 @@ impl Lexer {
 
     fn try_extract_list_item(&mut self) -> Option<ListItem> {
         self.at_line_start()?;
+        let start = self.mark();
 
         let mut indent = 0;
         while self.consume_if(|c| c == ' ') {
             indent += 1;
         }
 
-        self.consume_expected('-')?;
-        self.consume_expected(' ')?;
+        if !self.at_sequence("- ") {
+            self.rewind(start);
+            return None;
+        }
+
+        self.consume_expected_sequence("- ").unwrap();
 
         let start = self.mark();
         self.consume_until(|c| c == '\n');
-        self.consume_if(|c| c == '\n');
         let span = self.span(start);
         let content = self.extract(start);
+
+        self.consume_if(|c| c == '\n');
 
         let tokens = Lexer::new(content).collect::<Vec<_>>();
 
@@ -641,30 +678,37 @@ impl Lexer {
             return None;
         }
 
-        Some(Token::List {
-            span: self.span(start),
-            items,
-        })
+        let span = self.span(start);
+
+        Some(Token::List { span, items })
     }
 
     fn try_extract_numeric_list_item(&mut self) -> Option<NumericListItem> {
         self.at_line_start()?;
+        let start = self.mark();
 
         let mut indent = 0;
         while self.consume_if(|c| c == ' ') {
             indent += 1;
         }
 
-        let number = self.consume_integer()?;
+        let Some(number) = (|| {
+            let number = self.consume_integer()?;
+            self.consume_expected('.')?;
+            Some(number)
+        })() else {
+            self.rewind(start);
+            return None;
+        };
 
-        self.consume_expected('.')?;
         self.consume_if(|c| c == ' ');
 
         let start = self.mark();
         self.consume_until(|c| c == '\n');
-        self.consume_if(|c| c == '\n');
         let span = self.span(start);
         let content = self.extract(start);
+
+        self.consume_if(|c| c == '\n');
 
         let tokens = Lexer::new(content).collect::<Vec<_>>();
 
@@ -697,23 +741,32 @@ impl Lexer {
 
     fn try_extract_checklist_item(&mut self) -> Option<CheckListItem> {
         self.at_line_start()?;
+        let start = self.mark();
 
         let mut indent = 0;
         while self.consume_if(|c| c == ' ') {
             indent += 1;
         }
 
-        self.consume_expected('-')?;
-        self.consume_expected(' ')?;
-        self.consume_expected('[')?;
-        let checked = self.consume()? != ' ';
-        self.consume_expected(']')?;
+        let Some(checked) = (|| {
+            self.consume_expected('-')?;
+            self.consume_expected(' ')?;
+            self.consume_expected('[')?;
+            let checked = self.consume()? != ' ';
+            self.consume_expected(']')?;
+            self.consume_if(|c| c == ' ');
+            Some(checked)
+        })() else {
+            self.rewind(start);
+            return None;
+        };
 
         let start = self.mark();
         self.consume_until(|c| c == '\n');
-        self.consume_if(|c| c == '\n');
         let span = self.span(start);
         let content = self.extract(start);
+
+        self.consume_if(|c| c == '\n');
 
         let tokens = Lexer::new(content).collect::<Vec<_>>();
 
@@ -843,6 +896,7 @@ impl Iterator for Lexer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use pretty_assertions::assert_eq;
 
     macro_rules! test_lex_token {
         ($source:expr => $($token:tt)*) => {
@@ -851,9 +905,10 @@ mod tests {
             println!("\nRaw Source:\n{:?}", $source);
             println!("\nSource:\n{}", $source);
             println!("\nToken: {:#?}\n", token);
+            let expected = $($token)*;
             assert_eq!(
+                expected,
                 token,
-                $($token)*
             );
         };
         ($source:expr) => {
@@ -882,6 +937,15 @@ mod tests {
             => Token::Header {
                 span: Span { start: 0, end: 9 },
                 level: 1,
+                heading: "Heading".to_string()
+            }
+        }
+
+        test_lex_token! {
+            "### Heading"
+            => Token::Header {
+                span: Span { start: 0, end: 11 },
+                level: 3,
                 heading: "Heading".to_string()
             }
         }
@@ -1037,6 +1101,15 @@ mod tests {
                 code: "this is some code".to_string()
             }
         }
+
+        test_lex_token! {
+            "```language\n```"
+            => Token::Code {
+                span: Span { start: 0, end: 15 },
+                lang: Some("language".to_string()),
+                code: "".to_string()
+            }
+        }
     }
 
     #[test]
@@ -1094,18 +1167,18 @@ mod tests {
         test_lex_token! {
             "> [!kind]- Title!\n> this\n> is content\n> #callout"
             => Token::Callout {
-                span: Span { start: 0, end: 49 },
+                span: Span { start: 0, end: 48 },
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
                     text: "this\nis content\n#callout".to_string(),
                     tokens: vec![
                         Token::Text {
-                            span: Span { start: 18, end: 41 },
+                            span: Span { start: 18, end: 40 },
                             text: "this\nis content\n".to_string(),
                         },
                         Token::Tag {
-                            span: Span { start: 41, end: 49 },
+                            span: Span { start: 40, end: 48 },
                             tag: "callout".to_string(),
                         }
                     ],
@@ -1226,48 +1299,48 @@ mod tests {
                     ListItem {
                         span: Span {
                             start: 2,
-                            end: 9,
+                            end: 8,
                         },
                         indent: 0,
                         tokens: vec![
                             Token::Text {
                                 span: Span {
                                     start: 0,
-                                    end: 7,
+                                    end: 6,
                                 },
-                                text: "item 1\n".to_string(),
+                                text: "item 1".to_string(),
                             },
                         ],
                     },
                     ListItem {
                         span: Span {
                             start: 11,
-                            end: 18,
+                            end: 17,
                         },
                         indent: 0,
                         tokens: vec![
                             Token::Text {
                                 span: Span {
                                     start: 0,
-                                    end: 7,
+                                    end: 6,
                                 },
-                                text: "item 2\n".to_string(),
+                                text: "item 2".to_string(),
                             },
                         ],
                     },
                     ListItem {
                         span: Span {
                             start: 22,
-                            end: 30,
+                            end: 29,
                         },
                         indent: 2,
                         tokens: vec![
                             Token::Text {
                                 span: Span {
                                     start: 0,
-                                    end: 8,
+                                    end: 7,
                                 },
-                                text: "subitem\n".to_string(),
+                                text: "subitem".to_string(),
                             },
                         ],
                     },
@@ -1383,7 +1456,7 @@ mod tests {
                     ],
                 },
             ],
-        },
+        }
             };
     }
 
