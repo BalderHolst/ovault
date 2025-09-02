@@ -178,8 +178,8 @@ impl Vault {
             return Ok(());
         }
 
-        let contents = fs::read_to_string(path)?;
-        for (i, line) in contents.lines().enumerate() {
+        let content = fs::read_to_string(path)?;
+        for (i, line) in content.lines().enumerate() {
             let line = line.trim();
 
             // Skip empty lines and comments
@@ -212,14 +212,14 @@ impl Vault {
     /// Add a new note to the vault.
     ///
     /// NOTE: Call `index` after adding notes to update the vault state.
-    pub fn add_note<C: IntoNoteContents>(
+    pub fn add_note<C: IntoNoteContent>(
         &mut self,
         vault_path: PathBuf,
-        contents: C,
+        content: C,
     ) -> io::Result<PathBuf> {
         let abs_path = self.path.join(vault_path).with_extension("md");
         abs_path.parent().map(fs::create_dir_all).transpose()?;
-        fs::write(&abs_path, contents.into_contents())?;
+        fs::write(&abs_path, content.into_content())?;
         self.register_note(&abs_path);
         Ok(abs_path)
     }
@@ -638,14 +638,14 @@ impl Vault {
     /// Add a note to the vault.
     ///
     /// Use the `reindex` flag or call the `index` method to reindex the vault after adding notes.
-    #[pyo3(name = "add_note", signature = (vault_path, contents, reindex = false))]
+    #[pyo3(name = "add_note", signature = (vault_path, content, reindex = false))]
     pub fn py_add_note(
         &mut self,
         vault_path: &str,
-        contents: &str,
+        content: &str,
         reindex: bool,
     ) -> PyResult<String> {
-        let abs_path = self.add_note(vault_path.into(), contents).map_err(|e| {
+        let abs_path = self.add_note(vault_path.into(), content).map_err(|e| {
             pyo3::exceptions::PyIOError::new_err(format!("Could not add note '{vault_path}': {e}"))
         })?;
 
@@ -696,26 +696,26 @@ impl Vault {
     }
 }
 
-/// A trait for types that can be converted into note contents.
-pub trait IntoNoteContents {
-    /// Convert into a string that can be used as note contents.
-    fn into_contents(self) -> String;
+/// A trait for types that can be converted into note content.
+pub trait IntoNoteContent {
+    /// Convert into a string that can be used as note content.
+    fn into_content(self) -> String;
 }
 
-impl IntoNoteContents for String {
-    fn into_contents(self) -> String {
+impl IntoNoteContent for String {
+    fn into_content(self) -> String {
         self
     }
 }
 
-impl IntoNoteContents for &str {
-    fn into_contents(self) -> String {
+impl IntoNoteContent for &str {
+    fn into_content(self) -> String {
         self.to_string()
     }
 }
 
-impl IntoNoteContents for Vec<Token> {
-    fn into_contents(self) -> String {
+impl IntoNoteContent for Vec<Token> {
+    fn into_content(self) -> String {
         self.into_iter().map(|t| t.to_markdown()).collect()
     }
 }

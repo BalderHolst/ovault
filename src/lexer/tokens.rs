@@ -105,7 +105,7 @@ pub enum Token {
     Quote {
         /// The span of the quote in the source text.
         span: Span,
-        /// The tokenized contents of the quote.
+        /// The tokenized content of the quote.
         tokens: Vec<Token>,
         /// The text content of the quote.
         text: String,
@@ -276,7 +276,7 @@ impl Token {
                         callout
                             .tokens
                             .first()
-                            .map_or("<no contents>".to_string(), |t| string(&t.__repr__()))
+                            .map_or("<no content>".to_string(), |t| string(&t.__repr__()))
                     )
                 )
             }

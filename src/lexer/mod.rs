@@ -1092,17 +1092,17 @@ mod tests {
     #[test]
     fn test_lex_callout() {
         test_lex_token! {
-            "> [!kind]- Title!\n> this\n> is contents\n> #callout"
+            "> [!kind]- Title!\n> this\n> is content\n> #callout"
             => Token::Callout {
                 span: Span { start: 0, end: 49 },
                 callout: Callout {
                     kind: "kind".to_string(),
                     title: "Title!".to_string(),
-                    text: "this\nis contents\n#callout".to_string(),
+                    text: "this\nis content\n#callout".to_string(),
                     tokens: vec![
                         Token::Text {
                             span: Span { start: 18, end: 41 },
-                            text: "this\nis contents\n".to_string(),
+                            text: "this\nis content\n".to_string(),
                         },
                         Token::Tag {
                             span: Span { start: 41, end: 49 },

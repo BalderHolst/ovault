@@ -7,8 +7,8 @@ VAULT_DIR = Path(__file__).parent.parent / "test-vaults"
 
 import ovault
 
-def copy_dir_contents(src: Path, dst: Path):
-    """Recursively copies contents of src directory to dst."""
+def copy_dir_content(src: Path, dst: Path):
+    """Recursively copies content of src directory to dst."""
     dst.mkdir(parents=True, exist_ok=True)
     for item in os.listdir(src):
         src_path = src / item
@@ -28,7 +28,7 @@ def get_tmp_vault(tmp_path: Path, vault_name: str) -> ovault.Vault:
         pytest.fail(f"Test vault '{source_vault}' not found.")
 
     temp_vault_path = tmp_path / vault_name
-    copy_dir_contents(source_vault, temp_vault_path)
+    copy_dir_content(source_vault, temp_vault_path)
     return ovault.Vault(str(temp_vault_path))
 
 @pytest.fixture

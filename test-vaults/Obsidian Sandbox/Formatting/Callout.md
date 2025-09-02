@@ -51,13 +51,13 @@ Additionally, you can create a folding callout by adding `+` (default expanded) 
 
 ```markdown
 > [!FAQ]- Are callouts foldable?
-> Yes! In a foldable callout, the contents are hidden until it is expanded.
+> Yes! In a foldable callout, the content are hidden until it is expanded.
 ```
 
 Will show up as:
 
 > [!FAQ]- Are callouts foldable?
-> Yes! In a foldable callout, the contents are hidden until it is expanded.
+> Yes! In a foldable callout, the content are hidden until it is expanded.
 
 ### Customizations
 

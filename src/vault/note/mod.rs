@@ -5,7 +5,7 @@ pub mod frontmatter;
 use crate::{
     lexer::{tokens::*, Lexer, Span},
     normalize::normalize,
-    vault::IntoNoteContents,
+    vault::IntoNoteContent,
 };
 use std::{collections::HashSet, fs, io, path::PathBuf};
 
@@ -21,7 +21,7 @@ pub struct Note {
     pub path: PathBuf,
     /// Name of the note (file name without extension)
     pub name: String,
-    /// Length of the note contents in characters
+    /// Length of the note content in characters
     pub length: usize,
     /// Set of tags in the note
     pub tags: HashSet<String>,
@@ -61,16 +61,16 @@ impl Note {
     /// it will be replaced with the new data.
     pub fn set_frontmatter(&mut self, frontmatter: Frontmatter) -> io::Result<()> {
         let yaml = frontmatter.to_yaml(2);
-        let mut contents = self.contents()?;
+        let mut content = self.content()?;
 
         match self.frontmatter_string() {
             Some(s) => {
-                contents = format!("---\n{}\n---\n{}", yaml, &contents[s.len()..]);
-                fs::write(self.full_path(), contents)
+                content = format!("---\n{}\n---\n{}", yaml, &content[s.len()..]);
+                fs::write(self.full_path(), content)
             }
             None => {
-                contents = format!("---\n{}\n---\n{}", yaml, contents);
-                fs::write(self.full_path(), contents)
+                content = format!("---\n{}\n---\n{}", yaml, content);
+                fs::write(self.full_path(), content)
             }
         }
     }
@@ -80,15 +80,15 @@ impl Note {
         self.path.components().count()
     }
 
-    /// Read the note contents to a string
-    pub fn contents(&self) -> io::Result<String> {
+    /// Read the note content to a string
+    pub fn content(&self) -> io::Result<String> {
         fs::read_to_string(self.full_path())
     }
 
-    /// Get an iterator if tokens from the note contents.
+    /// Get an iterator if tokens from the note content.
     pub fn tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
-        let contents = self.contents()?;
-        Ok(Lexer::new(contents))
+        let content = self.content()?;
+        Ok(Lexer::new(content))
     }
 
     /// Add a note to the internal list of linked notes.
@@ -104,47 +104,47 @@ impl Note {
     /// Insert a string as a position within the note
     ///
     /// The vault may need to be re-indexed after this operation.
-    pub fn insert_at<C: IntoNoteContents>(&mut self, pos: usize, text: C) -> io::Result<()> {
-        let text = text.into_contents();
+    pub fn insert_at<C: IntoNoteContent>(&mut self, pos: usize, text: C) -> io::Result<()> {
+        let text = text.into_content();
         let path = self.full_path();
-        let contents = fs::read_to_string(path.clone())?;
-        let contents = format!("{}{}{}", &contents[..pos], text, &contents[pos..]);
-        self.index_contents(contents.clone());
-        fs::write(path, contents)
+        let content = fs::read_to_string(path.clone())?;
+        let content = format!("{}{}{}", &content[..pos], text, &content[pos..]);
+        self.index_content(content.clone());
+        fs::write(path, content)
     }
 
     /// Replace a span of text withing the note with a new string.
     ///
     /// The vault may need to be re-indexed after this operation.
-    pub fn replace_span<C: IntoNoteContents>(&mut self, span: Span, text: C) -> io::Result<()> {
-        let text = text.into_contents();
+    pub fn replace_span<C: IntoNoteContent>(&mut self, span: Span, text: C) -> io::Result<()> {
+        let text = text.into_content();
         let path = self.full_path();
-        let contents = fs::read_to_string(path.clone())?;
-        if span.start > span.end || span.end > contents.len() {
+        let content = fs::read_to_string(path.clone())?;
+        if span.start > span.end || span.end > content.len() {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 format!("Span {span:?} is out of bounds"),
             ));
         }
-        let (start, end) = span.byte_indexes(&contents);
-        let new_contents = format!("{}{}{}", &contents[..start], text, &contents[end..]);
-        self.index_contents(new_contents.clone());
-        fs::write(path, new_contents)
+        let (start, end) = span.byte_indexes(&content);
+        let new_content = format!("{}{}{}", &content[..start], text, &content[end..]);
+        self.index_content(new_content.clone());
+        fs::write(path, new_content)
     }
 
-    /// Set the entire contents of the note to a new string.
+    /// Set the entire content of the note to a new string.
     ///
     /// The vault may need to be re-indexed after this operation.
-    pub fn set_contents<C: IntoNoteContents>(&mut self, contents: C) -> io::Result<()> {
-        let contents = contents.into_contents();
+    pub fn set_content<C: IntoNoteContent>(&mut self, content: C) -> io::Result<()> {
+        let content = content.into_content();
         let path = self.full_path();
-        self.index_contents(contents.clone());
-        fs::write(path, contents)
+        self.index_content(content.clone());
+        fs::write(path, content)
     }
 
-    /// Update `tags` and `links` fields from note contents
+    /// Update `tags` and `links` fields from note content
     pub fn index(&mut self) {
-        let contents = match self.contents() {
+        let content = match self.content() {
             Ok(ts) => ts,
             Err(e) => {
                 eprintln!(
@@ -155,14 +155,14 @@ impl Note {
                 return;
             }
         };
-        self.index_contents(contents);
+        self.index_content(content);
     }
 
-    fn index_contents(&mut self, contents: String) {
+    fn index_content(&mut self, content: String) {
         self.links.clear();
         self.tags.clear();
-        self.length = contents.len();
-        let tokens = Lexer::new(contents);
+        self.length = content.len();
+        let tokens = Lexer::new(content);
         self.index_tokens(tokens);
     }
 
@@ -260,7 +260,7 @@ impl Note {
         self.length
     }
 
-    /// Get contents note as a list of tokens.
+    /// Get content note as a list of tokens.
     #[pyo3(name = "tokens")]
     pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
         match self.tokens() {
@@ -301,10 +301,10 @@ impl Note {
         normalize(self.name.clone())
     }
 
-    /// Read the contents of the note and return it as a string
+    /// Read the content of the note and return it as a string
     #[pyo3(name = "read")]
     pub fn py_read(&self) -> io::Result<String> {
-        self.contents()
+        self.content()
     }
 
     /// Inserts a string at a position in the note.

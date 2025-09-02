@@ -48,12 +48,12 @@ class Callout:
     Attributes:
         kind (str): The type of callout (e.g., 'Note', 'Warning', 'Tip').
         title (str): The title of the callout, if present.
-        contents (List['Token']): A list of tokens representing the content inside the callout.
+        content (List['Token']): A list of tokens representing the content inside the callout.
         foldable (bool): Whether the callout is collapsible.
     """
     kind: str
     title: str
-    contents: List['Token']
+    content: List['Token']
     foldable: bool
 
 class Span:
@@ -129,9 +129,9 @@ class Token:
     class Quote(Token):
         """Represents a blockquote token.
         Attributes:
-            contents (List[Token]): A list of tokens representing the content inside the quote.
+            content (List[Token]): A list of tokens representing the content inside the quote.
         """
-        contents: List[Token]
+        content: List[Token]
 
     class InlineMath(Token):
         """Represents an inline LaTeX math token.

@@ -136,13 +136,13 @@ class Evaluator:
         if not os.path.isfile(path):
             error(f"'{path}' is not a file.")
         with open(path) as f:
-            self.contents = f.read()
+            self.content = f.read()
 
     def evaluate_cmd(self):
         """Evaluate a parsed shell command."""
 
         mark = self.cmd_start;
-        cmd = self.contents[mark.index+len(L_SCRIPT):self.cursor]
+        cmd = self.content[mark.index+len(L_SCRIPT):self.cursor]
         sys.stdout.flush()
         proc = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         self.runs.append(Run(cmd, proc.returncode, proc.stdout, proc.stderr, mark.line, mark.col, None))
@@ -152,7 +152,7 @@ class Evaluator:
         """Evaluate a parsed script."""
 
         exe = self.exe
-        script = self.contents[self.cmd_start.index+len(L_SCRIPT):self.cursor].rstrip()
+        script = self.content[self.cmd_start.index+len(L_SCRIPT):self.cursor].rstrip()
         mark = self.start
 
         script = strip_common_whitespace(script)
@@ -174,12 +174,12 @@ class Evaluator:
 
     def get(self):
         """Get the current character under cursor."""
-        return self.contents[self.cursor]
+        return self.content[self.cursor]
 
     def evaluate(self):
         """Run the evaluation loop."""
 
-        while self.cursor < len(self.contents):
+        while self.cursor < len(self.content):
             c = self.get()
 
             self.col += 1
@@ -209,7 +209,7 @@ class Evaluator:
                     self.start = None
                 else:
                     self.state = EvaluatorState.DEFAULT
-                    put(self.contents[self.start.index:self.cursor+1])
+                    put(self.content[self.start.index:self.cursor+1])
                     self.start = None
 
             elif self.state == EvaluatorState.IN_SHELL:
@@ -223,11 +223,11 @@ class Evaluator:
             elif self.state == EvaluatorState.IN_EXE:
                 # Found the end of the executable name
                 if c == R_EXE:
-                    self.exe = self.contents[self.exe_start.index+len(L_EXE):self.cursor]
+                    self.exe = self.content[self.exe_start.index+len(L_EXE):self.cursor]
 
                     self.cursor += 1
 
-                    if self.cursor >= len(self.contents):
+                    if self.cursor >= len(self.content):
                         error(f"{self.path}:{self.line} Unexpected end of file.")
 
                     if self.get() != L_SCRIPT:
