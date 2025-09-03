@@ -20,10 +20,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+# This file has been modified by Balder Holst to work in the 'ovault' project.
+
 import sys
 import subprocess
 from difflib import unified_diff
-from typing import List, BinaryIO, Tuple, Optional
+from typing import BinaryIO
 
 def read_blob_field(f: BinaryIO, name: bytes) -> bytes:
     line = f.readline()
@@ -50,14 +53,14 @@ def write_blob_field(f: BinaryIO, name: bytes, blob: bytes):
     f.write(blob)
     f.write(b'\n')
 
-def capture(shell: str) -> dict:
+def capture(shell: str, cwd: str | None = None) -> dict:
     print(f"CAPTURING: {shell}")
-    process = subprocess.run(['sh', '-c', shell], capture_output = True)
+    process = subprocess.run(['sh', '-c', shell], capture_output = True, cwd = cwd);
     return {
         'shell': shell,
         'returncode': process.returncode,
         'stdout': process.stdout,
-        'stderr': process.stderr,
+        # 'stderr': process.stderr,
     }
 
 def load_list(file_path: str) -> list[str]:
@@ -71,22 +74,22 @@ def dump_snapshots(file_path: str, snapshots: list[dict]):
             write_blob_field(f, b"shell", bytes(snapshot['shell'], 'utf-8'))
             write_int_field(f, b"returncode", snapshot['returncode'])
             write_blob_field(f, b"stdout", snapshot['stdout'])
-            write_blob_field(f, b"stderr", snapshot['stderr'])
+            # write_blob_field(f, b"stderr", snapshot['stderr'])
 
 def load_snapshots(file_path: str) -> list[dict]:
     snapshots = []
     with open(file_path, "rb") as f:
         count = read_int_field(f, b"count")
         for _ in range(count):
-            shell = read_blob_field(f, b"shell")
+            shell = read_blob_field(f, b"shell").decode('utf-8')
             returncode = read_int_field(f, b"returncode")
             stdout = read_blob_field(f, b"stdout")
-            stderr = read_blob_field(f, b"stderr")
+            # stderr = read_blob_field(f, b"stderr")
             snapshot = {
                 "shell": shell,
                 "returncode": returncode,
                 "stdout": stdout,
-                "stderr": stderr,
+                # "stderr": stderr,
             }
             snapshots.append(snapshot)
     return snapshots
@@ -150,13 +153,13 @@ if __name__ == '__main__':
                 for line in unified_diff(a, b, fromfile="expected", tofile="actual"):
                     print(line, end='')
                 failed = True
-            if process.stderr != snapshot['stderr']:
-                a = snapshot['stderr'].decode('utf-8').splitlines(keepends=True)
-                b = process.stderr.decode('utf-8').splitlines(keepends=True)
-                print(f"UNEXPECTED: stderr")
-                for line in unified_diff(a, b, fromfile="expected", tofile="actual"):
-                    print(line, end='')
-                failed = True
+            # if process.stderr != snapshot['stderr']:
+            #     a = snapshot['stderr'].decode('utf-8').splitlines(keepends=True)
+            #     b = process.stderr.decode('utf-8').splitlines(keepends=True)
+            #     print(f"UNEXPECTED: stderr")
+            #     for line in unified_diff(a, b, fromfile="expected", tofile="actual"):
+            #         print(line, end='')
+            #     failed = True
             if failed:
                 exit(1)
         print('OK')

@@ -1,10 +1,13 @@
-import subprocess
 from pathlib import Path
-import pytest
-import ovault
+import os
 
+import rere
+
+ROOT_DIR = Path(__file__).parent.parent
 EXAMPLE_DIR = Path(__file__).parent.parent / "examples"
 VAULT_DIR = Path(__file__).parent.parent / "test-vaults"
+
+VAULT_PLACEHOLDER = "<vault>"
 
 VAULTS = [
     "Obsidian Sandbox",
@@ -14,80 +17,59 @@ VAULTS = [
     "TheJoboReal_Noter",
 ]
 
-# 1_overview.py
-# 2_find_tag.py
-# 3_find_headings.py
-# 4_check_external_links.py
-# 5_graph_image.py
-# 6_create_vault.py
-# 7_rename_note.py
+EXPECTED_FILE = Path(__file__).parent / "test_examples_expected.bi"
 
-def run_example(name: str, *args) -> str:
-    out = subprocess.run(['python', str(EXAMPLE_DIR / name), *args], capture_output=True, text=True)
-    cmd = f"python {name} {' '.join(list(args))}"
-    if out.returncode != 0:
-        print(f"Error running {cmd}:")
-        print(out.stderr)
-        exit(1)
-    out = out.stdout.strip()
-    print(f"\n[CMD] {cmd}:\n{out}\n")
-    return out
+SHELLS = [
+    "python3 examples/1_overview.py <vault>",
 
-# ================================== TESTS ==================================
+    "python3 examples/2_find_tag.py <vault> math",
+    "python3 examples/2_find_tag.py <vault> matematik",
+    "python3 examples/2_find_tag.py <vault> frontmatter1",
 
-def test_1_overview():
+    "python3 examples/3_find_headings.py",
 
-    expected = {
-            "Obsidian Sandbox":             ["path        : test-vaults/Obsidian Sandbox",
-                                             "notes       : 31",
-                                             "attachments : 0",
-                                             "tags        : ['tags']"],
-            "BalderHolst_uni-notes":        ['path        : test-vaults/BalderHolst_uni-notes',
-                                             'notes       : 509',
-                                             'attachments : 365',
-                                             "tags        : ['c', 'numerical', 'ai', 'cpp', 'datacommunication', 'elektronik', 'signals', 'kinematics', 'microcontrolers', 'vektorer', 'fysik', 'excalidraw', 'computerarchitecture', 'underactuated', 'matematik', 'forstærker', 'linearalgebra', 'notag', 'differentialer', 'signalprocessing', 'integraler', 'partialdiffequations', 'funktioner', 'vectorfields', 'approximation', 'TCP', 'linux', 'python', 'controlsystems', 'multivariablemath', 'embedded', 'komponent', 'funktionafflerevariable', 'softwaredevelopment', 'subject', 'intelligent', 'sorting', 'statistics', 'algorithms', 'filter', 'differentialligninger', 'distribution', 'matricer']"],
-            "simple_vault":                 ['path        : test-vaults/simple_vault',
-                                             'notes       : 7',
-                                             'attachments : 0',
-                                             "tags        : ['frontmatter-tag2', 'linksaregood', 'frontmatter-tag1', 'callout4youtag']"],
-            "SoRobby_ObsidianStarterVault": ['path        : test-vaults/SoRobby_ObsidianStarterVault',
-                                             'notes       : 99',
-                                             'attachments : 44',
-                                             "tags        : ['notes', 'excalidraw', 'dashboard']"],
-            "TheJoboReal_Noter":            ['path        : test-vaults/TheJoboReal_Noter',
-                                             'notes       : 874',
-                                             'attachments : 2207',
-                                             "tags        : ['ArcCos', 'Split', 'uni', 'ArcSin', 'effekt', 'Fjeder', 'course', 'Arbejde', 'Parrallel', 'define', 'Phasor', 'Heap', 'semester', 'excalidraw', 'Friktion', 'assignment', 'Inverterende', 'ArcTan', 'Lavplasfilter', 'Terminalhastighed', 'Hooks', 'ikke', 'Faseforskydning', 'Masseinertimoment', 'lecture-slide', 'lecture-note', 'exercise', 'SharedMemory', 'Stacks', 'algorithms', 'Centripidalkraften']"]
-    }
+    "python3 examples/4_check_external_links.py test-vaults/Obsidian Sandbox",
+    "python3 examples/4_check_external_links.py test-vaults/simple_vault",
 
-    for v in VAULTS:
-        out = run_example("1_overview.py", str(VAULT_DIR / v))
+    "python3 examples/5_graph_image.py <vault>",
 
-        print("\n" + str(out.splitlines()) + "\n")
+    "python3 examples/6_create_vault.py tmp_test_vault && rm -rf tmp_test_vault",
 
-        for i, line in enumerate(out.splitlines()):
-            if len(expected[v]) != out.count("\n") + 1:
-                raise pytest.fail(f"Expected {len(expected[v])} lines, got {len(out.splitlines())} for vault {v}")
-            if line.startswith("path        :"):
-                assert line == expected[v][i], f"Vault {v} failed on line {i+1}: {line}"
+    "python3 examples/7_rename_note.py test-vaults/simle_vault first_note    FIRST",
+    "python3 examples/7_rename_note.py test-vaults/simle_vault first_note.md FIRST.md",
 
-def test_2_find_tag(simple_vault: ovault.Vault):
-    vault_path = str(simple_vault.path)
+    "python3 examples/8_add_frontmatter.py <vault>",
 
-    # Find notes with a tag
-    expected = "Searching for notes with tag: linksaregood\n"\
-               "    second_note (180 characters)"
+    "python3 examples/9_formatter.py <vault>",
+]
 
-    got = run_example("2_find_tag.py", vault_path, "linksaregood")
+def unwrap_shells(shells: list[str]) -> list[str]:
+    result = []
+    for shell in shells:
+        if VAULT_PLACEHOLDER in shell:
+            for vault in VAULTS:
+                result.append(shell.replace(VAULT_PLACEHOLDER, '"' + os.path.relpath(VAULT_DIR / vault, ROOT_DIR) + '"'))
+        else:
+            result.append(shell)
+    return result
 
-    assert got == expected
+def restore_vault(vault_name: str):
+    vault_path = VAULT_DIR / vault_name
+    os.system(f"cd \"{vault_path}\" && git restore . && git clean -fd")
 
-    # Frontmatter tags
-    expected = "Searching for notes with tag: frontmatter-tag1\n"\
-               "    frontmatter (172 characters)"
+def restore_vaults():
+    for vault in VAULTS:
+        restore_vault(vault)
 
-    got = run_example("2_find_tag.py", vault_path, "frontmatter-tag1")
+def test_examples():
+    snapshots = rere.load_snapshots(EXPECTED_FILE)
+    shells = unwrap_shells(SHELLS)
 
-    print(got)
-    assert got == expected
+    assert len(snapshots) == len(shells), "UNEXPECTED: Amount of shell commands in test_examples.py\nNOTE: Re-run 'record.py' to assert the new output as correct." \
 
+    for (shell, snapshot) in zip(shells, snapshots):
+        restore_vaults()
+        result = rere.capture(shell, cwd=ROOT_DIR)
+        assert result == snapshot
+
+    restore_vaults()

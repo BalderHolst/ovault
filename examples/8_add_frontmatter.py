@@ -2,6 +2,8 @@
 
 # Usage: python 8_add_frontmatter.py <vault_name>
 
+# NOTE: Sorting is only done to make the output stable for testing purposes.
+
 import ovault
 import sys
 from pathlib import Path
@@ -12,7 +14,7 @@ if len(sys.argv) != 2:
 
 vault = ovault.Vault(sys.argv[1])
 
-for note in vault.notes():
+for note in sorted(vault.notes()):
     if note.frontmatter() is not None:
         print(f"'{note.name}' already has frontmatter, skipping.")
         continue

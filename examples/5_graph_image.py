@@ -2,6 +2,8 @@
 
 # Usage: `python3 examples/5_graph_image.py <vault> | neato -Tpng > graph.png`
 
+# NOTE: Sorting is only done to make the output stable for testing purposes.
+
 import ovault
 import sys
 
@@ -11,7 +13,7 @@ if len(sys.argv) != 2:
 
 vault = ovault.Vault(sys.argv[1])
 
-notes = vault.notes()
+notes = sorted(vault.notes())
 
 print("digraph {")
 print("    overlap=false;")
@@ -22,7 +24,7 @@ for note in notes:
     print(f'    "{note.normalized_name()}" [label="{note.name}"]')
 
 for note in notes:
-    for link in note.links:
+    for link in sorted(note.links):
         link = link.replace("\\", "")
         print(f'    "{note.normalized_name()}" -> "{link}"')
 

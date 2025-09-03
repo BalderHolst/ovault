@@ -2,6 +2,8 @@
 
 # Usage: `python3 examples/1_overview.py <vault>`
 
+# NOTE: Sorting is only done to make the output stable for testing purposes.
+
 import ovault
 import sys
 import os
@@ -16,4 +18,4 @@ print()
 print("path        :", os.path.relpath(vault.path, os.getcwd()))
 print("notes       :", len(vault.notes()))
 print("attachments :", len(vault.attachments()))
-print("tags        :", vault.tags())
+print("tags        :", sorted(vault.tags()))
