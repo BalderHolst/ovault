@@ -2,7 +2,7 @@ name: Docs
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "*" ]
 
 jobs:
   # Build job
@@ -36,6 +36,7 @@ jobs:
   # Deploy job
   deploy:
     needs: build-docs
+    if: github.ref == 'refs/heads/main'
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
