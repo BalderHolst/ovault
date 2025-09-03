@@ -1,4 +1,4 @@
-- [ ] Test `to_markdown` methods
+- [x] Test `to_markdown` methods
 - [x] Implement `warn!` and `error!`
 - [ ] Test examples automatically
 - [ ] Test on Windows
