@@ -57,6 +57,9 @@ mod ovault {
     #[pymodule_export]
     use normalize::normalize;
 
+    #[pymodule_export]
+    use lexer::py_to_markdown;
+
     #[pyfunction]
     fn parse_yaml<'py>(py: Python<'py>, source: &str) -> PyResult<Bound<'py, pyo3::types::PyList>> {
         let yamls = yaml_rust2::YamlLoader::load_from_str(source).map_err(|e| {

@@ -1,3 +1,6 @@
+#[cfg(feature = "python")]
+use pyo3::{pyfunction, Bound, PyAny, PyResult};
+
 use super::tokens::*;
 
 /// Trait for converting an item into a Markdown string representation.
@@ -146,8 +149,9 @@ impl ToMarkdown for Callout {
             foldable,
         } = self;
         format!(
-            "> [!{kind}]{dash} {title}\n>{content}\n",
+            "> [!{kind}]{dash}{space}{title}\n> {content}\n",
             dash = if *foldable { "-" } else { "" },
+            space = if self.has_title() { " " } else { "" },
             content = tokens_to_markdown(tokens).replace('\n', "\n> ")
         )
     }
@@ -182,5 +186,51 @@ impl ToMarkdown for CheckListItem {
             if self.checked { "x" } else { " " },
             tokens_to_markdown(&self.tokens)
         )
+    }
+}
+
+/// Converts a Python objects to a Markdown string.
+#[cfg(feature = "python")]
+#[pyfunction]
+#[pyo3(name = "to_markdown")]
+pub fn py_to_markdown<'py>(obj: &Bound<'py, PyAny>) -> PyResult<String> {
+    use pyo3::types::{PyAnyMethods, PyList, PyListMethods, PyString};
+
+    match obj {
+        obj if obj.is_instance_of::<PyString>() => {
+            let s = obj.downcast::<PyString>()?;
+            Ok(s.to_string())
+        }
+        obj if obj.is_instance_of::<Token>() => Ok(obj.downcast::<Token>()?.borrow().to_markdown()),
+        obj if obj.is_instance_of::<InternalLink>() => {
+            Ok(obj.downcast::<InternalLink>()?.borrow().to_markdown())
+        }
+        obj if obj.is_instance_of::<ExternalLink>() => {
+            Ok(obj.downcast::<ExternalLink>()?.borrow().to_markdown())
+        }
+        obj if obj.is_instance_of::<Callout>() => {
+            Ok(obj.downcast::<Callout>()?.borrow().to_markdown())
+        }
+        obj if obj.is_instance_of::<ListItem>() => {
+            Ok(obj.downcast::<ListItem>()?.borrow().to_markdown())
+        }
+        obj if obj.is_instance_of::<NumericListItem>() => {
+            Ok(obj.downcast::<NumericListItem>()?.borrow().to_markdown())
+        }
+        obj if obj.is_instance_of::<CheckListItem>() => {
+            Ok(obj.downcast::<CheckListItem>()?.borrow().to_markdown())
+        }
+        obj if obj.is_instance_of::<PyList>() => {
+            let list = obj
+                .downcast::<PyList>()?
+                .iter()
+                .map(|item| py_to_markdown(&item))
+                .collect::<Result<Vec<_>, pyo3::PyErr>>()?;
+            Ok(list.join(""))
+        }
+        other => Err(pyo3::exceptions::PyTypeError::new_err(format!(
+            "Cannot convert object of type '{}' to markdown.",
+            other.get_type().str()?
+        ))),
     }
 }

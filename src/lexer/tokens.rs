@@ -273,7 +273,12 @@ impl Token {
             Token::Callout { callout, .. } => {
                 format!(
                     "Callout({})",
-                    &format!("{}: {}", callout.kind, tokens_repr(&callout.tokens))
+                    &format!(
+                        "[{}] {:?}: {}",
+                        callout.kind,
+                        callout.title,
+                        tokens_repr(&callout.tokens)
+                    )
                 )
             }
             Token::Quote { tokens, .. } => {
@@ -509,6 +514,13 @@ pub struct Callout {
     pub tokens: Vec<Token>,
     /// Whether the callout can be folded or collapsed.
     pub foldable: bool,
+}
+
+impl Callout {
+    /// Checks if the callout has a non-empty title.
+    pub fn has_title(&self) -> bool {
+        !self.title.trim().is_empty()
+    }
 }
 
 #[cfg(feature = "python")]

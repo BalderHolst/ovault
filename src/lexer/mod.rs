@@ -9,6 +9,9 @@ pub use span::Span;
 pub use to_markdown::ToMarkdown;
 use tokens::*;
 
+#[cfg(feature = "python")]
+pub use to_markdown::py_to_markdown;
+
 #[derive(Debug, Clone, PartialEq)]
 struct Mark(usize);
 impl Copy for Mark {}

@@ -76,7 +76,7 @@ def test_2_find_tag(simple_vault: ovault.Vault):
 
     # Find notes with a tag
     expected = "Searching for notes with tag: linksaregood\n"\
-               "    second_note (178 characters)"
+               "    second_note (180 characters)"
 
     got = run_example("2_find_tag.py", vault_path, "linksaregood")
 
