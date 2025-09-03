@@ -38,23 +38,23 @@ def run_example(name: str, *args) -> str:
 def test_1_overview():
 
     expected = {
-            "Obsidian Sandbox":             ["path        : /home/balder/projects/ovault/test-vaults/Obsidian Sandbox",
+            "Obsidian Sandbox":             ["path        : test-vaults/Obsidian Sandbox",
                                              "notes       : 31",
                                              "attachments : 0",
                                              "tags        : ['tags']"],
-            "BalderHolst_uni-notes":        ['path        : /home/balder/projects/ovault/test-vaults/BalderHolst_uni-notes',
+            "BalderHolst_uni-notes":        ['path        : test-vaults/BalderHolst_uni-notes',
                                              'notes       : 509',
                                              'attachments : 365',
                                              "tags        : ['c', 'numerical', 'ai', 'cpp', 'datacommunication', 'elektronik', 'signals', 'kinematics', 'microcontrolers', 'vektorer', 'fysik', 'excalidraw', 'computerarchitecture', 'underactuated', 'matematik', 'forstærker', 'linearalgebra', 'notag', 'differentialer', 'signalprocessing', 'integraler', 'partialdiffequations', 'funktioner', 'vectorfields', 'approximation', 'TCP', 'linux', 'python', 'controlsystems', 'multivariablemath', 'embedded', 'komponent', 'funktionafflerevariable', 'softwaredevelopment', 'subject', 'intelligent', 'sorting', 'statistics', 'algorithms', 'filter', 'differentialligninger', 'distribution', 'matricer']"],
-            "simple_vault":                 ['path        : /home/balder/projects/ovault/test-vaults/simple_vault',
+            "simple_vault":                 ['path        : test-vaults/simple_vault',
                                              'notes       : 7',
                                              'attachments : 0',
                                              "tags        : ['frontmatter-tag2', 'linksaregood', 'frontmatter-tag1', 'callout4youtag']"],
-            "SoRobby_ObsidianStarterVault": ['path        : /home/balder/projects/ovault/test-vaults/SoRobby_ObsidianStarterVault',
+            "SoRobby_ObsidianStarterVault": ['path        : test-vaults/SoRobby_ObsidianStarterVault',
                                              'notes       : 99',
                                              'attachments : 44',
                                              "tags        : ['notes', 'excalidraw', 'dashboard']"],
-            "TheJoboReal_Noter":            ['path        : /home/balder/projects/ovault/test-vaults/TheJoboReal_Noter',
+            "TheJoboReal_Noter":            ['path        : test-vaults/TheJoboReal_Noter',
                                              'notes       : 874',
                                              'attachments : 2207',
                                              "tags        : ['ArcCos', 'Split', 'uni', 'ArcSin', 'effekt', 'Fjeder', 'course', 'Arbejde', 'Parrallel', 'define', 'Phasor', 'Heap', 'semester', 'excalidraw', 'Friktion', 'assignment', 'Inverterende', 'ArcTan', 'Lavplasfilter', 'Terminalhastighed', 'Hooks', 'ikke', 'Faseforskydning', 'Masseinertimoment', 'lecture-slide', 'lecture-note', 'exercise', 'SharedMemory', 'Stacks', 'algorithms', 'Centripidalkraften']"]
