@@ -718,6 +718,7 @@ impl Lexer {
         let Some(number) = (|| {
             let number = self.consume_integer()?;
             self.consume_expected('.')?;
+            self.consume_expected(' ')?;
             Some(number)
         })() else {
             self.rewind(start);

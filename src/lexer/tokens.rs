@@ -244,7 +244,7 @@ impl Token {
     /// String representation of the token.
     pub fn __repr__(&self) -> String {
         const MAX_LEN: usize = 20;
-        fn string(s: &str) -> String {
+        fn string_repr(s: &str) -> String {
             let mut new_s = String::from(s);
             if new_s.len() > MAX_LEN {
                 new_s = format!("{}...", &new_s.chars().take(MAX_LEN).collect::<String>());
@@ -253,37 +253,35 @@ impl Token {
             new_s.replace("\n", "\\n")
         }
 
+        fn tokens_repr(tokens: &[Token]) -> String {
+            let token_strs: Vec<String> = tokens.iter().map(|t| t.__repr__()).collect();
+            format!("[{}]", token_strs.join(", "))
+        }
+
         match self {
-            Token::Text { text, .. } => format!("Text({})", string(text)),
-            Token::Tag { tag, .. } => format!("Tag({})", string(tag)),
+            Token::Text { text, .. } => format!("Text({})", string_repr(text)),
+            Token::Tag { tag, .. } => format!("Tag({})", string_repr(tag)),
             Token::Header { level, heading, .. } => {
-                format!("Header({} {})", "#".repeat(*level), string(heading))
+                format!("Header({} {})", "#".repeat(*level), string_repr(heading))
             }
             Token::InternalLink { link, .. } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link, .. } => format!("ExternalLink({})", link.label()),
             Token::Code { lang, code, .. } => match lang {
-                Some(lang) => format!("Code({}: {})", string(lang), string(code)),
-                None => format!("Code({})", string(code)),
+                Some(lang) => format!("Code({}: {})", string_repr(lang), string_repr(code)),
+                None => format!("Code({})", string_repr(code)),
             },
             Token::Callout { callout, .. } => {
                 format!(
                     "Callout({})",
-                    &format!(
-                        "{}: {}",
-                        callout.kind,
-                        callout
-                            .tokens
-                            .first()
-                            .map_or("<no content>".to_string(), |t| string(&t.__repr__()))
-                    )
+                    &format!("{}: {}", callout.kind, tokens_repr(&callout.tokens))
                 )
             }
-            Token::Quote { text, .. } => {
-                format!("Quote({})", string(&format!("{:?}", text)))
+            Token::Quote { tokens, .. } => {
+                format!("Quote({})", tokens_repr(tokens))
             }
-            Token::Frontmatter { yaml, .. } => format!("Frontmatter({})", string(yaml)),
-            Token::InlineMath { latex, .. } => format!("InlineMath({})", string(latex)),
-            Token::DisplayMath { latex, .. } => format!("DisplayMath({})", string(latex)),
+            Token::Frontmatter { yaml, .. } => format!("Frontmatter({})", string_repr(yaml)),
+            Token::InlineMath { latex, .. } => format!("InlineMath({})", string_repr(latex)),
+            Token::DisplayMath { latex, .. } => format!("DisplayMath({})", string_repr(latex)),
             Token::Divider { .. } => "Divider".to_string(),
             Token::List { items, .. } => {
                 let item_strs: Vec<String> = items
@@ -319,7 +317,7 @@ impl Token {
                 format!("CheckList([{}])", item_strs.join(", "))
             }
             Token::TemplaterCommand { command, .. } => {
-                format!("TemplaterCommand({})", string(command))
+                format!("TemplaterCommand({})", string_repr(command))
             }
         }
     }
