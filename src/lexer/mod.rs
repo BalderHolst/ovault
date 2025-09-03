@@ -117,7 +117,7 @@ impl Lexer {
                 break;
             }
         }
-        return Some(c);
+        Some(c)
     }
 
     fn consume_expect(&mut self, expect: impl FnOnce(char) -> bool) -> Option<char> {
@@ -207,6 +207,7 @@ impl Lexer {
         self.extract_span(self.span(start))
     }
 
+    #[allow(unused)]
     fn extract_all(&self) -> String {
         self.extract_span(Span {
             start: 0,
@@ -461,7 +462,7 @@ impl Lexer {
         let source = self.extract(start);
         let source = source.strip_suffix('\n').unwrap_or(&source);
 
-        let mut lexer = Self::new_with_skip_function(&source, skip_funcs::skip_block_prefix);
+        let mut lexer = Self::new_with_skip_function(source, skip_funcs::skip_block_prefix);
 
         let mut tokens = lexer.run();
 

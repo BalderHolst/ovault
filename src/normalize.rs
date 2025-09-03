@@ -20,7 +20,7 @@ pub fn normalize(mut name: String) -> String {
     let name = name.trim();
 
     // Strip ".md" suffix if present
-    let name = name.strip_suffix(".md").unwrap_or(&name);
+    let name = name.strip_suffix(".md").unwrap_or(name);
 
     // Replace spaces with hyphens
     let name = name

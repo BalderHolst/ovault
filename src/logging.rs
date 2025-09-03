@@ -12,8 +12,8 @@ macro_rules! debug {
     ($($arg:tt)*) => ({
         println!("{color}[DEBUG] {msg}{reset}",
             msg   = format!($($arg)*,),
-            color = crate::logging::WHITE,
-            reset = crate::logging::RESET
+            color = $crate::logging::WHITE,
+            reset = $crate::logging::RESET
         );
     })
 }
@@ -24,8 +24,8 @@ macro_rules! info {
     ($($arg:tt)*) => ({
         println!("{color}[INFO] {msg}{reset}",
             msg   = format!($($arg)*,),
-            color = crate::logging::BLUE,
-            reset = crate::logging::RESET
+            color = $crate::logging::BLUE,
+            reset = $crate::logging::RESET
         );
     })
 }
@@ -36,8 +36,8 @@ macro_rules! warn {
     ($($arg:tt)*) => ({
         eprintln!("{color}[WARN] {msg}{reset}",
             msg   = format!($($arg)*,),
-            color = crate::logging::YELLOW,
-            reset = crate::logging::RESET
+            color = $crate::logging::YELLOW,
+            reset = $crate::logging::RESET
         );
     })
 }
@@ -48,8 +48,8 @@ macro_rules! error {
     ($($arg:tt)*) => ({
         eprintln!("{color}[ERROR] {msg}{reset}",
             msg   = format!($($arg)*,),
-            color = crate::logging::RED,
-            reset = crate::logging::RESET
+            color = $crate::logging::RED,
+            reset = $crate::logging::RESET
         );
     })
 }

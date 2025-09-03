@@ -123,13 +123,13 @@ impl Vault {
 
     /// Get a note by its path in the vault. Either absolute or relative to the vault path.
     pub fn get_note_by_path(&self, path: &Path) -> Option<&Note> {
-        let norm_name = self.path_to_norm_name(&path)?;
+        let norm_name = self.path_to_norm_name(path)?;
         self.get_note(&norm_name)
     }
 
     /// Get a mutable reference to a note by its path in the vault. Either absolute or relative to the vault path.
     pub fn get_note_by_path_mut(&mut self, path: &Path) -> Option<&mut Note> {
-        let norm_name = self.path_to_norm_name(&path)?;
+        let norm_name = self.path_to_norm_name(path)?;
         self.get_note_mut(&norm_name)
     }
 
