@@ -1,5 +1,6 @@
 - [x] Test `to_markdown` methods
 - [x] Implement `warn!` and `error!`
 - [x] Test examples automatically
+- [ ] Re-write stub file
 - [ ] Test on Windows
 - [ ] Add ignore arg when creating `Vault`

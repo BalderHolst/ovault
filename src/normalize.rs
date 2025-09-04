@@ -12,6 +12,7 @@ use pyo3::prelude::*;
 /// ```
 pub fn normalize(mut name: String) -> String {
     // TODO: Actually handle multiple files with the same name
+    // This includes adding this as a `Vault` method to check for existing names
     while name.contains('/') {
         name = name.split_once('/').unwrap().1.to_string();
     }
