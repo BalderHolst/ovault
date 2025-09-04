@@ -55,6 +55,7 @@ mod ovault {
     use vault::Frontmatter;
 
     #[pymodule_export]
+    // TODO: Make this a `Vault` method that handles collisions
     use normalize::normalize;
 
     #[pymodule_export]

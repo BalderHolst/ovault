@@ -337,7 +337,7 @@ impl Note {
     /// Inserts a string into the note *before* a given token.
     ///
     /// NOTE: The token should originate from this note as this
-    /// method used the internal `Span` of the note to determine
+    /// method uses the internal `Span` of the note to determine
     /// the insertion position.
     #[pyo3(signature = (token, text, offset=0))]
     pub fn insert_before_token(
@@ -353,7 +353,7 @@ impl Note {
     /// Insert a string into the note *after* a given token.
     ///
     /// NOTE: The token should originate from this note as this
-    /// method used the internal `Span` of the note to determine
+    /// method uses the internal `Span` of the note to determine
     /// the insertion position.
     #[pyo3(signature = (token, text, offset=0))]
     pub fn insert_after_token(
