@@ -1,191 +1,143 @@
-"""Obsidian Vault Python Interface (ovault)"""
+"""
+A library for managing an [Obsidian](https://obsidian.md/) vault.
+"""
 
-import os
-from typing import List, Optional, Set, Dict, Iterator
+from typing import Union, List, Optional, Set, Dict, Any, Tuple
 
-class ExternalLink:
-    """Represents an external link token.
+__version__: str = ...
 
-    Attributes:
-        render (bool): Whether the link should be rendered (i.e., starts with '!' for an embedded link).
-        url (str): The URL of the external link.
-        show_how (str): The text to display for the link.
-        options (Optional[str]): Optional rendering options.
-        position (Optional[str]): An optional anchor link within the link, if present.
+def parse_yaml(source: str) -> List[object]:
     """
-    render: bool
-    url: str
-    show_how: str
-    options: Optional[str]
-    position: Optional[str]
+    Parses a YAML string and returns a Python list of parsed objects.
 
-    def label(self) -> str:
-        """Gets the label for the external link."""
-        ...
+    Args:
+        source: A string containing the YAML content.
 
-class InternalLink:
-    """Represents an internal link token to another note or attachment.
-
-    Attributes:
-        dest (str): The destination note's name or path.
-        position (Optional[str]): An optional position within the note (e.g., a heading).
-        show_how (Optional[str]): An optional alias or display text for the link.
-        options (Optional[str]): Optional rendering options.
-        render (bool): Whether the link should be rendered (i.e., starts with '!' for an embedded link).
+    Returns:
+        A list of Python objects parsed from the YAML source.
     """
-    dest: str
-    position: Optional[str]
-    show_how: Optional[str]
-    options: Optional[str]
-    render: bool
+    ...
 
-    def label(self) -> str:
-        """Gets the label for the internal link."""
-        ...
-
-class Callout:
-    """Represents a callout block.
-    Attributes:
-        kind (str): The type of callout (e.g., 'Note', 'Warning', 'Tip').
-        title (str): The title of the callout, if present.
-        content (List['Token']): A list of tokens representing the content inside the callout.
-        foldable (bool): Whether the callout is collapsible.
+def text_to_tokens(text: str) -> List["Token"]:
     """
-    kind: str
-    title: str
-    content: List['Token']
-    foldable: bool
+    Tokenize a string to a list of tokens.
+
+    Args:
+        text: The string to tokenize.
+
+    Returns:
+        A list of tokens.
+
+    Example:
+        >>> tokens = text_to_tokens("# Hello World!")
+        >>> tokens
+        [<Token.Header ...>, <Token.Text ...>]
+    """
+    ...
+
+def to_markdown(obj: object) -> str:
+    """
+    Converts a Python objects to a Markdown string.
+
+    Args:
+        obj: The object or list of objects to convert.
+
+    Returns:
+        A string containing the Markdown representation of the object.
+    """
+    ...
 
 class Span:
-    """Represents a span of text in a source document.
-    Attributes:
-        start (int): The starting byte index of the span.
-        end (int): The ending byte index of the span.
-    """
+    """Represents a span of text in the source, with a start and end position."""
     start: int
     end: int
 
-class Token:
+class Attachment:
     """
-    Base class for all token types, with variants as nested classes.
-    Each token represents a structural or content element parsed from a markdown note.
+    An attachment in an Obsidian vault. An attachment is any
+    file that is not a markdown file.
     """
-    span: Span
-    def span(self) -> Span:
-        """Returns the span of the token."""
+    path: str
+
+FrontmatterValue = Union[str, int, float, bool, List[Any]]
+
+class Frontmatter:
+    """
+    Represents the frontmatter of a note, which is a collection of ordered key-value pairs.
+    This class acts like a dictionary, where keys are strings and values can be various types,
+    including numbers, strings, booleans, arrays.
+
+    The main difference from a standard dictionary is that the order of items is preserved
+    """
+
+    def __init__(self) -> None:
+        """Creates a new empty `Frontmatter`."""
         ...
-    def span_mut(self) -> Span:
-        """Returns a mutable reference to the span of the token."""
-        ...
-    def is_whitespace(self) -> bool:
-        """Returns true if the token is a text token consisting only of whitespace."""
-        ...
-    def __getattr__(self, name: str) -> any:
-        """Dynamic attribute access for token variants."""
-        ...
+
     def __repr__(self) -> str:
-        """A string representation of the token."""
+        """Returns a string representation of the frontmatter, showing its keys."""
         ...
 
-    class Frontmatter(Token):
-        """Represents a YAML frontmatter block at the start of a note.
-        Attributes:
-            yaml (str): The content of the YAML frontmatter.
-        """
-        yaml: str
+    def __len__(self) -> int:
+        """Returns the number of items in the frontmatter."""
+        ...
 
-    class Text(Token):
-        """Represents a plain text token.
-        Attributes:
-            text (str): The text content.
-        """
-        text: str
+    def __contains__(self, key: str) -> bool:
+        """Checks if the frontmatter contains a specific key."""
+        ...
 
-    class Tag(Token):
-        """Represents a tag token.
-        Attributes:
-            tag (str): The name of the tag (e.g., without the '#').
-        """
-        tag: str
+    def __delitem__(self, key: str) -> None:
+        """Deletes a key-value pair from the frontmatter by key."""
+        ...
 
-    class Header(Token):
-        """Represents a header token.
-        Attributes:
-            level (int): The heading level (1-6).
-            heading (str): The heading text.
-        """
-        level: int
-        heading: str
+    def __setitem__(self, key: str, value: FrontmatterValue) -> None:
+        """Sets the value for a specific key, or adds the key-value pair if it does not exist."""
+        ...
 
-    class Code(Token):
-        """Represents a code block or inline code.
-        Attributes:
-            lang (Optional[str]): The programming language of the code block.
-            code (str): The code content.
-        """
-        lang: Optional[str]
-        code: str
+    def get(self, key: str) -> Optional[FrontmatterValue]:
+        """Retrieves the value associated with a specific key."""
+        ...
 
-    class Quote(Token):
-        """Represents a blockquote token.
-        Attributes:
-            content (List[Token]): A list of tokens representing the content inside the quote.
-        """
-        content: List[Token]
+    def set(self, key: str, value: FrontmatterValue) -> None:
+        """Sets the value for a specific key, or adds the key-value pair if it does not exist."""
+        ...
 
-    class InlineMath(Token):
-        """Represents an inline LaTeX math token.
-        Attributes:
-            latex (str): The LaTeX content.
-        """
-        latex: str
+    def clear(self) -> None:
+        """Clears all items from the frontmatter."""
+        ...
 
-    class DisplayMath(Token):
-        """Represents a display LaTeX math token.
-        Attributes:
-            latex (str): The LaTeX content.
-        """
-        latex: str
+    def is_empty(self) -> bool:
+        """Checks if the frontmatter is empty."""
+        ...
 
-    class Divider(Token):
-        """Represents a horizontal divider token (e.g., '---')."""
-        pass
+    def copy(self) -> "Frontmatter":
+        """Creates a copy of this `Frontmatter`."""
+        ...
 
-    class Callout(Token):
-        """Represents a callout token.
-        Attributes:
-            callout (Callout): The Callout object containing details about the callout.
-        """
-        callout: Callout
+    def keys(self) -> List[str]:
+        """Returns a list of keys in the frontmatter."""
+        ...
 
-    class InternalLink(Token):
-        """Represents an internal link token.
-        Attributes:
-            link (InternalLink): The InternalLink object containing details about the link.
-        """
-        link: InternalLink
+    def values(self) -> List[FrontmatterValue]:
+        """Returns a list of values in the frontmatter."""
+        ...
 
-    class ExternalLink(Token):
-        """Represents an external link token.
-        Attributes:
-            link (ExternalLink): The ExternalLink object containing details about the link.
-        """
-        link: ExternalLink
+    def items(self) -> List[Tuple[str, FrontmatterValue]]:
+        """Returns a list of key-value pairs as tuples in the frontmatter."""
+        ...
+
+    def dict(self) -> Dict[str, FrontmatterValue]:
+        """Returns a python dictionary representation of the frontmatter."""
+        ...
+
+    def yaml(self, indent: int = 2) -> str:
+        """Converts the frontmatter to a YAML string representation."""
+        ...
 
 class Note:
-    """
-    A note in an Obsidian vault, represented as a markdown file.
-    Attributes:
-        vault_path (os.PathLike): The absolute path to the vault's root directory.
-        path (os.PathLike): The path of the note relative to the vault's root.
-        name (str): The name of the note (file stem).
-        length (int): The total number of characters in the note's content.
-        tags (Set[str]): A set of all tags found in the note.
-        backlinks (Set[str]): A set of normalized note names that link to this note.
-        links (Set[str]): A set of normalized note names that this note links to.
-    """
-    vault_path: os.PathLike
-    path: os.PathLike
+    """A note in an Obsidian vault."""
+    vault_path: str
+    path: str
     name: str
     length: int
     tags: Set[str]
@@ -193,139 +145,422 @@ class Note:
     links: Set[str]
 
     def __repr__(self) -> str:
-        """Returns a string representation of the Note."""
+        """Get a string representation of the note."""
         ...
-    def __len__(self) -> int: 
-        """Returns the length of the note in characters."""
+
+    def __len__(self) -> int:
+        """Get the length of the note in characters."""
         ...
-    def tokens(self) -> Iterator[Token]:
-        """Returns an iterator over the tokens in the note's content."""
+
+    def tokens(self) -> List["Token"]:
+        """Get content note as a list of tokens."""
         ...
-    def full_path(self) -> os.PathLike:
-        """Returns the absolute path to the note file."""
+
+    def full_path(self) -> str:
+        """Get the absolute path to the note file."""
         ...
-    def frontmatter(self) -> Optional[str]:
-        """Returns the YAML frontmatter content if present."""
+
+    def frontmatter(self) -> Optional[Frontmatter]:
+        """Get the frontmatter as a python dictionary"""
         ...
+
+    def set_frontmatter(self, frontmatter: Frontmatter) -> None:
+        """Set the frontmatter of the note from a python dictionary."""
+        ...
+
+    def normalized_name(self) -> str:
+        """Get the normalized name of the node."""
+        ...
+
     def read(self) -> str:
-        """Reads and returns the full content of the note file."""
+        """Read the content of the note and return it as a string"""
         ...
+
     def insert_at(self, pos: int, text: str) -> None:
-        """Inserts text at a specific position in the note.
-        Args:
-            pos (int): The character position to insert at.
-            text (str): The text to insert.
-        """
+        """Inserts a string at a position in the note."""
         ...
-    def insert_before_token(self, token: Token, text: str, offset: int = 0) -> None:
-        """Inserts text before a given token in the note.
-        Args:
-            token (Token): The token to insert text before.
-            text (str): The text to insert.
-            offset (int): An optional character offset from the token's start.
-        """
+
+    def replace_between(self, start: int, end: int, text: str) -> None:
+        """Replaces the text between two positions in the note with the given text."""
         ...
-    def insert_after_token(self, token: Token, text: str, offset: int = 0) -> None:
-        """Inserts text after a given token in the note.
-        Args:
-            token (Token): The token to insert text after.
-            text (str): The text to insert.
-            offset (int): An optional character offset from the token's end.
-        """
-        ...
+
     def replace_span(self, span: Span, text: str) -> None:
-        """Replaces the content within a given span with new text.
-
-        Args:
-            span (Span): The span of the text to replace.
-            text (str): The new text to insert.
         """
-        ...
-    def replace_between(self, start: Span, end: Span, text: str) -> None:
-        """Replaces the content between two spans with new text.
-
-        Args:
-            start (Span): The starting span.
-            end (Span): The ending span.
-            text (str): The new text to insert.
+        Replaces a `Span` in the note with the given text.
+        This can be used to replace tokens within the note.
         """
         ...
 
+    def insert_before_token(self, token: "Token", text: str, offset: int = 0) -> None:
+        """
+        Inserts a string into the note *before* a given token.
 
-class Attachment:
-    """
-    An attachment in an Obsidian vault.
-    Attributes:
-        path (os.PathLike): The path of the attachment relative to the vault's root.
-    """
-    path: os.PathLike
+        NOTE: The token should originate from this note as this
+        method uses the internal `Span` of the note to determine
+        the insertion position.
+        """
+        ...
+
+    def insert_after_token(self, token: "Token", text: str, offset: int = 0) -> None:
+        """
+        Insert a string into the note *after* a given token.
+
+        NOTE: The token should originate from this note as this
+        method uses the internal `Span` of the note to determine
+        the insertion position.
+        """
+        ...
 
 class Vault:
     """
-    An Obsidian vault containing notes and attachments.
-    The vault is indexed on creation and can be re-indexed with the `index` method.
-    Attributes:
-        path (os.PathLike): The absolute path to the vault's root directory.
-        dangling_links (Dict[str, List[str]]): A dictionary mapping a source note's
-            normalized name to a list of non-existent links it contains.
-        ignored (Set[os.PathLike]): A set of paths that were ignored during indexing.
+    An Obsidian vault containing notes and attachments. The vault is indexed
+    on creation and can be re-indexed with the `index` method.
     """
-    path: os.PathLike
+    path: str
     dangling_links: Dict[str, List[str]]
-    ignored: Set[os.PathLike]
+    ignored: Set[str]
 
-    def __init__(self, path: str) -> None:
-        """Initializes and indexes a new Vault instance.
+    def __init__(self, path: str, create: bool = False) -> None:
+        """
+        Create a new vault from the given path. The path must be an existing directory.
+
         Args:
-            path (str): The path to the Obsidian vault directory.
+            path: Path to the vault directory.
+            create: Whether to create the directory if it does not exist.
         """
         ...
+
     def notes(self) -> List[Note]:
-        """Returns a list of all notes in the vault."""
+        """Get a list of all notes in the vault. Order is not guaranteed."""
         ...
+
     def attachments(self) -> List[Attachment]:
-        """Returns a list of all attachments in the vault."""
+        """Get a list of all attachments in the vault. Order is not guaranteed."""
         ...
+
     def tags(self) -> List[str]:
-        """Returns a list of all unique tags found in the vault."""
+        """Get a list of all tags in the vault. Order is not guaranteed."""
         ...
+
     def index(self) -> None:
-        """Re-indexes the entire vault, updating all note and link data."""
+        """
+        Index the vault. This will clear the current index and re-index the vault.
+
+        This is useful if you have edited, added or removed notes or attachments from the vault.
+        """
         ...
+
     def get_notes_by_tag(self, tag: str) -> List[Note]:
-        """Returns a list of notes containing a specific tag."""
+        """Get all notes that have the given tag."""
         ...
+
     def get_note_by_name(self, name: str) -> Optional[Note]:
-        """Returns a single note by its normalized name, if it exists."""
+        """Get note by its name."""
         ...
-    def rename_note(self, source: str, dest: str) -> None:
-        """Renames a note and updates all links to it in the vault.
-        Args:
-            source (str): The normalized name of the note to rename.
-            dest (str): The new normalized name for the note.
+
+    def get_note_by_path(self, path: str) -> Optional[Note]:
+        """Get note by its path in the vault. Either absolute or relative to the vault path."""
+        ...
+
+    def add_note(self, vault_path: str, content: str, reindex: bool = False) -> str:
         """
-        ...
-    def rename_tag(self, source: str, dest: str) -> None:
-        """Renames a tag across all notes in the vault.
+        Add a note to the vault.
+
         Args:
-            source (str): The tag to rename.
-            dest (str): The new name for the tag.
+            vault_path: The relative path of the new note within the vault.
+            content: The content of the note.
+            reindex: Whether to reindex the vault after adding the note.
         """
         ...
 
-def text_to_tokens(text: str) -> List[Token]:
-    """Converts a markdown text string into a list of Token objects."""
-    ...
+    def rename_note(self, old_name: str, new_name: str) -> Note:
+        """
+        Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
 
-def normalize(name: str) -> str:
-    """Normalizes a note name to be used in Obsidian links.
+        Args:
+            old_name: The current name of the note.
+            new_name: The new name for the note.
+
+        Returns:
+            The renamed Note object.
+        """
+        ...
+
+    def rename_tag(self, old_tag: str, new_tag: str) -> None:
+        """
+        Rename a tag in the vault. This will update all notes that have the tag.
+
+        Args:
+            old_tag: The tag to be renamed.
+            new_tag: The new name for the tag.
+        """
+        ...
+
+class VaultItem:
+    """
+    An item in an Obsidian vault can be either a note or an attachment.
+    """
+    class Note(VaultItem):
+        """A note in the vault (markdown file)"""
+        note: Note
+
+    class Attachment(VaultItem):
+        """An attachment in the vault"""
+        attachment: Attachment
+
+class ExternalLink:
+    """
+    Represents an external link to an external URL.
 
     Example:
-    >>> normalize("My Note")
-    'my-note'
+        ```markdown
+        ![alt text](https://imageimage--link.domain)
+        [show_how](https://github.com/BalderHolst)
+        ```
     """
-    ...
+    render: bool
+    url: str
+    show_how: str
+    options: Optional[str]
+    position: Optional[str]
 
-def parse_yaml(source: str) -> List[any]:
-    """Parses a YAML string into a list of Python objects."""
-    ...
+class InternalLink:
+    """
+    Represents an internal link to another note.
+
+    Example:
+        ```markdown
+        ![[note_name#position|display text]]
+        ```
+    """
+    dest: str
+    position: Optional[str]
+    show_how: Optional[str]
+    options: Optional[str]
+    render: bool
+
+class Callout:
+    """
+    Represents a callout block in the document.
+
+    Example:
+        ```markdown
+        > [!note]- Title
+        > This is a note callout.
+        ```
+    """
+    kind: str
+    title: str
+    tokens: List["Token"]
+    foldable: bool
+
+class ListItem:
+    """Represents a single item in a list."""
+    span: Span
+    indent: int
+    tokens: List["Token"]
+
+class NumericListItem:
+    """Represents a single item in a numerated list."""
+    span: Span
+    number: int
+    indent: int
+    tokens: List["Token"]
+
+class CheckListItem:
+    """Represents a single item in a checklist."""
+    checked: bool
+    span: Span
+    indent: int
+    tokens: List["Token"]
+
+class Token:
+    """
+    Represents a part of a note, such as text, code blocks, links, etc.
+
+    Example - Token Stream
+    A note might contain the following:
+    ```markdown
+    # Heading
+    This is a paragraph with a [link](https://example.com).
+    ```
+
+    This would be represented as a sequence of `Token` instances:
+    ```text
+    - `Token.Header { level: 1, heading: "Heading" }`
+    - `Token.Text { text: "This is a paragraph with a " }`
+    - `Token.ExternalLink { link: ... }`
+    - `Token.Text { text: "." }`
+    ```
+
+    Example - Find Headings
+    To find all headings in a note, you can iterate over the tokens:
+    ```python
+    # Example 3: Find all headings in the "Start Here" note in the Obsidian Sandbox vault
+
+    import ovault
+
+    # Open the sandbox vault
+    vault = ovault.Vault("./test-vaults/Obsidian Sandbox/")
+
+    # Find a note by name
+    note = vault.get_note_by_name("Start Here")
+
+    # Get all tokens in the note
+    tokens = note.tokens()
+
+    # Iterate through tokens and print headings
+    for token in tokens:
+        if isinstance(token, token.Header):
+            print(f"Found heading: {token.heading} at level {token.level}")
+
+    ```
+    """
+
+    def __repr__(self) -> str:
+        """String representation of the token."""
+        ...
+
+    def to_markdown(self) -> str:
+        """Convert the token to a Markdown string."""
+        ...
+
+    class Frontmatter(Token):
+        """
+        Represents the frontmatter of a note, which is typically YAML formatted metadata.
+
+        NOTE: This can only appear as the first token in a note.
+        """
+        span: Span
+        yaml: str
+
+    class Text(Token):
+        """Represents a block of text in the note."""
+        span: Span
+        text: str
+
+    class Tag(Token):
+        """Represents a tag in the note."""
+        span: Span
+        tag: str
+
+    class Header(Token):
+        """
+        Represents a header in the note, which can be of different levels.
+
+        Example:
+        ```text
+        # First  => level = 1
+        ## Second => level = 2
+        ### Third => level = 3
+        ```
+        """
+        span: Span
+        level: int
+        heading: str
+
+    class Code(Token):
+        """
+        Represents a code block in the note.
+
+        Example:
+        ````markdown
+        ```python
+        def hello_world():
+           print("Hello, world!")
+        ```
+        ````
+        """
+        span: Span
+        lang: Optional[str]
+        code: str
+
+    class Quote(Token):
+        """Represents a block quote in the note."""
+        span: Span
+        tokens: List["Token"]
+
+    class InlineMath(Token):
+        """Represents inline mathematical expressions in the note."""
+        span: Span
+        latex: str
+
+    class DisplayMath(Token):
+        """Represents display mathematical expressions in the note."""
+        span: Span
+        latex: str
+
+    class Divider(Token):
+        """Represents a horizontal divider in the note."""
+        span: Span
+
+    class Callout(Token):
+        """Represents a callout block in the note."""
+        span: Span
+        callout: "Callout"
+
+    class InternalLink(Token):
+        """Represents an internal link to another note within the vault."""
+        span: Span
+        link: "InternalLink"
+
+    class ExternalLink(Token):
+        """Represents an external link to a URL."""
+        span: Span
+        link: "ExternalLink"
+
+    class List(Token):
+        """
+        Represents a bulleted or numbered list in the note.
+
+        Example:
+        ```markdown
+        - Item 1
+        - Item 2
+          - Subitem 2.1
+        ```
+        """
+        span: Span
+        items: List[ListItem]
+
+    class NumericList(Token):
+        """
+        Represents a numerated list in the note.
+
+        Example:
+        ```markdown
+        1. First item
+        2. Second item
+           1. Subitem 2.1
+           2. Subitem 2.2
+        ```
+        """
+        span: Span
+        items: List[NumericListItem]
+
+    class CheckList(Token):
+        """
+        Represents a checklist in the note.
+
+        Example:
+        ```markdown
+        - [x] Completed item
+        - [ ] Incomplete item
+        ```
+        """
+        checked: bool
+        span: Span
+        indent: int
+        tokens: List["Token"]
+
+    class TemplaterCommand(Token):
+        """
+        Represents a Templater command in the note.
+
+        Example:
+        ```markdown
+        <% tp.file.include("path/to/file.md") %>
+        ```
+        """
+        span: Span
+        command: str
