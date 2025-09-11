@@ -168,6 +168,12 @@ class Note:
         """Get content note as a list of tokens."""
         ...
 
+    def all_tokens(self) -> List["Token"]:
+        """
+        Get all tokens in the note, including tokens within nested structures like lists and callouts.
+        """
+        ...
+
     def full_path(self) -> str:
         """Get the absolute path to the note file."""
         ...

@@ -87,7 +87,6 @@ impl Note {
         fs::read_to_string(self.full_path())
     }
 
-    // TODO: Maybe unfold recursive tokens?
     /// Get an iterator if tokens from the note content.
     pub fn tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
         let content = self.content()?;
@@ -97,7 +96,8 @@ impl Note {
     /// Get an iterator of all tokens in the note, including those nested
     /// within other tokens (e.g. callouts, quotes, lists).
     pub fn all_tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
-        Ok(self.tokens()?.flat_map(|token| {
+        let content = self.content()?;
+        Ok(Lexer::new(content).flat_map(|token| {
             let mut tokens = vec![token.clone()];
             match token {
                 Token::Callout { callout, .. } => {
@@ -123,7 +123,19 @@ impl Note {
                         tokens.extend(item.tokens.iter().cloned());
                     }
                 }
-                _ => {}
+                Token::Frontmatter { .. }
+                | Token::Text { .. }
+                | Token::Tag { .. }
+                | Token::Header { .. }
+                | Token::Code { .. }
+                | Token::InlineMath { .. }
+                | Token::DisplayMath { .. }
+                | Token::Divider { .. }
+                | Token::InternalLink { .. }
+                | Token::ExternalLink { .. }
+                | Token::TemplaterCommand { .. } => {
+                    // These tokens do not contain nested tokens
+                }
             }
             tokens.into_iter()
         }))
@@ -288,6 +300,16 @@ impl Note {
     /// Get content note as a list of tokens.
     #[pyo3(name = "tokens")]
     pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
+        match self.tokens() {
+            Ok(ts) => Ok(ts.collect()),
+            Err(e) => Err(e.into()),
+        }
+    }
+
+    /// Get content note as a list of all tokens, including those nested
+    /// within other tokens (e.g. callouts, quotes, lists).
+    #[pyo3(name = "all_tokens")]
+    pub fn py_all_tokens(&self) -> PyResult<Vec<Token>> {
         match self.tokens() {
             Ok(ts) => Ok(ts.collect()),
             Err(e) => Err(e.into()),

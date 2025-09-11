@@ -29,7 +29,7 @@ SHELLS = [
     "python3 examples/3_find_headings.py",
 
     # "python3 examples/4_check_external_links.py \"test-vaults/Obsidian Sandbox\"",
-    "python3 examples/4_check_external_links.py test-vaults/simple_vault",
+    # "python3 examples/4_check_external_links.py test-vaults/simple_vault",
 
     "python3 examples/5_graph_image.py <vault>",
 

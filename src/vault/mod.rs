@@ -404,7 +404,7 @@ impl Vault {
                 continue;
             };
 
-            for token in note.tokens()? {
+            for token in note.all_tokens()? {
                 if let Token::Tag { ref tag, .. } = token {
                     if *tag == old_tag {
                         let span = *token.span();

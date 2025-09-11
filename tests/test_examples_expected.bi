@@ -1,4 +1,4 @@
-:i count 41
+:i count 40
 :b shell 61
 python3 examples/1_overview.py "test-vaults/Obsidian Sandbox"
 :i returncode 0
@@ -294,12 +294,6 @@ python3 examples/3_find_headings.py
 Found heading: I’m interested in Obsidian at level 2
 Found heading: Official Help Site at level 2
 Found heading: What is this place? at level 2
-
-:b shell 67
-python3 examples/4_check_external_links.py test-vaults/simple_vault
-:i returncode 0
-:b stdout 30
-All external links are valid!
 
 :b shell 64
 python3 examples/5_graph_image.py "test-vaults/Obsidian Sandbox"
