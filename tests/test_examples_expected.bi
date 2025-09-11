@@ -2823,1328 +2823,1587 @@ Formatting note: test-vaults/simple_vault/first_note.md
 python3 examples/9_formatter.py --vault "test-vaults/Obsidian Sandbox"
 :i returncode 0
 :b stdout 2242
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Images.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Blockquote.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Callout.md
 Formatting note: test-vaults/Obsidian Sandbox/Formatting/Code block.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Table.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Diagram.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Emphasis.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Footnote.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Task.md
 Formatting note: test-vaults/Obsidian Sandbox/Formatting/Comment.md
 Formatting note: test-vaults/Obsidian Sandbox/Guides/Create a vault.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Heading.md
-Formatting note: test-vaults/Obsidian Sandbox/Vault is just a local folder.md
-Formatting note: test-vaults/Obsidian Sandbox/Adventurer/From plain-text note-taking.md
-Formatting note: test-vaults/Obsidian Sandbox/Start Here.md
-Formatting note: test-vaults/Obsidian Sandbox/Guides/Link notes.md
-Formatting note: test-vaults/Obsidian Sandbox/Plugins make Obsidian special for you.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Highlighting.md
-Formatting note: test-vaults/Obsidian Sandbox/Guides/Get started with Obsidian.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Lists.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Strikethrough.md
-Formatting note: test-vaults/Obsidian Sandbox/Adventurer/No prior experience.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Format your notes.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Horizontal divider.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Internal link.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Embeds.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Callout.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Blockquote.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Links.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Inline code.md
-Formatting note: test-vaults/Obsidian Sandbox/Formatting/Math.md
 Formatting note: test-vaults/Obsidian Sandbox/Guides/Create your first note.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Diagram.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Embeds.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Emphasis.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Footnote.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Format your notes.md
+Formatting note: test-vaults/Obsidian Sandbox/Adventurer/From plain-text note-taking.md
 Formatting note: test-vaults/Obsidian Sandbox/Adventurer/From standard note-taking.md
+Formatting note: test-vaults/Obsidian Sandbox/Guides/Get started with Obsidian.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Heading.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Highlighting.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Horizontal divider.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Images.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Inline code.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Internal link.md
+Formatting note: test-vaults/Obsidian Sandbox/Guides/Link notes.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Links.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Lists.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Math.md
+Formatting note: test-vaults/Obsidian Sandbox/Adventurer/No prior experience.md
+Formatting note: test-vaults/Obsidian Sandbox/Plugins make Obsidian special for you.md
+Formatting note: test-vaults/Obsidian Sandbox/Start Here.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Strikethrough.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Table.md
+Formatting note: test-vaults/Obsidian Sandbox/Formatting/Task.md
+Formatting note: test-vaults/Obsidian Sandbox/Vault is just a local folder.md
 
 :b shell 75
 python3 examples/9_formatter.py --vault "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
 :b stdout 39582
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Omdrejningslegne.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Thread Deadlocks.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spoler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linear Classification.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentialregning - Basis.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Partial Differential Equations.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Planck konstanten.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Røntgenstråling.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Feedback Control.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Pulse Sampling.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Score Function.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Software Development.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Feed Forward.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gnidningsmordstand gennem Luft.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Zeigler Nichols Tuning Method.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Full Adder.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Simulation of Robot Dynamics.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Root Locus Tuning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Multivariate Random Variables.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normalfordelingen.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bivariate Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Morgans Law.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spherical Coordinates.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ladning i en Kugle.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Random Variables.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Indre og Ydre Produkt.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/First-Order Logic.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transmission.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/n-Space.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Specifik Fordampningsvarme.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Covariance.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Plug-in Estimator.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ledere og Isolatorer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Komplekse Tal.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cylindrical Coordinates.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integraler Regneregler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Axis Angle.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Max Flow.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matricer - Regneregler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Anti Aliasering Filter.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Line Integrals.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Operationsforstærker.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Angle-Set Conventions.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Smart Pointers in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Potentiel Energi.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linært Afhængige Vektorer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DH-Parameters.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unix Files.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Den retningsafledte.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Machine Learning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sorting Algorithms.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Standard Teorien.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bølgeformlen.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Files.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hypothesis Testing.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fisher Information.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplacian Operator.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Decibel.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DC Amplification.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Nyquist Formula.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Classification of Second order PDEs.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Seperation of Variables.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/RISC vs. CISC Architecture.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Penduler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gauss's Divergence Theorem.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eigen values and vectors.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Forward Kinematics.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mekanisk energi i centralbevægelser.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Pointers.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Røntgenrør.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Least Squared Problem.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matched z-transformation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Massemidtpunkt.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/De kinematiske ligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Wald Test.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Filters.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Multiplexer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Types of Microcontrolers.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Steady State Tracking.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fast Fourier transformation (FFT).md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Quicksort.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linære Funktioner.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/FAN-OUT.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gain Margins.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Diagonalization.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Strømdeler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Koblede Førsteordensdifferentialligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spectral Theorem.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Law of Cosines.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transport Layer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Række og Søjle vektorer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gimbal Lock.md
-Formatting note: test-vaults/BalderHolst_uni-notes/HOME.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Control System Performance.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fordampningsenergi.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Big-O Notation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kinematrics.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Partialbrøker.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Positive definite matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplace's Equation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/impulstog.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Coulumbs konstant.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Euler-Lagrange Modelling.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Andengradspolynomier.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/En-en-tydig Funktion.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Trace.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Critical Value.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bandwidth.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Common Mode Rejection Ratio.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dæmpede Svingninger - Differentialligning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vnodes and Inodes.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vector Fields.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Log-likelihood Test.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Nyquist Stability.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eulers Formel.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eigendecomposition.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/gravitationskraft.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Libraries in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integral Table.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Diagonalmatrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IIR Filters.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Anti-Windup.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Control Systems.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fourieseries.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Positive semi-definite matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Pooling.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Error Analysis.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Basis.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Expectation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bilineær z-transformation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Konduktans.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Change of Variables.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Boolean Algebra.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Potential Energy.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Projection.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Funktioner af flere Variable.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Logaritmer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spændingsdeler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Memory Management in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kredsløb.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Delay through filter (gruppeløstid).md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linære førsteordensdifferentialligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normal form of a PDE.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Determinanen for Matricer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Steady-State Value of Time Function.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mergesort.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bayesian Networks.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Modstande.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mixture Models.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fotoelektrisk Effekt.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Neutral Stability.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Controllability.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ARP Packet.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Energi.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matrix Kernel.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Friktion.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Identity Matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Arc Length.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Trigonometri.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rotational Matrices.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal element.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Digital Realisation Structures.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/Drawing 2022-11-17 12.34.37.excalidraw.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/LU Decomposition.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Interupts.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Covariance and Correlation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Standard IO.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Lineært Tidsinvariant System.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/System of Linear Equations.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gravitation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Konservative og ikke-konservative kræfter.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Potensregneregler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal Reconstruction.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/NAT.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplaces lov.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Karnaugh Map.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Velocity Curves.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Numbering Systems.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Knudepunktsmetoden.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/D Latch.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ethernet.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Chebyshev Filter.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Frequency Response.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vektorfunktioner.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ALU.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Microcontrolers.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Jacobian Matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Antisymetrisk.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Controllable Canonical Form.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Inference.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hvordan skriver man en videnskabelig artikel.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Coulumbs Lov.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kraftmoment.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The Wave Equation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Nyquist-Shannon.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cascade Control.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Andenordensdifferentialligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Binomial Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sum of Products.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevægelsesmængdemoment.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Library Interpositioning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Directories in C.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sequences.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Jævn Cirkelbevægelse.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Specifik Smeltevarme.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Viskositet.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Intelligent Systems.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Polar Coordinates.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Shannon Formula.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hidden Markov Models.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tyngdeaccelerationen.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Media Access Control.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Inverse Kinematics.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentiation af funktioner med to variable.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Templates/Insert Title.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/fysik PA.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Plane Kredsløb.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The Bootstrap.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Foldningssum.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Flytningsformlen.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Row Echelon Form.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Asymptotic Relative Efficiency (ARE).md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Window Functions.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Centripetalkraft.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ækvivalente Kredsløb.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/References in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integrator.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Particle Filtering.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Templates/subject.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Periodic Signal Analysis.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for 2. Løsningsformel.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stokes Gnidningslov.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Underactuated Robots.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tangentplan.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cholesky Decomposition.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Assembly.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impulse Sampling.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kosaraju’s Algorithm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Acceleration af partikler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Planer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hældningsfelt.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Data Link Layer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevægelse på Skråplan.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Monotoniforhold.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integralregning - Basis.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Score Test.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The State of a System.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unified Process.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Optimal Control.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Green's Theorem.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gaussian Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Små Integrationsbeviser.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kalman Filter.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impule Inveriant z-transformation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Emperical CDF.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Templates/distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Elementarladningen.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Centripetalacceleration.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Densitet.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bode Plot.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Homogeneous Functions.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Line Coding.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eksponentielle Funktioner.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/AVR Ports.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Statistics.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impulsmoment.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/C Libraries.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Lysets Hastighed.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rulning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IPv4.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matrix Image.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Exponential Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentialregning Regneregler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Strøm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/KVL.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rank of Matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Links.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unix IO.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Viterbi Algorithm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Komparator.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/MIC Architecture.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vectors.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Halveringtid.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bias.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stable Sorting.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Arrays in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Forwarding Table.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Einsteins Fotoelektriske Lov.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Phasor Representation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linear Systems.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Radix Sort.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Insertion Sort.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Triple Integrals.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/PID-controller.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentiator.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linarisering.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Taylorpolynomium.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Diskret Fourier Transformation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linux Processes.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Variance.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mean Square Error (MSE).md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Partiel Integration.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Confidence Interval.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Degrees of Freedom.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hastighed og Fart.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transient Respons.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gradient.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rationelle Funktioner.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/State Space Models.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stød.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kinetic Energy.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for den Gennerelle Løsningsformel til Linære Førsteordensdifferentialligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fotoner.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IID.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Data Communication.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Varmekapacitet.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Embedded.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spænding.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Inertimoment.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Uegenlige Integraler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Multivariable Math.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Snitkurver.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Frames.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normal Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Poisson Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sample Mean and Variance.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Maps.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Orthogonal Matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Logistisk vækst.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Schmitt Trigger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Propability Space.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Probability vs Likelihood.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vinkelfrekvens.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal Bandwidth.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Standard Error.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ADC.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Thevenin Ækvivalens.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/State Machines.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DC.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Maximum Likelihood Estimation (MLE).md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Parity-Check Code.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Digitization.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Inverse Matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differensligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Harmoniske svingninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Marginal Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tyngdekraften.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Numerical Methods.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sliding Mode Control.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Memory Management.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transformation Matrices.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Omvendt funktion.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/File Metadata.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Niveaukurver.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normalkraft.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for Parameterfremstilling.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differential Equations.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/FIR Filtre.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Karatsuba Algorithm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/UART Protocol.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/C++ Streams.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fordoblings- og halveringkonstant.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Strongly Connected Components.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The C++ Preprocessor.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Step Response.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The OSI model.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Convergence of Random Variables.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Approximation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Central Limit Theorem.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/QQ-plot.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Scrum.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unit Sample.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Registers.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impedans.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gray Codes.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Artificial Intelligence.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bayesian Learning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Skrå Kast.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/Truth-table to MUX.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Observers.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signals.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Latch.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Assumptions of Kinematics.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal Processing.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplace Transformation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Effekt.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bolzmanns Konstant.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ulige Funktioner.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transistorer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Abstract Classes in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bellman-Ford* Algorithm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Distributions.md
-Formatting note: test-vaults/BalderHolst_uni-notes/README.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Breadth-first Search.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Divergence.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dijkstra’s Algorithm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tretrinsraketten.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Poisson's Equation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fourier-transformation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Parallelforbindelser.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ohm's Lov.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/At Gøre Prøve.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/RMS-værdien.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ARM.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stående Cirkelbølger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Python Web Scraping.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Koordinatsystem og Flader.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Singular Value Decomposition.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Classes in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Det Komplekse Plan.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ladningers bevægelse i et kuglesymmetrisk felt.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentialregning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/TCP-IP.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Interfaces in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gates.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linear Algebra.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Symetric Matrices.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Beviser.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hamming Distance.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The Heat Equation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Intel x86 Architecture.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/KCL.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impulse Response.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Middelværdisætningen.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Filter Transformations.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integral Control.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Serieforbindelser.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Arbejde.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IPv6.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mekanisk energi.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Curl.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Compensation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Supervised Learning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Grænser.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kinetisk Energi.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matrix.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Norton Ækvivalens.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gnidning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tangent.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/P-value.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kvadratkomplettering.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fuldstændig og partikulær løsning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Elektrisk Resonans.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Master Theorem.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stationære punkter.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Relativitetsteorien.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ligninssystemer Uden Løsninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stability.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kondensator.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dirac Delta Function.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Delta Method.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tarjan's Algorithm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Deep Learning.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/X2 Distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Jacobian Matrix for Robotics.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Algorithms and Data Structures.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Predict CPU Burst.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Amdahl's Law.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Raketligningen.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Direct Samling.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DHCP.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Bayesian Networks.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Depth-first Search.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Law of Large Number.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fjederkraft.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Memory Allocation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Disturbance Rejection.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Circles.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Edmonds Karp Algorithm.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Newtons Love.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sekant.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Butterworth Filter.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Orientation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dæmpede Svingninger - Differentialligning 1.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Terminalhastighed.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Frekvens.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Safe State.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/State Feedback.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mekanisk effekt.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Surface Integrals.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rotation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/z-transformation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integration med Substidution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Generalized Coordinates.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Newtons Afkølingslov.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Network Layer.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Førsteordensdifferentialligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Craig's Notation.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integraler.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cirklens Ligning.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/AC.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ADC.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ALU.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ARM.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/ARP Packet.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/AVR Ports.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Abstract Classes in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Acceleration af partikler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Algorithms and Data Structures.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Amdahl's Law.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Andengradspolynomier.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Andenordens inhomogene differentialligninger.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hello World in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Subtractor.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Andenordensdifferentialligninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Angle-Set Conventions.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Anti Aliasering Filter.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Anti-Windup.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Antisymetrisk.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Approximation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Arbejde.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Arc Length.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Arrays in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Artificial Intelligence.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Assembly.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Assumptions of Kinematics.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Asymptotic Relative Efficiency (ARE).md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/At Gøre Prøve.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Axis Angle.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bandwidth.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Basis.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bayesian Learning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bayesian Networks.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bellman-Ford* Algorithm.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bessel.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Process.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tangent Plane.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Elektroner.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dioder.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Loops in C++.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Z-distribution.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fejlberegning på Operationsforstærker.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for 2. Løsningsformel.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for Parameterfremstilling.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for den Gennerelle Løsningsformel til Linære Førsteordensdifferentialligninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Beviser.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevægelse på Skråplan.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevægelsesmængde (Impuls).md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Keplers Lov.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ford Fulkerson Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevægelsesmængdemoment.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bias.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Big-O Notation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bilineær z-transformation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Binomial Distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bivariate Distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bode Plot.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bolzmanns Konstant.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Boolean Algebra.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Breadth-first Search.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Butterworth Filter.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bølgeformlen.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/C Libraries.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/C++ Streams.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cascade Control.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Central Limit Theorem.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Centripetalacceleration.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Centripetalkraft.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Change of Variables.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Chebyshev Filter.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cholesky Decomposition.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Circles.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cirklens Ligning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Classes in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Classification of Second order PDEs.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Common Mode Rejection Ratio.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Confidence Interval.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Control System Performance.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Control Systems.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Controllability.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Controllable Canonical Form.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Convergence of Random Variables.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Coulumbs Lov.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Coulumbs konstant.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Covariance.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Covariance and Correlation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Craig's Notation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Critical Value.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Curl.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Cylindrical Coordinates.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/D Latch.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DC.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DC Amplification.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DH-Parameters.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/DHCP.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Data Communication.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Data Link Layer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/De kinematiske ligninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Decibel.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Deep Learning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Degrees of Freedom.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Delay through filter (gruppeløstid).md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Delta Method.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Den retningsafledte.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Densitet.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Depth-first Search.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Det Komplekse Plan.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Determinanen for Matricer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Diagonalization.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Diagonalmatrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differensligninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differential Equations.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentialregning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentialregning - Basis.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentialregning Regneregler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentiation af funktioner med to variable.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Differentiator.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Digital Realisation Structures.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Digitization.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dijkstra’s Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dioder.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dirac Delta Function.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Direct Samling.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Directories in C.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Diskret Fourier Transformation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Distributions.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Disturbance Rejection.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Divergence.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/Drawing 2022-11-17 12.34.37.excalidraw.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Bayesian Networks.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Compensation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Inference.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dynamic Memory Allocation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dæmpede Svingninger - Differentialligning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Dæmpede Svingninger - Differentialligning 1.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Edmonds Karp Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Effekt.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eigen values and vectors.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eigendecomposition.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Einsteins Fotoelektriske Lov.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eksponentielle Funktioner.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Elektrisk Resonans.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Elektroner.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Elementarladningen.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Elementarpartiklers Bølgeegenskaber.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Riemann Sum.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tri-State Buffer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Embedded.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Emperical CDF.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/En-en-tydig Funktion.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Energi.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Error Analysis.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ethernet.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Euler-Lagrange Modelling.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Eulers Formel.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Expectation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Exponential Distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/FAN-OUT.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/FIR Filtre.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fast Fourier transformation (FFT).md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Feed Forward.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Feedback Control.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fejlberegning på Operationsforstærker.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/File Metadata.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Files.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Filter Transformations.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Filters.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/First-Order Logic.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fisher Information.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fjederkraft.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Flytningsformlen.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Foldningssum.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ford Fulkerson Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fordampningsenergi.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fordoblings- og halveringkonstant.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Forward Kinematics.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Forwarding Table.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fotoelektrisk Effekt.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fotoner.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fourier-transformation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fourieseries.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Frames.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Frekvens.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Frequency Response.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Friktion.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Fuldstændig og partikulær løsning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Full Adder.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Funktioner af flere Variable.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Førsteordensdifferentialligninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gain Margins.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gates.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gauss's Divergence Theorem.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gaussian Distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Generalized Coordinates.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gimbal Lock.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gnidning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gnidningsmordstand gennem Luft.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gradient.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gravitation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Gray Codes.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Green's Theorem.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Grænser.md
+Formatting note: test-vaults/BalderHolst_uni-notes/HOME.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Halveringtid.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hamming Distance.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Harmoniske svingninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hastighed og Fart.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hello World in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hidden Markov Models.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Homogeneous Functions.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hvordan skriver man en videnskabelig artikel.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hypothesis Testing.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Hældningsfelt.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IID.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IIR Filters.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IPv4.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/IPv6.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Identity Matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impedans.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impule Inveriant z-transformation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impulse Response.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impulse Sampling.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Impulsmoment.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Indre og Ydre Produkt.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Inertimoment.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Templates/Insert Title.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Insertion Sort.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integral Control.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integral Table.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integraler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integraler Regneregler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integralregning - Basis.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integration med Substidution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Integrator.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Intel x86 Architecture.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Intelligent Systems.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Interfaces in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Interupts.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Inverse Kinematics.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Inverse Matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Jacobian Matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Jacobian Matrix for Robotics.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Jævn Cirkelbevægelse.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/KCL.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/KVL.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kalman Filter.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Karatsuba Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Karnaugh Map.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Keplers Lov.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kinematrics.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kinetic Energy.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kinetisk Energi.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Knudepunktsmetoden.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Koblede Førsteordensdifferentialligninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Komparator.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Komplekse Tal.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kondensator.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Konduktans.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Konservative og ikke-konservative kræfter.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Koordinatsystem og Flader.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kosaraju’s Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kraftmoment.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kredsløb.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Kvadratkomplettering.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/LU Decomposition.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ladning i en Kugle.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ladningers bevægelse i et kuglesymmetrisk felt.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplace Transformation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplace's Equation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplaces lov.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Laplacian Operator.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Latch.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Law of Cosines.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Law of Large Number.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Least Squared Problem.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ledere og Isolatorer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Libraries in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Library Interpositioning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ligninssystemer Uden Løsninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linarisering.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Line Coding.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Line Integrals.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linear Algebra.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linear Classification.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linear Systems.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Lineært Tidsinvariant System.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Links.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linux Processes.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linære Funktioner.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linære førsteordensdifferentialligninger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Linært Afhængige Vektorer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Log-likelihood Test.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Logaritmer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Logistisk vækst.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Loops in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Lysets Hastighed.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/MIC Architecture.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Machine Learning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Maps.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Marginal Distribution.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Maskemetoden.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Massemidtpunkt.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Master Theorem.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matched z-transformation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matricer - Regneregler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matrix Image.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Matrix Kernel.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Max Flow.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Maximum Likelihood Estimation (MLE).md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mean Square Error (MSE).md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Media Access Control.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mekanisk effekt.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mekanisk energi.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mekanisk energi i centralbevægelser.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Memory Management.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Memory Management in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mergesort.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Microcontrolers.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Middelværdisætningen.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Mixture Models.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Modstande.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Monotoniforhold.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Morgans Law.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Multiplexer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Multivariable Math.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Multivariate Random Variables.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/NAT.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Network Layer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Neutral Stability.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Newtons Afkølingslov.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Newtons Love.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Niveaukurver.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normal Distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normal form of a PDE.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normalfordelingen.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Normalkraft.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Norton Ækvivalens.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Numbering Systems.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Numerical Methods.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Nyquist Formula.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Nyquist Stability.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Nyquist-Shannon.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Observers.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ohm's Lov.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Omdrejningslegne.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Omvendt funktion.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Operationsforstærker.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Optimal Control.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Orientation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Orthogonal Matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/P-value.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/PID-controller.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Parallelforbindelser.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Parity-Check Code.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Partial Differential Equations.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Partialbrøker.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Particle Filtering.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Partiel Integration.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Penduler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Periodic Signal Analysis.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Phasor Representation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Planck konstanten.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Plane Kredsløb.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Planer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Plug-in Estimator.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Pointers.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Poisson Distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Poisson's Equation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Polar Coordinates.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Pooling.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Positive definite matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Positive semi-definite matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Potensregneregler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Potential Energy.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Potentiel Energi.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Predict CPU Burst.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Probability vs Likelihood.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Process.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Projection.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Propability Space.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Pulse Sampling.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Python Web Scraping.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/QQ-plot.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Quicksort.md
+Formatting note: test-vaults/BalderHolst_uni-notes/README.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/RISC vs. CISC Architecture.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/RMS-værdien.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Radix Sort.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Raketligningen.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Random Variables.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rank of Matrix.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rationelle Funktioner.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/References in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Registers.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Relativitetsteorien.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Riemann Sum.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Root Locus Tuning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rotation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rotational Matrices.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Row Echelon Form.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Rulning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Række og Søjle vektorer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Røntgenrør.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Røntgenstråling.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Safe State.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sample Mean and Variance.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Schmitt Trigger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Score Function.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Score Test.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Scrum.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sekant.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Seperation of Variables.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sequences.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Serieforbindelser.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Shannon Formula.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal Bandwidth.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal Processing.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal Reconstruction.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signal element.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Signals.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Simulation of Robot Dynamics.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Singular Value Decomposition.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Skrå Kast.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sliding Mode Control.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Smart Pointers in C++.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Små Integrationsbeviser.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Snitkurver.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Software Development.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sorting Algorithms.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Specifik Fordampningsvarme.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Specifik Smeltevarme.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spectral Theorem.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spherical Coordinates.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spoler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spænding.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Spændingsdeler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stability.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stable Sorting.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Standard Error.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Standard IO.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Standard Teorien.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/State Feedback.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/State Machines.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/State Space Models.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stationære punkter.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Statistics.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Steady State Tracking.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Steady-State Value of Time Function.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Step Response.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stokes Gnidningslov.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Strongly Connected Components.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Strøm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Strømdeler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stående Cirkelbølger.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Stød.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Subtractor.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Sum of Products.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Supervised Learning.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Surface Integrals.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Symetric Matrices.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/System of Linear Equations.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/TCP-IP.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tangent.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tangent Plane.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tangentplan.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tarjan's Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Taylorpolynomium.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Terminalhastighed.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The Bootstrap.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The C++ Preprocessor.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The Heat Equation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The OSI model.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The State of a System.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/The Wave Equation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Thevenin Ækvivalens.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Thread Deadlocks.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Trace.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transformation Matrices.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transient Respons.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transistorer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transmission.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Transport Layer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tretrinsraketten.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tri-State Buffer.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Trigonometri.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Triple Integrals.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/Truth-table to MUX.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tyngdeaccelerationen.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Tyngdekraften.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Types of Microcontrolers.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/UART Protocol.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Uegenlige Integraler.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ulige Funktioner.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Underactuated Robots.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unified Process.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unit Sample.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unix Files.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Unix IO.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Variance.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Varmekapacitet.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vector Fields.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vectors.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vektorfunktioner.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Velocity Curves.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vinkelfrekvens.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Viskositet.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Viterbi Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Vnodes and Inodes.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Wald Test.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Window Functions.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/X2 Distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Z-distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Zeigler Nichols Tuning Method.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Templates/distribution.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/fysik PA.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/gravitationskraft.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/impulstog.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/n-Space.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Templates/subject.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/z-transformation.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Ækvivalente Kredsløb.md
 
 :b shell 66
 python3 examples/9_formatter.py --vault "test-vaults/simple_vault"
 :i returncode 0
 :b stdout 590
-Formatting note: test-vaults/simple_vault/list.md
-Formatting note: test-vaults/simple_vault/sub/todo.md
-Formatting note: test-vaults/simple_vault/todo.md
+Formatting note: test-vaults/simple_vault/callout.md
 Formatting note: test-vaults/simple_vault/code.md
+Formatting note: test-vaults/simple_vault/first_note.md
+Formatting note: test-vaults/simple_vault/frontmatter.md
+Formatting note: test-vaults/simple_vault/list.md
 Formatting note: test-vaults/simple_vault/quote.md
 Formatting note: test-vaults/simple_vault/second_note.md
-Formatting note: test-vaults/simple_vault/first_note.md
-Formatting note: test-vaults/simple_vault/websites.md
-Formatting note: test-vaults/simple_vault/frontmatter.md
 Formatting note: test-vaults/simple_vault/sub/sub-note.md
-Formatting note: test-vaults/simple_vault/callout.md
+Formatting note: test-vaults/simple_vault/sub/todo.md
+Formatting note: test-vaults/simple_vault/todo.md
+Formatting note: test-vaults/simple_vault/websites.md
 
 :b shell 82
 python3 examples/9_formatter.py --vault "test-vaults/SoRobby_ObsidianStarterVault"
 :i returncode 0
 :b stdout 10607
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Trips/Trips Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert formula variable definition.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Warning callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Success callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Bug callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Contact.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert external link.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Obsidian Development/Obsidian Development Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Formulas/All Formulas.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Resources/Resources Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/Dataview nested table.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 6.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Error callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Journal/Entries/2023-07-21.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Meetings/2023-10-29 - Example Meeting Note.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Abstract callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Enceladus Ice Thickness.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Home.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert columns.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Important callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Missing callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Note page.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup meetings.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Math constant.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Formulas/All Formulas.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Meetings/All Meetings.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Notes/All Notes.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Blank page.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Boilerplate.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 2.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Concept Board/Drawings/Satellite Concept Drawing.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup notes.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert table of contents.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/README.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/README.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Personal/Personal Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Book.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Books/Books Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Bug callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Caution callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Concept.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Concept Board/Concept Board.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Contact.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/learning/Course assignment.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/learning/Course lecture.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/learning/Course note.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/learning/Course setup.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Danger callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Radiation Belt Locations.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Book.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Caution callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Spaces Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Meetings/All Meetings.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Journal/Entries/2023-07-21.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/Dataview flat table.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/Dataview nested table.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Definition.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Done callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Element Structure and Formats.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Empty page.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Enceladus Geysers Potential Causes.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Enceladus Ice Thickness.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Error callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Contacts/Example Contact.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Example callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/FAQ callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Failure callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Help callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Home.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Important callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Inbox/Inbox.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Info callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert code block.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert columns.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert external link.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert formula variable definition.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 1.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 2.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 3.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 4.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 5.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 6.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/Insert navigation bar.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert table of contents.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Journal/Journal Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Journal entry.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Learning/Learning Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/List installed plugins.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Math constant.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Math formula.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Missing callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Obsidian Development/Navigation with Dataview and customJS.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Obsidian Development/Navigation with DataviewJS.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Note callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Note page.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Notes Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Obsidian Development/Obsidian Development Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Definitions/Periapsis.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Personal/Personal Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project boilerplate page.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project feature.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/learning/Course lecture.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project meeting.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project note.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup meetings.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup notes.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup references.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup tasks.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project task.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Projects.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Question callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Quote callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/README.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/README.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Radiation Belt Locations.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/References.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/resources/Resource.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Resources/Resources Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Concept Board/Drawings/Satellite Concept Drawing.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/pinned/Sidebar Navigation.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Solar Cycle Duration.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/spaces/Space home.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Spaces Dashboard.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Success callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Summary callout.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Tasks.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/pinned/Tasks.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Note callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/learning/Course assignment.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Summary callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Obsidian Development/Navigation with Dataview and customJS.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Projects.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 4.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 1.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Meetings/2023-10-29 - Example Meeting Note.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Element Structure and Formats.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert code block.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project boilerplate page.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Math formula.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Todo callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/FAQ callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Question callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Help callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 3.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/spaces/Space home.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Books/Books Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Solar Cycle Duration.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Travel and Trip.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Concept Board/Concept Board.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Definition.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Empty page.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Failure callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Blank page.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Journal entry.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Notes Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/Dataview flat table.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/References.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Notes/Enceladus Geysers Potential Causes.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Learning/Learning Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/pinned/Sidebar Navigation.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Concept Board/Concepts/Vertical Hydroponics.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Info callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/List installed plugins.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup tasks.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Projects/Top Secret Project/Notes/All Notes.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project meeting.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/learning/Course note.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Quote callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Done callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Journal/Journal Dashboard.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Obsidian Development/Navigation with DataviewJS.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Contacts/Example Contact.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project note.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/dataview/Insert navigation bar.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Concept.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Tip callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Example callout.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Definitions/Periapsis.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Insert header 5.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project setup references.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Todo callout.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/general/Travel and Trip.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Trips/Trips Dashboard.md
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Spaces/Formulas/Tsiolkovsky Rocket Equation.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Inbox/Inbox.md
-Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/project/Project task.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/Concept Board/Concepts/Vertical Hydroponics.md
+Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/callouts/Warning callout.md
 
 :b shell 71
 python3 examples/9_formatter.py --vault "test-vaults/TheJoboReal_Noter"
 :i returncode 0
 :b stdout 103077
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Tri-state Buffer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/ORG.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/ORG.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Differensligninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Differensligninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Layer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/SPI/SPI Setup.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Managing Deadlocks.md
-Formatting note: test-vaults/TheJoboReal_Noter/Templates/CourseTemp.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Unicast, Multicast and Broadcast addresses.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Hashing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Flytningsmoment.md
-Formatting note: test-vaults/TheJoboReal_Noter/Templates/ExerciseTemp.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture Least Square Problems.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Fuzzy Logic Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Network Control Protocols.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Multilevel/Multitransition MLT-3.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Gates.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Subroutine/CALL, RCALL.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Subroutine/CALL, RCALL.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Nodes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier Tabeller.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Port3 Numerisk.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Mathematica/Tag sÃ¸jler fra importet data.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Boltzman Softmax Function.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Reference Signals.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Full-Duplex Switched Ethernet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Instructions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Instructions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Page Fault Frequency.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-08 22.21.12.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/Having.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Bit manipulation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Bit manipulation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Cortex M4/Cortex-M4 TIMER0.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Geographical Routing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Resource allocation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/How to use ADC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/How to use ADC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Detection.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Droner/Group 7 Team Contract.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/CTC example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/CTC example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/ALU (Arithmetic Logic Unit).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/External interrupt register.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/External interrupt register.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Anti-Windup.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Socket Address.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Game Plan.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Cortex M4/Cortex-M4 Registers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/Modellering af Dynamiske systemer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/SPI/SPI Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Opgave 4.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch12.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Amplitudespektrum.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/03-01-2025.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/1. ordens differentialeligninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/19-11-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Building robots in matlab/2 axis 2D planar robot.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/2024-19-12.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/2024-20-12.md
 Formatting note: test-vaults/TheJoboReal_Noter/Calendar/2025-06-01.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/FCS field.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/IO ports.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/IO ports.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Kunstig Inteligens.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Joints.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Control Surface.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Bit-oriented framing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Dining-Philosophers Problem.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Rotationmatrices.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Blocks.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Simple Computer Model.md
-Formatting note: test-vaults/TheJoboReal_Noter/Todo/TODO.md
-Formatting note: test-vaults/TheJoboReal_Noter/Templates/Todo.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Direkte type 1 og 2Direkte Type 1Direkte Type 1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch07.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/No operation(NOP).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/No operation(NOP).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Bit Error detection.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Overblik over Systemer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/t-norms and s-norms.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Forward Kinematics.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Spoler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Kraftmoment..md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Situations.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Terminologi.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/booktitle.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Rapport Kilder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Matched z-transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/CAN physical and Data link Layer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Modbus/Intro.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/OpenCV/Intro.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Modbus/Intro.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Frames â three types.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Autoconfiguration.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Fourier RÃ¦kker.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier RÃ¦kker.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Optimal Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/MAL (Micro Assembly Language)/Optimization of the microcode.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Rotationsmatrices.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Addressing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Exercise 7 Newton.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Service.md
-Formatting note: test-vaults/TheJoboReal_Noter/Templates/NoteTemp.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Intro til Numeriske Metoder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Holdekredsløb.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Binary Trees Traversal.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Logical Shift.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Logical Shift.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Odometry.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Closed Loop Transfer function.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-04-24 12.22.17.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Exercises/Lektion 2 Sampling og Rekonstruktion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Boolean algebra.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Boolean algebra.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/Groups.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/Random Access.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/inverse kinematics.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-02-08 15.30.46.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Flow and error control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Localization.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Actions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/MiddelvÃ¦rdier.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/MiddelvÃ¦rdier.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/SPI(Serial Peripheral Interface-bus).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Tidsvarierende signaler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Bass ForstÃ¦rker.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Thrashing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Nummerical Recipes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Memory Access Timing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/Interrupt example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/Interrupt example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Setup PORT as Input or Output.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Setup PORT as Input or Output.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Gruppeløbstid.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Initial Value Problem Lecture.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Induktionsbeviser.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Polers indflydelse.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Invers Diskret Fourier Transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Full Adder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Fuzzy logic.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/AC-kredsloeb.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/INC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/INC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Prevention.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/Example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/Example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/Example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface Wait State.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIC-2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/RTCS (Run to Complete Scheduling).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Gauss Elimination.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Markov Decision Process.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/PWM example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Polar RZ.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-04-12 16.12.54.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-03-21 11.32.24.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/PA/PA 1 opg1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface 8-bit.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Ãkvivalentkredsloeb.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Assignments/Kinematik opgaver.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/DHCP Dynamic Host Configuration Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Valg af filter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/2025-12-01.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/21-11-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/22-01-2025.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/24-11-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/26-01-2025.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/26-12-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/27-11-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/29-11-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/29-12-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Calendar/30-12-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Multilevel/4D-PAM5.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Multilevel/8B6T.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/UML/Generel UML.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Computer Vision.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/Directives.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/Directives.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/AC-kredsloeb.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/AC-kredslÃ¸b.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/ADC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/ADC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/ADC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/ADC.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/ADCH or ADCL Result register.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/ADCH or ADCL Result register.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/mini møder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/SQL Cheatsheet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Velocity/Angular velocity.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/DÃ¦mpning af system.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/STS.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/STS.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Full Order Observer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Dirac delta funktion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Two Categories of Links.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Numerisk assignment 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Von Neumann architecture/Pentium II Motherboard.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/SUBI.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/SUBI.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Structure and Compilation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Structure and Compilation.md
-Formatting note: test-vaults/TheJoboReal_Noter/written_markdown/expected.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Read & Write to file/Read and Write class to file example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/The Control Unit.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Control of Autonomous Systems.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Virtual Monitor.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Diode PN.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Surface Integrals.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Hierarchical Routing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Noisy channel Shannon Capacity.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/IIR Filtre.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Timers in ATMEGA32.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Timers in ATMEGA32.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/Media Access Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Bankers Algorithm.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/FreeRTOS.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/UDP (User Datagram Protocol).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/TIMER0 interrupt.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/TIMER0 interrupt.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Eksamens opgaver/Maj 2021.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/D-type latch.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-17 16.10.09.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch06.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Karnaugh maps (K-maps).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Resistor.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Partielle BrÃ¸ker.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Direkte type 1 og 2Direkte Type 2Direkte Type 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Robotters Fysik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch03.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/General.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Statistik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/ICMPV6 Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/INCLUDE.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/INCLUDE.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/SQL kommandoer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/LCD Driver FPGA.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Cortex M4/Cortex-M4 NVIC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 4.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Level Curves.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Address aggregation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Simple computer model (a program example).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Rotation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Knudepunktmetoden.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Matlab addons.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Feedback tabel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Paging.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Cyclic Codes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Parameters.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Connection-oriented service.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/Databaser/Normalisering af Data.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Pin reader.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Pin reader.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Nummereringssystemer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Nummereringssystemer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Numerical Integration.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Drawing 2023-01-14 18.43.16.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Differensligning Eksempel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Digital Assignment.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-16 16.37.56.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Decoder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Decoder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/z-transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Header guard.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/ATmega128L - external memory.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Brigdet Ethernet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Vision/Ground sample distance (GSD).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Von Neumann architecture/Von Neumann Architecture.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Forwarding mechanism.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Tangent Plane.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/EQU.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/EQU.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Integral Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Thevening.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Op-Amp.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Reinforcement Learning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Knudepunktmetode.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Diskret Fourier Transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Differential Operators.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Multilink.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Boolean Operators.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/LineÃ¦r Algebra.md
-Formatting note: test-vaults/TheJoboReal_Noter/Projects/Eink Calendar.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Comparators.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/ALOHA.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Encoding.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/Join.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Keypad Encoder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Videnskabsteori Overblik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/2025-12-01.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Data Kommunikation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Bidirectional protocols.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/ICMPv4.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Kordinatsystemer/Polar cordinates.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/03-01-2025.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Aliasing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Streams.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/CAN Frames.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch05.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/C++.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Logical and Physical address space.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Penzaboard.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Linear algebra og matrice opgaver.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Numerical Book.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Go-Back-N Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Debuggin tools.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Congestion control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Laplace Transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Laplace Transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/toc.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Formelsamling Fysik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/MAL (Micro Assembly Language)/Modification of the Data Path.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Multivariable Funktioner.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/SECURITY.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Address Field.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Routing and forwarding.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/CLOCK.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Heat Equation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Fast Ethernet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Protocols.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Protocols.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Transistor.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/CONTRIBUTING.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/plottes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Superpositionsprincippet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/PWM signal.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Non-Uniform Memory Access (NUMA).md
-Formatting note: test-vaults/TheJoboReal_Noter/Templates/AssignmentTemp.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Effekt og arbejde.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Sekvens/Laplacetransformeret frekvens.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Butterworth.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Partial Differential equations.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/DÃ¦mpede svingninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/DÃ¦mpede Svingninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Cecksum.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch01.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Stop and Wait Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/IJVM/IJVM Implementation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/OverfÃ¸ringsfunktion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Register VHDL.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/OUT (from IO).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/OUT (from IO).md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Line or Curve Integral.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2022-12-24 16.19.33.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Mapping.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/26-01-2025.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Forwarding of IP packets.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIR (Micro Instructions Register).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Physical Layer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Big O notation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/dedication.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Sub(Subtract).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Sub(Subtract).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/AMD processor 16-bit (AM186EM).md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Triple Integration.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/HDLC Connect and Disconnect.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Read & Write to file/Read and write string to file example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Sugeno or Takagi-Sugeno or Functional Fuzzy Systems.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Ros2 basics.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/References.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/AC-kredslÃ¸b.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Videnskabsteori.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Double Integration.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/RMS Effekt.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/ADCSRA Register.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/ADCSRA Register.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/ADD.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/ADD.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/ADD or Multiply function.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/ADD or Multiply function.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/ADMUX.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/ADMUX.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Frame Format.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/TCCR0 timer counter control register.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/TCCR0 timer counter control register.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/OSI model.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Multilevel/Definittion 2B1Q.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Q-Learning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Generelle formler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Casting.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Op og Afladning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Sinusformet signal.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Drawing 2024-04-15 13.39.03.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Droner/Before Flight Checklist.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Stacks/Stack Pointer set.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Stacks/Stack Pointer set.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Priority Encoder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-06-01 11.11.40.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Eksamensopgaver.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/State Feedback.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/BevÃ¦gelsesmÃ¦ngder/BevÃ¦gelsesmÃ¦ngde for et partikel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Lavpas til båndpasfilter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/PWM (pulse width modulation).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Assignment 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Halvledere.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Halvledere.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Normal form of a PDE.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Mamdani or standard fuzzy system.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/C++ cheatsheet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Biaskompensator og biasstrÃ¸m.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Information field.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/ALOHA.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/ALU (Arithmetic Logic Unit).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/AMD processor 16-bit (AM186EM).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/ANOVA tables.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/ARP Address Resolution Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/ARP Request Reply example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/ARP-Package format.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/ATmega128L - external memory.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/AVR Microcontroller.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Kondensator formel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Potentiel og kinetisk energi.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Building robots in matlab/2 axis 2D planar robot.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-04 11.51.19.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Converge Error.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Const.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/DEC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/DEC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Spilt power supply.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Komponenter og subcircuits.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Quality of Service (QoS).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Root Locus.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch02.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/DEF.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/DEF.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/ICMPv4 Query messages.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Memory(Heap and Stacks).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Switched Ethernet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Droner.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/Multiplexing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/AVR interrupt.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/AVR interrupt.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Abstract Classes/Abstract Classes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Actions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Adders.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Address Binding.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Address Field.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Address aggregation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Address demultiplexer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Addressing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Projects/Airmon wifi bruteforce.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Algoritmer og  Datastruktur.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Aliasing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Allocation of frames.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Amplitudegrafer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Amplitudespektrum.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Amplitudespektrum for pulssampling.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Anden ordens differentiale ligning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Velocity/Angular velocity.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Anti-Windup.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Architecture.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Arithmetic operations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Arithmetic operations.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Arrays.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Arrays.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Arrays.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Loops.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Loops.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Inheritance/Inheritance.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/SpÃ¦ndings og strÃ¸m deler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/Link Control Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Effekt.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Numeriske Metoder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Double Integrals.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer ICANN range.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/Interrupt addresses.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/Interrupt addresses.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Videnskabsteori Intro.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Softwareudvikling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/SVD Exercise.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Ratio Damping.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-04 12.45.14.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 6 Convergence and root finding error.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Koordinatsystemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Assignment 2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Assignment 5 Num.md
+Formatting note: test-vaults/TheJoboReal_Noter/Templates/AssignmentTemp.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/Asynchronous Balanced Mode (ABM).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Atomic Acces.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transmission Impairment/Attenuation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Auxiliary Conditions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/BIT-wise logical operations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/BIT-wise logical operations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/BODE plot.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Bachelor.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Bankers Algorithm.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Barlett Vindue.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Basic Hardware.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Basics.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Bass ForstÃ¦rker.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Droner/Before Flight Checklist.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Bessel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Bessel Butterworth & Chebushev.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/BevÃ¦gelsesmÃ¦ngder/BevÃ¦gelsesmÃ¦ngde.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/BevÃ¦gelsesmÃ¦ngder/BevÃ¦gelsesmÃ¦ngde for et partikel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Biaskompensator og biasstrÃ¸m.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Bidirectional protocols.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Big O notation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Binary Tree.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Binary Trees Traversal.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Bipolar AMI & Pseudoternary.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Bipolar Junction Transistor (BJT), FET og PNP.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Bisection Method.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Bit Error detection.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Bit manipulation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Bit manipulation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Bit-oriented framing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Block Coding.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Boltzman Softmax Function.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Vision/Book.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Boolean Operators.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Boolean algebra.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Boolean algebra.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Bootstrapping in RL.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Bounded Buffer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Bounding boxes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Brigdet Ethernet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Build and run ROS.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Burst error.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Butterworth.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/C++.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/C++ cheatsheet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Subroutine/CALL, RCALL.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Subroutine/CALL, RCALL.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/CAN Frames.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/CAN physical and Data link Layer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/CAN â Controller Area Network.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Bachelor/CBBA consensus-based bundle algorithm.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/CISC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/CLOCK.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/COM.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/COM.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/CONTRIBUTING.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/CPU.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/CSMA.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/CSMA or CD.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/CTC example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/CTC example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Cache.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Calculus.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Calculus noter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Mappings/Cases.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Casting.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Controlled Access/Channelization.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Character-oriented framing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Chebyshevfilter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/Choice of Solution.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Cholesky & LU exercise.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Classes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Classification of PDE.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Closed Loop Transfer function.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Common Mode Rejection (CMR).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Communication example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Comparators.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Libraries/Compile.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Kaskaderealisation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/abbreviations.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fast Fourier Transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Registers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Matematisk Pendul.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Eksamen/Matematisk pendul.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Sampling Based Planning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Round-Robin.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Service.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/IFU (Instruction Fetch Unit).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Linear Least Square Problems org tut.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Final Value Theorem.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Adders.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Simple Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Protocols/Simple protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Framing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Stift legemes Rotation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Complex Comaparator.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Computer Arkitektur.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Computer Vision.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Condition Variable.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Condition for Controllability.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Conditional Jump (CP & CPI).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Conditional Jump (CP & CPI).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Connectionless Service.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Connectionless and Connectionâoriented service.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Const.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Consumer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Control Field.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Control Surface.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Control of Autonomous Systems.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Controllable Canonical Form.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Converge Error.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Copy on Write.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Cortex M4/Cortex-M4 NVIC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Cortex M4/Cortex-M4 Registers.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Cortex M4/Cortex-M4 TIMER0.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Counter VHDL.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Counters.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Counters.md
+Formatting note: test-vaults/TheJoboReal_Noter/Templates/CourseTemp.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Coverage Planning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Cyclic Codes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Kordinatsystemer/Cylendrical Cordinates.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/D-Type Flip-Flop.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/D-type latch.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/DEC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/DEC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/DEF.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/DEF.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Joints and Links/DH Parameters.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/DH Parameters.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/DH.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/DHCP Dynamic Host Configuration Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Dashboard.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Data Kommunikation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Data Link Control DLC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Layer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Data Path Timing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Polynomial.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Data types(Variables).md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Data types(Variables).md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Taylor.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Error Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Namespace.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Datateknik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/De Moivre w4 -81.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/De Moivre.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Deadlock.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Detection.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Prevention.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Recovery.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Situations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Debuggin tools.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Decoder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Decoder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Multilevel/Definittion 2B1Q.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Demand Paging.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Tabeller/Densitet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Inheritance/Derived constructers.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Designs of instruction - LOAD.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Differensligning Eksempel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Differensligninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Differensligninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Differensligninger og Dæmpede svingninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Differential Operators.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Digital Assignment.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Digital Programmerbar elektronik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Digitization.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Dijkstra Method.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Dining-Philosophers Problem.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Diode PN.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Dioden.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Dirac delta funktion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/Directives.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/Directives.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Direkte type 1 og 2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Direkte type 1 og 2Direkte Type 1Direkte Type 1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Direkte type 1 og 2Direkte Type 2Direkte Type 2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Discrete Design.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Diskret Fourier Transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Display schematic.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Display schematic.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Distance from point to plane.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Divider.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Division.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Division.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/DomÃ¦ner.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/DomÃ¦ner og Ranges.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Double Integrals.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Double Integration.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Opgaver/Drawing 2022-12-01 10.18.34.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Drawing 2022-12-02 12.37.17.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Drawing 2022-12-20 13.05.59.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Drawing 2022-12-20 23.04.31.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2022-12-24 16.19.33.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-04 11.51.19.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-04 12.45.14.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-04 13.36.23.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-07 13.36.12.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-08 11.58.53.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Drawing 2023-01-14 18.43.16.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-17 16.10.09.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-02-08 15.30.46.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-03-21 11.32.24.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-04-12 16.12.54.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-04-24 12.22.17.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-04-24 12.37.17.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-01-02 20.35.25.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-01-03 12.17.25.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/Drawing 2024-04-15 13.39.03.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-06-01 11.11.40.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-08 22.21.12.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-12 14.08.07.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-16 16.37.56.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-26 09.37.59.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-26 10.01.34.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-10-09 11.42.52.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-10-21 08.30.11.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-10-21 08.55.36.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Droner.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/DÃ¦mpede Svingninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/DÃ¦mpede svingninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/DÃ¦mpning af system.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/EQU.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/EQU.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Effekt.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Effekt og arbejde.md
+Formatting note: test-vaults/TheJoboReal_Noter/Projects/Eink Calendar.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Eksamen.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Eksamensopgaver.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/BevÃ¦gelsesmÃ¦ngder/Elastisk stÃ¸d.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Elektro.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Elektro Formelsamling.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Elektro fysik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Embedded Systems.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Encoder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Encoding.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Enheds step funktion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Error Analysis for linear equations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/Error Detection Mechanisms.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Euler and fixed angles.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Exam test.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/Example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/Example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/Example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/Example P F bit.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Exercises/Exercise 1 Fuzzy control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Exercise 7 Newton.md
+Formatting note: test-vaults/TheJoboReal_Noter/Templates/ExerciseTemp.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/External interrupt register.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/External interrupt register.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/FCS field.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/False Position Method.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/Udvikling/Faser i traditionel softwareudvikling.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Fast Ethernet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fast Fourier Transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Eksamens opgaver/Februar 2021 opg 4.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Feedback Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Feedback tabel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Filtre Typer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Final Value Theorem.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Finite State Machine (FSM).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Flag Fields.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Flow and error control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Eksamen/Flytningsformel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Flytningsmoment.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Formelsamling Calculus.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Formelsamling Fysik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Formelsamling Kinematik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Formler.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Forstaerkningsteknik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Forward Kinematics.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Forwarding of IP packets.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Four Value Functions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Four Value Functions 2024-10-31 12.30.10.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier Koefficienter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Fourier RÃ¦kker.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier RÃ¦kker.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Fourier RÃ¦kker.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier Tabeller.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier Transform.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier function.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Fragmentation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Framing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/FreeRTOS.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/FreeRTOS (Real Time Operating System).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Frekvens og phasor.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Frekvensanalyse.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Frekvensrespons.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Full Adder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Full Order Observer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Full-Duplex Switched Ethernet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Fuzzy Logic Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Fuzzy logic.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Fysisk Pendul.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Fysisk pendul.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/FÃ¦lles Emitterkobling.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Game Plan.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Game plan for ISA.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Gates.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Gauss Elimination.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/General.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/UML/Generel UML.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Generelle formler.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Geographical Routing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Gigabit Ethernet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Gigabit Ethernet Encoding.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Gigabit Physical Layer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/Global interrupt enable.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/Global interrupt enable.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Go-Back-N Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Graphs.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Greens Theorem.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Vision/Ground sample distance (GSD).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Droner/Group 7 Team Contract.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/Groups.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Gruppeløbstid.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/HDLC Connect and Disconnect.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Frames â three types.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/HOP and TTL.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Halvledere.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Halvledere.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Hamming og Hanning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Harmoniske bevÃ¦gelser.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Hashing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/Having.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Header guard.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Heat Equation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Hello World.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Hierarchical Routing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/High-Level Data Link Control (HDLC).md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Higher order derivatives.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Holdekredsløb.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/How to use ADC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/How to use ADC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Højpasfilter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/ICMPV6 Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/ICMPv4.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/ICMPv4 Query messages.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/IEEE Standard Ethernet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/IFU (Instruction Fetch Unit).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/IIR Filtre.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/IJVM/IJVM Implementation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/IJVM/IJVM implementation in Mic-1.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/IJVM instruction set.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/IJVM/IJVM instruction set.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/IN & OUT.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/IN & OUT.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/IN (from IO).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/IN (from IO).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/INC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/INC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/INCLUDE.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/INCLUDE.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/IO ports.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/IO ports.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Addressing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Cecksum.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Datagrams.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Network Addressing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV4 to IPV6.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Address Mapping.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Addressing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Autoconfiguration.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Blocks.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Extension Headers.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Flow Label.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Special Addresses.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/ISA Progress.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/If, while, for loops.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Impedans.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Impedans og Resonans.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/Impulsmoment sÃ¦tningen.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Impulsrespons.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Impulssampling.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Individuel Studieaktivitet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Allocation of frames.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Higher order derivatives.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Indlejret Programmering.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Induktionsbeviser.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Inertimoment og flytningsmoment.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Inertimoment pÃ¥ pendul.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Inference for Simple Linear Regression.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Information field.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Inheritance/Inheritance.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Initial Value Problem Lecture.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Inside of AVR port.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Inside of AVR port.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Instruction on set design.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Instructions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Instructions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Integral Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Shared Memory/Inter Process Communication.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/Interrupt addresses.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/Interrupt addresses.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/Interrupt example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/Interrupt example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Modbus/Intro.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/OpenCV/Intro.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Modbus/Intro.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Intro til Numeriske Metoder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Introduction to Embodied Artificial Intelligence.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Invers Diskret Fourier Transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Invers Laplace Transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Invers z-transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/Join.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Joints.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Joints and Links/Joints and Links.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Kaiser vindue.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Kalman Filter & Random Variables.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Karnaugh  maps.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Karnaugh maps (K-maps).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Kaskade Kontrol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Kaskaderealisation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Keypad Encoder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Kinematik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Assignments/Kinematik opgaver.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Kirchoffs StrÃ¸m lov.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Knudepunktmetode.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Knudepunktmetoden.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Koblede diff ligninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Komplet Beskrivelse.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Komponenter og subcircuits.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Kondensator.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Kondensator.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Kondensator formel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Konstruktion af filter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Kontinuerte Stokastiske Variable.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/KontinÃ¦r tids tilstands modeller.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Koordinatsystemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Kraftmoment..md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Kunstig Inteligens.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/LCD Driver FPGA.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/LDS and LDI.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/LDS and LDI.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/LU Decomposition og Gaussian.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/LU Decompostion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Laplace Transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Laplace Transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Sekvens/Laplacetransformeret frekvens.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Lavpas til båndpasfilter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Lavpas til højpasfilter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Lead & Lag kompensatorer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Least squares problems.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 4 SVD and error analysis.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Lecture 4 error estimate.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 6 Convergence and root finding error.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 8 Numerical Integration.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Lecture 8 Numerical integration.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 9 Newton-Cotes quadratures.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture Least Square Problems.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture Linear Least Squares problems.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Lecture1_Task.md
+Formatting note: test-vaults/TheJoboReal_Noter/Templates/LectureSlideTemp.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Exercises/Lektion 1 HÃ¸j og Lavpas filtre.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Opgaver/Lektion 2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Exercises/Lektion 2 Sampling og Rekonstruktion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Level Curves.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Ligningssystemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Limits on Multivariable Functions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Line Coding.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Line Coding Schemes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Line or Curve Integral.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Linear Invariante systemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Linear Least Square Problems org tut.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Linear algebra og matrice opgaver.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Velocity/Linear velocity of rigid bodies.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Linearization.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/LineÃ¦r Algebra.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/LineÃ¦r approximation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/Link Control Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Link-Layer Addressing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Linked Lists.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Linux Querks.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Loaclity.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Localization.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Logical Addressing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Logical Shift.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Logical Shift.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Logical and Physical address space.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Loops.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Loops.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Fourier/Lækage.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/MAC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/MAL (Micro Assembly Language)/MAL (Micro Assembly Language).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIC-1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIC-2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIC-3.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIR (Micro Instructions Register).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/MOV.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/MOV.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Eksamens opgaver/Maj 2021.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Maksimal fejl i forstÃ¦rkning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Mamdani or standard fuzzy system.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Managing Deadlocks.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Mapping.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Markov Decision Process.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Maskemetoden.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Matched z-transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Matematisk Pendul.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Eksamen/Matematisk pendul.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Matematisk pendul.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Mathematica generelle kommandoer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Matlab & Mathematica.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Matlab Commands.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Matlab addons.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/Matlab simulering.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Matricer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/Media Access Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Memory.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Memory Access Timing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface 16-bit.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface 8-bit.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface Wait State.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Management optimization.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Memory Operation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Memory(Heap and Stacks).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Mere Rotation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Micro Architecture Level.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/MiddelvÃ¦rdier.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/MiddelvÃ¦rdier.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/Modellering af Dynamiske systemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/MAL (Micro Assembly Language)/Modification of the Data Path.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Monitors.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Monte Carlo Policy.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Multi-Protocol Label Switching (MPLS).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Multiplexer (MUX), or Selector.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/Multiplexing.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Multiplication.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Multiplication.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Multiplication.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Kondensator.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Kondensator.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Assignments/inverse kinematics.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Lead & Lag kompensatorer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Discrete Design.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Polar NRZ.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Bessel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Encapsulation and decapsulation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch10.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Inference for Simple Linear Regression.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Condition for Controllability.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-04-24 12.37.17.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/FÃ¦lles Emitterkobling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Matlab & Mathematica.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Selective-Repeat Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/IEEE Standard Ethernet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Kordinatsystemer/Spherical Cordinates.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Multilevel/Multitransition MLT-3.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Multivariable Calculus.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Multivariable Funktioner.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Multivariat Statistik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Namespace.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Address Translation NAT.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Congestion control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Connection-oriented service.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Error Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Flow Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Forwarding mechanism.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Layer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Perfomance.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Quality of Service (QoS).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Security.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/No operation(NOP).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/No operation(NOP).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Nodes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Noiseless channel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Noisy channel Shannon Capacity.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Non-Uniform Memory Access (NUMA).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/Normal Response Mode (NRM).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Normal form of a PDE.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/Databaser/Normalisering af Data.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Notation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Templates/NoteTemp.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Num Exercise 4.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Numerical Assignment 1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Numerical Book.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Numerical Integration.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Numerisk assignment 2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Numeriske Metoder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Nummereringssystemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Nummereringssystemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Nummerical Recipes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Nyquist Stability Criterion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Nyquist-Shannon sætning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/ORG.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/ORG.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/OSI model.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/OUT (from IO).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/OUT (from IO).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Observability.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Observer Based Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Odometry.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Ohms Lov.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Ohms Lov Serie og Parallel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/On-Policy vs off-policy.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Op og Afladning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Op-Amp.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/OpAfLadning.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Protocols/Piggybacking.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Deadlock Recovery.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Flow Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier function.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/MAC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Reference operator.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Steady State Tracking.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Transition phases.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Impedans og Resonans.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Arithmetic operations.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Arithmetic operations.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/relation mellem s og z-domÃ¦ne.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Open and Closed Loop Control System.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Operationsforstaerker.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Operationsforstærker.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Opgave 1.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Laplace/Opgave 2.1 Laplace.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Opgave 2.excalidraw.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Opgave 3.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Transmission Distrortion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Topics.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Lecture 4 error estimate.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Multiplexer (MUX), or Selector.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Architecture.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Build and run ROS.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Parrallel-koblinger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Introduction to Embodied Artificial Intelligence.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Basic Hardware.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Sorting.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Formelsamling Kinematik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Bipolar AMI & Pseudoternary.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Common Mode Rejection (CMR).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Inheritance/Virtual.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Mere Rotation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Basics.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Bessel Butterworth & Chebushev.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Exam test.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Protection.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Connectionless and Connectionâoriented service.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Schematic.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Schematic.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Bachelor/CBBA consensus-based bundle algorithm.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Spanning Tree.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Computer Arkitektur.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Rekonstruktion/Rekonstruktion Princip.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Opgave 4.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Optimal Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/MAL (Micro Assembly Language)/Optimization of the microcode.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Overblik over Systemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/OverfÃ¸ringsfunktion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Overføringsfunktion Eksempel.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Overshoot Risetime og Settling time.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/PA/PA 1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/PA/PA 1 opg1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/PID Controller.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Data from the Network Layer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Frame Format.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Multilink.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Network Control Protocols.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Transition phases.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Stacks/PUSH, POP.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Stacks/PUSH, POP.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Terminology.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Nyquist-Shannon sætning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Rationelle funktioner.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Kirchoffs StrÃ¸m lov.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Specielle Matricer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/PWM (pulse width modulation).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/PWM example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/PWM signal.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Page Buffering Algorithm.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Page Fault Frequency.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Page Replacing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Paging.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Parallelrealisation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Parameters.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Parrallel-koblinger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Partial Differential equations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/PartialbrÃ¸ker.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Partielle BrÃ¸ker.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Pendul i store vinkler.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Von Neumann architecture/Pentium II Motherboard.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Penzaboard.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Physical Layer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Fourier/Picket Fencing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Protocols/Piggybacking.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Pin reader.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Pin reader.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Velocity/Point velocity in frame.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/Point-ToPoint-Protocol-(PPP).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Pointers.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Polar Manchester and differentiel Manchester.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Polar NRZ.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Polar RZ.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Kordinatsystemer/Polar cordinates.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Polers indflydelse.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Controlled Access/Polling.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/PopOS boot entry management.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Port3 Numerisk.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Portfolio.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Portfolio 1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Portfolio 2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Potentiel og kinetisk energi.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Priority Encoder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Priorityqueing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Process Synchronization.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Producer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Program execution of the LOAD instruction.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Protection.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Protocols.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Protocols.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Pulssampler Model.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Pulssampling Princip.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Python Converter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Python Converter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Q-Learning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/R-S (Reset-Set) Latch.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/README.md
 Formatting note: test-vaults/TheJoboReal_Noter/README.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Virtual Memory/Virtual Memory Basics.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Communication example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Logical Addressing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/AVR interrupt.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/AVR interrupt.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Maskemetoden.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-26 10.01.34.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Linearization.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-10-21 08.30.11.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Distance from point to plane.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Linux Querks.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Inside of AVR port.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Inside of AVR port.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Ohms Lov Serie og Parallel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Bachelor.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Controllable Canonical Form.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Hamming og Hanning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Subroutine/RET.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Subroutine/RET.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/RMS Effekt.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/RTCS (Run to Complete Scheduling).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/RTCS - Scheduler API.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Race Condition.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/Random Access.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Rapport Kilder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Ratio Damping.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Rationelle funktioner.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Read & Write to file/Read and Write class to file example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Read & Write to file/Read and write string to file example.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Readers-Writers Problem.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Reference Signals.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Reference operator.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/References.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Register VHDL.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Registers.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Regler.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Mathematica/Regler til inputs.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Reguleringsteknik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Reinforcement Learning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Rekonstruktion/Rekonstruktion Princip.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Rekonstruktion/Rekonstruktionsfilter.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Rektangulært Vindue.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Relation mellem s-domæne og z-domæne.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Controlled Access/Reservation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Resistor.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Resonans.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Resource Allocation Algorithm.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Resource allocation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Richardson Extrapolation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Richardson Extrapolation exercise.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Robotics.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Robotters Fysik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Root Finding Exercise.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Root Finding Lecture.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Root Locus.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Ros2 basics.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Rotation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Rotationmatrices.excalidraw.md
 Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Rotations matrix om x-akse.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Rotationsmatrices.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Round-Robin.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Routing and forwarding.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Rulning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/SBC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/SBC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/SCTP (Stream Control Transmission Protocol).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/SECURITY.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/SET.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/SET.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/SNMP (Simple Network Management Protocol).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/SNR signal to noice ratio.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/SPI/SPI Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/SPI/SPI Registers.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/SPI/SPI Setup.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/SPI(Serial Peripheral Interface-bus).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/SQL Cheatsheet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/SQL/SQL kommandoer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/STS.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/STS.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/SUBI.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/SUBI.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/SVD Exercise.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Safe State.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Sampling Based Planning.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Samplingfrekvens.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Samplingsignalet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Schematic.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Schematic.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Scientific Method.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Segmentation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Sekvens/Sekvenser Definition.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Selective-Repeat Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Semaphore.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 2.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 3.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 4.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 5.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 6.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 7.md
+Formatting note: test-vaults/TheJoboReal_Noter/Templates/SemesterTemp.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Service.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Services.md
+Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Scripts/Downloaded/Set Dimensions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Setup PORT as Input or Output.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Setup PORT as Input or Output.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Shift Registers VHDL.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Signal rate.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Signalbehandling.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Signals and Variables.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Simple Computer Model.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Simple Computer Model Instructions.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Simple Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Simple computer model (a program example).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Protocols/Simple protocol.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Simultaneous random variables.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Address demultiplexer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Special Addresses.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/ANOVA tables.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Translation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Notation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/ARP Request Reply example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Unipolar NRZ.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/Error Detection Mechanisms.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Single-Bit error.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Singular Value Decomposition.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Sinusformet signal.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Smart Pointers.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Softwareudvikling.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Sorting.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Spanning Tree.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Specielle Matricer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Kordinatsystemer/Spherical Cordinates.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Spilt power supply.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Spole.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Spoler.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/SpÃ¦ndings og strÃ¸m deler.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Stabilitet i et System.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Stability Margin Gain and Phase.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Stacks/Stack Pointer set.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Stacks/Stack Pointer set.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Assignments/Stack Queue and balPar.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Stacks/Stacks.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Stacks/Stacks.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Sekvens/Standard Frekvenser.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/State Feedback.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Statistik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Steady State Tracking.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Stepfunktion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Stift legemes Rotation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Stop and Wait Protocol.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Protocols/Stop-and-wait.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Streams.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Strings.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Struct.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Structure and Compilation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Structure and Compilation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Sub(Subtract).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Sub(Subtract).md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Subroutine/Subroutines.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Subroutine/Subroutines.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Operationsforstærker.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Page Replacing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Block Coding.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier Transform.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Rulning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/ADD.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/ADD.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Control Field.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Euler and fixed angles.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-07 13.36.12.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Direkte type 1 og 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/ARP-Package format.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/ADCSRA Register.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/ADCSRA Register.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Operationsforstaerker.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/PA/PA 1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Spole.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/2024-20-12.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-12 14.08.07.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/CPU.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Consumer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Four Value Functions 2024-10-31 12.30.10.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Page Buffering Algorithm.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Velocity/Point velocity in frame.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Classification of PDE.md
-Formatting note: test-vaults/TheJoboReal_Noter/Templates/SemesterTemp.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Error Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch08.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Translationsmatrices.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/info function.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Example.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Semaphore.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Eksamens opgaver/Februar 2021 opg 4.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Subtractors.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Sugeno or Takagi-Sugeno or Functional Fuzzy Systems.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Superposition.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Superpositionsintegralet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/Superpositionsprincippet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Surface Integrals.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Switched Ethernet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Systems of non-linear equations Lecture.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/TCCR0 timer counter control register.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/TCCR0 timer counter control register.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/TCP (Transmission Control Protocol).md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/TIMER0.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/TIMER0.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Simple Computer Model Instructions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 5.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/Matlab simulering.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-04 13.36.23.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Stabilitet i et System.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Encoder.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Virtual Memory/Virtual Space Address.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Burst error.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Polar Manchester and differentiel Manchester.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Differensligninger og Dæmpede svingninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Inheritance/Derived constructers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Sekvens/Sekvenser Definition.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Finite State Machine (FSM).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Assignments/Stack Queue and balPar.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Reguleringsteknik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 4 SVD and error analysis.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Network Addressing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/29-12-2024.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Signalbehandling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Linked Lists.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/LU Decompostion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/If, while, for loops.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Strings.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Eksamen.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Mathematica generelle kommandoer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Shift Registers VHDL.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Overshoot Risetime og Settling time.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Address Mapping.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Process Synchronization.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Portfolio 1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Stability Margin Gain and Phase.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Safe State.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Systems of non-linear equations Lecture.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/19-11-2024.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Enheds step funktion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Fourier RÃ¦kker.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Frekvens og phasor.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/IN & OUT.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/IN & OUT.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Address Translation NAT.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Embedded Systems.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Bisection Method.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Error Analysis for linear equations.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Memory Operation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Deadlock.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Mappings/Cases.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Binary Tree.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Kordinatsystemer/Cylendrical Cordinates.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Least squares problems.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Management optimization.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/CISC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-10-21 08.55.36.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch04.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch09.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Multivariat Statistik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/PartialbrÃ¸ker.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/planar Inverse kinematics.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Complex Comaparator.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/diskret tids tilstands model.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/21-11-2024.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Hello World.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/KontinÃ¦r tids tilstands modeller.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/LineÃ¦r approximation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/1. ordens differentialeligninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Observer Based Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Inertimoment pÃ¥ pendul.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/27-11-2024.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/30-12-2024.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/TIMER0 interrupt.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/TIMER0 interrupt.md
+Formatting note: test-vaults/TheJoboReal_Noter/Todo/TODO.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Mathematica/Tag sÃ¸jler fra importet data.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Tangent Plane.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Taylor.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Temporal Difference.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Terminologi.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Terminology.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/The Control Unit.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Thevening.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Thrashing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Three types of addresses.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/TidsdomÃ¦ne Modeller.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Tidsvarierende signaler.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Timers in ATMEGA32.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Timers in ATMEGA32.md
+Formatting note: test-vaults/TheJoboReal_Noter/Templates/Todo.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Topics.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Transformation Matrix.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Transistor.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Orientation/Translation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Translationsmatrices.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Transmission Distrortion.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Addressing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Congestion Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Encapsulation and decapsulation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Error Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Flow Control.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer ICANN range.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Multiplexing and demultiplexing.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Service.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Socket Address.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Tri-state Buffer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Triple Integrals.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Triple Integration.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Tuning fuzzy controllers.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Tvungne Svingninger.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Two Categories of Links.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/Udvikling/Typer af systemer.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/UCSRA Control and register Status.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/UCSRA Control and register Status.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/UDP (User Datagram Protocol).md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Ulige funktioner.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Unicast, Multicast and Broadcast addresses.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Unipolar NRZ.md
 Formatting note: test-vaults/TheJoboReal_Noter/Templates/Untitled.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Untitled.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Controlled Access/Untitled.md
@@ -4152,318 +4411,59 @@ Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/Udvik
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Bachelor/Untitled.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Untitled.md
 Formatting note: test-vaults/TheJoboReal_Noter/Untitled.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Richardson Extrapolation exercise.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Amplitudegrafer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transmission Impairment/Attenuation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/Example P F bit.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Matricer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Forstaerkningsteknik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Bipolar Junction Transistor (BJT), FET og PNP.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/DomÃ¦ner og Ranges.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Laplace/Opgave 2.1 Laplace.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Tabeller/restitutionskoefficient.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/PopOS boot entry management.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Matlab Commands.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Noter/BODE plot.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Vision/Book.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Greens Theorem.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Impulsrespons.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/Choice of Solution.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Assignment 5 Num.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Invers Laplace Transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Samplingfrekvens.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Lavpas til højpasfilter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Addressing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Tabeller/Densitet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/IJVM/IJVM implementation in Mic-1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Three types of addresses.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Stepfunktion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Controlled Access/Channelization.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Directives/SET.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Directives/SET.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Triple Integrals.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Nyquist Stability Criterion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/UCSRA Control and register Status.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/UCSRA Control and register Status.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Parallelrealisation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/add C and e.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/LDS and LDI.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/LDS and LDI.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/29-11-2024.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Kaskade Kontrol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Komplet Beskrivelse.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/COM.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/COM.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Struct.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Counters.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Counters.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Frekvensanalyse.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Pulssampling Princip.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Addressing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Copy on Write.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Dioden.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/SCTP (Stream Control Transmission Protocol).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Controlled Access/Polling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Num Exercise 4.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Opgaver/Drawing 2022-12-01 10.18.34.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Portfolio 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Data Path Timing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Deadlocks/Resource Allocation Algorithm.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Instruction on set design.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/26-12-2024.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Højpasfilter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/DomÃ¦ner.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Chebyshevfilter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Kaiser vindue.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Division.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Division.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/De Moivre.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Scripts/Downloaded/Set Dimensions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Drawing 2023-01-08 11.58.53.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Layer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Character-oriented framing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Eksamen/Flytningsformel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Kinematik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Temporal Difference.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Line Coding.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/False Position Method.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Rekonstruktion/Rekonstruktionsfilter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Bounding boxes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Digitization.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Ligningssystemer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/PID Controller.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Valg af filter.md
 Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Vector Fields.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/Transformation Matrix.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Addressing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIC-3.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Calculus.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture Linear Least Squares problems.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/DH.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Bootstrapping in RL.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-09-26 09.37.59.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Protocols/Stop-and-wait.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Priorityqueing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Gammel eksamen/eksamen 1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/LU Decomposition og Gaussian.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Signal rate.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/copyright.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Matlab & Mathematica/Mathematica/Regler til inputs.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Gigabit Ethernet Encoding.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Simple Computer Model/Program execution of the LOAD instruction.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch11.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Wave Equation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Graphs.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Open and Closed Loop Control System.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Race Condition.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Superposition.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Abstract Classes/Abstract Classes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Multiplexing and demultiplexing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Harmoniske bevÃ¦gelser.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Barlett Vindue.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 6.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Limits on Multivariable Functions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Indlejret Programmering.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Robotics.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/Display schematic.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/Display schematic.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/Impulsmoment sÃ¦tningen.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Smart Pointers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Auxiliary Conditions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/Udvikling/Faser i traditionel softwareudvikling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/MOV.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/MOV.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Bounded Buffer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Four Value Functions.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Multi-Protocol Label Switching (MPLS).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Divider.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV4 to IPV6.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Linear Invariante systemer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 3.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Rektangulært Vindue.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Signals and Variables.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/2024-19-12.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Multilevel/4D-PAM5.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Opgave 2.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Kontinuerte Stokastiske Variable.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/lecture 12.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Formelsamling Calculus.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Gammel eksamen/eksamen 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Portfolio.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Fourier/Picket Fencing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Classes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Address Binding.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Lecture1_Task.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/Interrupt/Global interrupt enable.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/Interrupt/Global interrupt enable.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Monitors.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Filtre Typer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Datateknik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Drawing 2022-12-20 13.05.59.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Exercises/Exercise 1 Fuzzy control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Calculus noter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Single-Bit error.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Monte Carlo Policy.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Tvungne Svingninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Demand Paging.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Scientific Method.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Forstaerkningsteknik/Noter/Maksimal fejl i forstÃ¦rkning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Elektro.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Impedans.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-01-03 12.17.25.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Relation mellem s-domæne og z-domæne.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Gigabit Ethernet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Line coding/Line Coding Schemes.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch13.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/MIC-1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Services.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/CSMA or CD.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/De Moivre w4 -81.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/RTCS - Scheduler API.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Koblede diff ligninger.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Kalman Filter & Random Variables.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Observability.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-10-09 11.42.52.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Lecture 8 Numerical integration.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 8 Numerical Integration.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/ATmega32/ADD or Multiply function.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/ATmega32/ADD or Multiply function.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Joints and Links/Joints and Links.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Softwareudvikling/Udvikling/Typer af systemer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Richardson Extrapolation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Amplitudespektrum for pulssampling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Lecture 9 Newton-Cotes quadratures.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Frekvensrespons.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Fragmentation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/ARP Address Resolution Protocol.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Multivariable Calculus.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/BevÃ¦gelsesmÃ¦ngder/Elastisk stÃ¸d.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Boolean algebra/Python Converter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Python Converter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/ADC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Analog to Digital/ADC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/ADC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Analog to Digital/ADC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/exam.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/TidsdomÃ¦ne Modeller.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Fourier Koefficienter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Multivariable Calculus/Opgaver/Fourier RÃ¦kker/Opgave 1.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Counter VHDL.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/SPI/SPI Registers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Paging/Loaclity.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Sekvens/Standard Frekvenser.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Fysisk Pendul.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Fysisk pendul.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Fourier/Lækage.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/PPP Data from the Network Layer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Extension Headers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Karnaugh  maps.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Root Finding Lecture.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Joints and Links/DH Parameters.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/DH Parameters.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/IN (from IO).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/IN (from IO).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/FreeRTOS (Real Time Operating System).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Feedback Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Memory Interface/Memory Interface 16-bit.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Semesters/Semester 7.md
-Formatting note: test-vaults/TheJoboReal_Noter/Excalidraw/Drawing 2024-01-02 20.35.25.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Samplingsignalet.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/SNR signal to noice ratio.md
-Formatting note: test-vaults/TheJoboReal_Noter/written_markdown/ollamatest.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV6/IPV6 Flow Label.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Pendul i store vinkler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/Normal Response Mode (NRM).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/MAL (Micro Assembly Language)/MAL (Micro Assembly Language).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Game plan for ISA.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Cache.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer Congestion Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Drawing 2022-12-20 23.04.31.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/D-Type Flip-Flop.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/High-Level Data Link Control (HDLC).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Exercises/Lektion 1 HÃ¸j og Lavpas filtre.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotics/Coverage Planning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/SBC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/SBC.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/Pointers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/R-S (Reset-Set) Latch.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Velocity/Linear velocity of rigid bodies.md
-Formatting note: test-vaults/TheJoboReal_Noter/Projects/Airmon wifi bruteforce.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Ethernet/Gigabit Physical Layer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Subroutine/RET.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Subroutine/RET.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/Drawing 2022-12-02 12.37.17.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Microcontrollers/Memory.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Cholesky & LU exercise.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Polynomial.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Link-Layer Addressing.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/HOP and TTL.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Controlled Access/Reservation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Security.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/HDLC Fields/Flag Fields.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/CAN networks/CAN â Controller Area Network.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Ohms Lov.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Pulssampling/Pulssampler Model.md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/22-01-2025.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Lecture Notes/Dijkstra Method.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Producer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Condition Variable.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Invers z-transformation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Data Link Control DLC/Data Link Control DLC.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Videnskabsteori.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/Videnskabsteori Intro.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Videnskabsteori Overblik.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Vigtige formler.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Vinduer/Vinduesfunktion.md
 Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Vinduesfunktion.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Instructions/Conditional Jump (CP & CPI).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Instructions/Conditional Jump (CP & CPI).md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Matematisk pendul.excalidraw.md
-Formatting note: test-vaults/TheJoboReal_Noter/Misc/Excalidraw/Anden ordens differentiale ligning.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/printf().md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Atomic Acces.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/Transport Layer.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/Assembly/Stacks/Stacks.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Assembly/Stacks/Stacks.md
-Formatting note: test-vaults/TheJoboReal_Noter/written_markdown/page-1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/n-Step Bootstrapping.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/1 Formelsamlinger/Elektro Formelsamling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Elektro fysik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Noise/Noiseless channel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Perfomance.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Opgaver/Lektion 2.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/Tuning fuzzy controllers.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Transport Layer/SNMP (Simple Network Management Protocol).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Vigtige formler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Inertimoment og flytningsmoment.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Lecture Notes/Ulige funktioner.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/Root Finding Exercise.md
-Formatting note: test-vaults/TheJoboReal_Noter/Templates/LectureSlideTemp.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Network Flow Control.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4 Datagrams.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C/BIT-wise logical operations.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Datateknik/Microcontrollers/C/BIT-wise logical operations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Inheritance/Virtual.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Virtual Memory/Virtual Memory Basics.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Virtual Monitor.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Virtual Memory/Virtual Space Address.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Von Neumann architecture/Von Neumann Architecture.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Wave Equation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/abbreviations.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Exercises/add C and e.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/booktitle.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch01.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch02.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch03.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch04.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch05.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch06.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch07.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch08.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch09.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch10.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch11.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch12.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/ch13.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/copyright.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/dedication.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/Modellering af systemer/diskret tids tilstands model.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Gammel eksamen/eksamen 1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Algoritmer og Datastruktur/Gammel eksamen/eksamen 2.md
 Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/C++/Functions and stuff/enum and enum class.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Micro-architecture level/Micro Architecture Level.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Assignments/Numerical Assignment 1.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/High Level Data Link Control/Asynchronous Balanced Mode (ABM).md
-Formatting note: test-vaults/TheJoboReal_Noter/Calendar/24-11-2024.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Algoritmer og  Datastruktur.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/IPV4/IPV4.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/TCP (Transmission Control Protocol).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Overføringsfunktion Eksempel.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Sampling/Impulssampling.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Data Links Layers/Point-To-Point Protocol (PPP)/Point-ToPoint-Protocol-(PPP).md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Statistik/Formler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Dashboard.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/ISA Progress.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Shared Memory/Inter Process Communication.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/On-Policy vs off-policy.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/BevÃ¦gelsesmÃ¦ngder/BevÃ¦gelsesmÃ¦ngde.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Digital Programmerbar elektronik/Noter/Subtractors.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Regler.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Signalbehandling/Lecture Notes/Elektroniske Filtre/Konstruktion af filter.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Network Layer/Connectionless Service.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Data Kommunikation/Noter/Access/Media Access Control/CSMA.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Process Synchronization/Readers-Writers Problem.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/Singular Value Decomposition.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Courses/Digital Programmerbar elektronik.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Computer Arkitektur/Noter/Memory/Segmentation.md
-Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Eksamen/Resonans.md
-Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/Superpositionsintegralet.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/exam.md
+Formatting note: test-vaults/TheJoboReal_Noter/written_markdown/expected.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/info function.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Assignments/inverse kinematics.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Eksamen/inverse kinematics.excalidraw.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Slides/lecture 12.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/NewNotes/mini møder.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/n-Step Bootstrapping.md
+Formatting note: test-vaults/TheJoboReal_Noter/written_markdown/ollamatest.md
+Formatting note: test-vaults/TheJoboReal_Noter/written_markdown/page-1.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kinematik/Lecture Notes/Inverse kinematics/planar Inverse kinematics.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Calculus/Exercises/plottes.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Indlejret Programmering/Noter/printf().md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Reguleringsteknik/Noter/relation mellem s og z-domÃ¦ne.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Robotters Fysik/Tabeller/restitutionskoefficient.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Kunstig inteligens/Lecture Notes/t-norms and s-norms.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/FreeRTOS/toc.md
+Formatting note: test-vaults/TheJoboReal_Noter/Formelsamling/z-transformation.md
+Formatting note: test-vaults/TheJoboReal_Noter/Uni/Notes/Elektro fysik/Ãkvivalentkredsloeb.md
 

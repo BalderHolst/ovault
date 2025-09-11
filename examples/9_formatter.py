@@ -6,6 +6,8 @@
 # If `--vault` is provided, `<path>` is treated as a vault path.
 # If `--tokens` is provided, the note tokens will be printed.
 
+# NOTE: Sorting is only done to make the output stable for testing purposes.
+
 import ovault
 import sys
 import os
@@ -57,7 +59,7 @@ def format_vault(path: str, print_tokens: bool = False):
     if not os.path.isdir(path):
         usage(f"ERROR: Vault path '{path}' is not a directory.")
         exit(1)
-    for note in ovault.Vault(path).notes():
+    for note in sorted(ovault.Vault(path).notes()):
         format_note(note.full_path(), print_tokens=print_tokens)
 
 # Main function to parse command-line arguments and call the appropriate formatting function
