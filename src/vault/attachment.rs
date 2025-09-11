@@ -13,3 +13,11 @@ pub struct Attachment {
     /// Path to the attachment file.
     pub path: PathBuf,
 }
+
+#[cfg(feature = "python")]
+#[pymethods]
+impl Attachment {
+    fn __repr__(&self) -> String {
+        format!("Attachment({})", self.path.display())
+    }
+}
