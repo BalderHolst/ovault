@@ -19,13 +19,24 @@ print("digraph {")
 print("    overlap=false;")
 print('    node [shape=box, style=filled, fillcolor="#0099FF25"];')
 print('    edge [color="#00000090"];')
+print()
 
-for note in notes:
-    print(f'    "{note.normalized_name()}" [label="{note.name}"]')
+notes = {
+    note.normalized_name(): (note, f"{i}{note.normalized_name()}")
+    for i, note in enumerate(vault.notes())
+}
 
-for note in notes:
+for note, node in notes.values():
+    print(f'    "{node}" [label="{note.path}"]')
+
+print()
+
+for note, node in notes.values():
     for link in sorted(note.links):
         link = link.replace("\\", "")
-        print(f'    "{note.normalized_name()}" -> "{link}"')
+        if link not in notes: continue
+        _, link_node = notes[link]
+
+        print(f'    "{node}" -> "{link_node}"')
 
 print("}")

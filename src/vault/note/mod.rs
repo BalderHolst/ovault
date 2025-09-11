@@ -12,6 +12,7 @@ use std::{collections::HashSet, fs, io, path::PathBuf};
 
 use frontmatter::{Frontmatter, FrontmatterItem};
 
+// TODO: Add `hash` method (also for python)
 /// A note in an Obsidian vault.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
@@ -249,16 +250,6 @@ use yaml_rust2::{Yaml, YamlLoader};
 #[cfg(feature = "python")]
 #[pymethods]
 impl Note {
-    /// Get a string representation of the note.
-    pub fn __repr__(&self) -> String {
-        format!("Note({})", self.name)
-    }
-
-    /// Get the length of the note in characters.
-    pub fn __len__(&self) -> usize {
-        self.length
-    }
-
     /// Get content note as a list of tokens.
     #[pyo3(name = "tokens")]
     pub fn py_tokens(&self) -> PyResult<Vec<Token>> {
@@ -364,6 +355,46 @@ impl Note {
     ) -> PyResult<()> {
         let pos = token.span().end as isize + offset;
         self.py_insert_at(pos, text)
+    }
+
+    /// Compare two notes for equality.
+    pub fn __eq__(&self, other: &Note) -> bool {
+        self == other
+    }
+
+    /// Compare two notes for inequality.
+    pub fn __ne__(&self, other: &Note) -> bool {
+        !self.__eq__(other)
+    }
+
+    /// Compare two notes for ordering based on their names.
+    pub fn __lt__(&self, other: &Note) -> bool {
+        self.name < other.name
+    }
+
+    /// Compare two notes for ordering based on their names.
+    pub fn __le__(&self, other: &Note) -> bool {
+        self.name <= other.name
+    }
+
+    /// Compare two notes for ordering based on their names.
+    pub fn __gt__(&self, other: &Note) -> bool {
+        self.name > other.name
+    }
+
+    /// Compare two notes for ordering based on their names.
+    pub fn __ge__(&self, other: &Note) -> bool {
+        self.name >= other.name
+    }
+
+    /// Get the length of the note in characters.
+    pub fn __len__(&self) -> usize {
+        self.length
+    }
+
+    /// Get a string representation of the note.
+    pub fn __repr__(&self) -> String {
+        format!("Note({})", self.name)
     }
 }
 
