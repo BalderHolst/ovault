@@ -39,6 +39,16 @@ pub enum VaultItem {
     },
 }
 
+impl VaultItem {
+    /// Get the path of the vault item
+    pub fn path(&self) -> &PathBuf {
+        match self {
+            VaultItem::Note { note } => &note.path,
+            VaultItem::Attachment { attachment } => &attachment.path,
+        }
+    }
+}
+
 /// An Obsidian vault containing notes and attachments.
 #[cfg(not(feature = "python"))]
 #[derive(Debug, Clone, PartialEq)]
@@ -123,7 +133,9 @@ impl Vault {
 
     /// Get a note by its path in the vault. Either absolute or relative to the vault path.
     pub fn get_note_by_path(&self, path: &Path) -> Option<&Note> {
+        dbg!(path);
         let norm_name = self.path_to_norm_name(path)?;
+        dbg!(&norm_name);
         self.get_note(&norm_name)
     }
 
@@ -268,6 +280,7 @@ impl Vault {
 
         let note = note.clone();
 
+        // TODO: Some check if the patched links need to use full note paths to avoid collisions.
         // Update notes that link to this note
         for backlink in note.backlinks.clone() {
             let Some(backlink_note) = self.get_note_mut(&backlink) else {
@@ -532,45 +545,97 @@ impl Vault {
         }
     }
 
-    // TODO: Handle multiple items with the same name
-    fn get_item(&self, normalized_name: &str) -> Option<&VaultItem> {
-        self.items
-            .get(normalized_name)
-            .and_then(|items| items.first())
+    fn get_item(&self, name: &str) -> Option<&VaultItem> {
+        let normalized_name = normalize(name.to_string());
+
+        let last_component = normalized_name
+            .rsplit('/')
+            .next()
+            .unwrap_or(&normalized_name);
+
+        let candidates = self.items.get(last_component)?;
+
+        if candidates.len() == 1 {
+            return Some(&candidates[0]);
+        }
+
+        // Try to find the item with a matching vault path
+        for candidate in candidates {
+            let str_path = candidate.path().to_str()?;
+            let norm_path = normalize(str_path.to_string());
+            if norm_path == normalized_name {
+                return Some(candidate);
+            }
+        }
+
+        // Fallback, return the candidate with the shortest path
+        candidates
+            .iter()
+            .min_by_key(|item| item.path().components().count())
     }
 
-    // TODO: Handle multiple items with the same name
-    fn get_item_mut(&mut self, normalized_name: &str) -> Option<&mut VaultItem> {
-        self.items
-            .get_mut(normalized_name)
-            .and_then(|items| items.first_mut())
+    fn get_item_mut(&mut self, name: &str) -> Option<&mut VaultItem> {
+        let normalized_name = normalize(name.to_string());
+
+        let last_component = normalized_name
+            .rsplit('/')
+            .next()
+            .unwrap_or(&normalized_name);
+
+        let candidates = self.items.get_mut(last_component)?;
+
+        if candidates.len() == 1 {
+            return Some(&mut candidates[0]);
+        }
+
+        // Try to find the item with a matching vault path
+        let matched = candidates
+            .iter_mut()
+            .find(|candidate| {
+                let Some(str_path) = candidate.path().to_str() else {
+                    return false;
+                };
+                let norm_path = normalize(str_path.to_string());
+                norm_path == normalized_name
+            })
+            .map(|c| c as *mut VaultItem);
+
+        if let Some(matched) = matched {
+            // SAFETY: We have a mutable reference to self, so we can safely return a mutable reference to the matched item
+            return unsafe { Some(&mut *matched) };
+        }
+
+        // Fallback, return the candidate with the shortest path
+        candidates
+            .iter_mut()
+            .min_by_key(|item| item.path().components().count())
     }
 
     /// Get a note by its normalized name.
-    pub fn get_note(&self, normalized_name: &str) -> Option<&Note> {
-        match self.get_item(normalized_name) {
+    pub fn get_note(&self, name: &str) -> Option<&Note> {
+        match self.get_item(name) {
             Some(VaultItem::Note { note }) => Some(note),
             _ => None,
         }
     }
 
-    fn get_note_mut(&mut self, normalized_name: &str) -> Option<&mut Note> {
-        match self.get_item_mut(normalized_name) {
+    fn get_note_mut(&mut self, name: &str) -> Option<&mut Note> {
+        match self.get_item_mut(name) {
             Some(VaultItem::Note { note }) => Some(note),
             _ => None,
         }
     }
 
     /// Get an attachment by its normalized name.
-    pub fn get_attachment(&self, normalized_name: &str) -> Option<&Attachment> {
-        match self.get_item(normalized_name) {
+    pub fn get_attachment(&self, name: &str) -> Option<&Attachment> {
+        match self.get_item(name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,
         }
     }
 
-    fn get_attachment_mut(&mut self, normalized_name: &str) -> Option<&mut Attachment> {
-        match self.get_item_mut(normalized_name) {
+    fn get_attachment_mut(&mut self, name: &str) -> Option<&mut Attachment> {
+        match self.get_item_mut(name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,
         }

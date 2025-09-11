@@ -323,7 +323,8 @@ impl Note {
     /// Get the normalized name of the node.
     #[pyo3(name = "normalized_name")]
     pub fn py_normalized_name(&self) -> String {
-        normalize(self.name.clone())
+        let path = self.path.to_str().unwrap_or(&self.name);
+        normalize(path.to_string())
     }
 
     /// Read the content of the note and return it as a string

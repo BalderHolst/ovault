@@ -26,15 +26,16 @@ notes = {
     for i, note in enumerate(vault.notes())
 }
 
-for note, node in notes.values():
-    print(f'    "{node}" [label="{note.path}"]')
+for name, (note, node) in notes.items():
+    print(f'    "{node}" [label="{name}"]')
 
 print()
 
 for note, node in notes.values():
     for link in sorted(note.links):
         link = link.replace("\\", "")
-        if link not in notes: continue
+        if link not in notes:
+            continue
         _, link_node = notes[link]
 
         print(f'    "{node}" -> "{link_node}"')

@@ -4,24 +4,29 @@
 use pyo3::prelude::*;
 
 #[cfg_attr(feature = "python", pyfunction)]
-/// Nomalize a note name to be used in Obsidian links.
+/// Nomalize a note name or path to be used in Obsidian links.
 ///
 /// Example:
 /// ```python
 /// normalize("My Note") => "my-note"
 /// ```
-pub fn normalize(mut name: String) -> String {
-    // TODO: Actually handle multiple files with the same name
-    // This includes adding this as a `Vault` method to check for existing names
-    while name.contains('/') {
-        name = name.split_once('/').unwrap().1.to_string();
-    }
-
+pub fn normalize(name: String) -> String {
     // Trim leading and trailing whitespace
-    let name = name.trim();
+
+    let mut name = name.trim();
+
+    name = name.strip_prefix('/').unwrap_or(name);
 
     // Strip ".md" suffix if present
     let name = name.strip_suffix(".md").unwrap_or(name);
+
+    // Trim spaces in each path component
+    let name = name
+        .split('/')
+        .map(|part| part.trim())
+        .filter(|part| !part.is_empty())
+        .collect::<Vec<&str>>()
+        .join("/");
 
     // Replace spaces with hyphens
     let name = name
@@ -128,7 +133,7 @@ mod tests {
     fn test_normalize_with_special_characters() {
         assert_normalize("Note!@#$%^&*()", "note!@#$%^&*()");
         assert_normalize("Note, with comma.", "note-with-comma.");
-        assert_normalize("Note/with/slash", "slash");
+        assert_normalize("Note/with/slash", "note/with/slash");
         assert_normalize("Note_with_underscore", "note_with_underscore");
     }
 
@@ -136,18 +141,24 @@ mod tests {
     fn test_normalize_with_path_components() {
         // This is crucial for how Obsidian handles links.
         // It should extract the "file name" part and then normalize it.
-        assert_normalize("path/to/My Document.md", "my-document");
-        assert_normalize("another/dir/Note with Spaces.txt", "note-with-spaces.txt");
-        assert_normalize("/absolute/path/File.md", "file");
-        assert_normalize("no/extension/file", "file");
+        assert_normalize("path/to/My Document.md", "path/to/my-document");
+        assert_normalize(
+            "another/dir/Note with Spaces.txt",
+            "another/dir/note-with-spaces.txt",
+        );
+        assert_normalize("/absolute/path/File.md", "absolute/path/file");
+        assert_normalize("no/extension/file", "no/extension/file");
     }
 
     #[test]
     fn test_normalize_complex_case() {
         assert_normalize(
             "  A'nOthEr / CoMplEx   N0tE   wItH 'pUnCtUaTiOn?!.md  ",
-            "complex-n0te-with-punctuation?!",
+            "another/complex-n0te-with-punctuation?!",
         );
-        assert_normalize("very///deep/path/My Final-Note.md", "my-final-note");
+        assert_normalize(
+            "very///deep/path/My Final-Note.md",
+            "very/deep/path/my-final-note",
+        );
     }
 }

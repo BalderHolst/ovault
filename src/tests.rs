@@ -194,7 +194,11 @@ fn test_open_vaults() {
 #[test]
 #[serial]
 fn test_get_note_by_path() {
-    let vaults = vec![TestVaultBase::Sandbox, TestVaultBase::BalderHolst];
+    let vaults = vec![
+        TestVaultBase::SimpleVault,
+        TestVaultBase::Sandbox,
+        TestVaultBase::BalderHolst,
+    ];
 
     for base in vaults {
         println!("\nTesting vault: {:?}", base);
@@ -217,6 +221,47 @@ fn test_get_note_by_path() {
             assert_eq!(note, note_by_abs);
             assert_eq!(note, note_by_rel);
         }
+    }
+}
+
+#[test]
+fn test_name_collisions() {
+    let base = TestVaultBase::SimpleVault;
+    let test_vault = TestVault::new(base).expect("Failed to create test vault");
+    let vault = &test_vault.vault;
+
+    let root_todo_names: &[&str] = &["todo", "Todo", "TODO", " ToDo ", " todo "];
+    let sub_todo_names: &[&str] = &[
+        "sub/todo",
+        "sub/Todo",
+        "sub/TODO",
+        "sub/ ToDo ",
+        "sub/ todo ",
+        "SUB/todo",
+        "Sub/Todo",
+        "SUB/TODO",
+        " SUB/ ToDo ",
+        "SUB/ todo ",
+    ];
+
+    let root_todo = vault.get_note("todo").expect("Failed to get 'todo' note");
+
+    let subdir_todo = vault
+        .get_note(sub_todo_names[0])
+        .expect("Failed to get 'sub/todo' note");
+
+    assert_ne!(root_todo.path, subdir_todo.path);
+
+    for name in root_todo_names.iter().skip(1) {
+        println!("Checking root todo name variant: '{}'", name);
+        let note = vault.get_note(name).expect("Failed to get 'todo' note");
+        assert_eq!(note.path, root_todo.path);
+    }
+
+    for name in sub_todo_names.iter().skip(1) {
+        let note = vault.get_note(name).expect("Failed to get 'sub/todo' note");
+        println!("Checking subdir todo name variant: '{}'", name);
+        assert_eq!(note.path, subdir_todo.path);
     }
 }
 

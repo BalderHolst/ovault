@@ -6,6 +6,18 @@ from typing import Union, List, Optional, Set, Dict, Any, Tuple
 
 __version__: str = ...
 
+
+def normalize(name: str) -> str:
+    """
+    Normalize a note name or path to be used in Obsidian links.
+
+    Example:
+        ```python
+        normalize("My Note") => "my-note"
+        ```
+    """
+    ...
+
 def parse_yaml(source: str) -> List[object]:
     """
     Parses a YAML string and returns a Python list of parsed objects.
