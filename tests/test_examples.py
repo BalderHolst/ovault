@@ -24,11 +24,11 @@ SHELLS = [
 
     "python3 examples/2_find_tag.py <vault> math",
     "python3 examples/2_find_tag.py <vault> matematik",
-    "python3 examples/2_find_tag.py <vault> frontmatter1",
+    "python3 examples/2_find_tag.py <vault> frontmatter-tag1",
 
     "python3 examples/3_find_headings.py",
 
-    "python3 examples/4_check_external_links.py test-vaults/Obsidian Sandbox",
+    # "python3 examples/4_check_external_links.py \"test-vaults/Obsidian Sandbox\"",
     "python3 examples/4_check_external_links.py test-vaults/simple_vault",
 
     "python3 examples/5_graph_image.py <vault>",
@@ -40,7 +40,8 @@ SHELLS = [
 
     "python3 examples/8_add_frontmatter.py <vault>",
 
-    "python3 examples/9_formatter.py <vault>",
+    "python3 examples/9_formatter.py test-vaults/simple_vault/first_note.md",
+    "python3 examples/9_formatter.py --vault <vault>",
 ]
 
 def unwrap_shells(shells: list[str]) -> list[str]:

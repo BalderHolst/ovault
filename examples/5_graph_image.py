@@ -13,8 +13,6 @@ if len(sys.argv) != 2:
 
 vault = ovault.Vault(sys.argv[1])
 
-notes = sorted(vault.notes())
-
 print("digraph {")
 print("    overlap=false;")
 print('    node [shape=box, style=filled, fillcolor="#0099FF25"];')
@@ -23,7 +21,7 @@ print()
 
 notes = {
     note.normalized_name(): (note, f"{i}{note.normalized_name()}")
-    for i, note in enumerate(vault.notes())
+    for i, note in enumerate(sorted(vault.notes()))
 }
 
 for name, (note, node) in notes.items():
