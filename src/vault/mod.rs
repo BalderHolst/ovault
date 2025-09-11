@@ -44,7 +44,7 @@ pub enum VaultItem {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vault {
     /// Maps normalized note names to notes
-    pub items: HashMap<String, VaultItem>,
+    items: HashMap<String, Vec<VaultItem>>,
 
     /// Path to Obsidian vault
     pub path: PathBuf,
@@ -78,7 +78,7 @@ pub struct Vault {
     #[pyo3(get)]
     pub ignored: HashSet<PathBuf>,
 
-    items: HashMap<String, VaultItem>,
+    items: HashMap<String, Vec<VaultItem>>,
     tags: HashMap<String, HashSet<String>>,
 }
 
@@ -134,11 +134,11 @@ impl Vault {
     }
 
     fn items(&self) -> impl Iterator<Item = &VaultItem> {
-        self.items.values()
+        self.items.values().flatten()
     }
 
     fn items_mut(&mut self) -> impl Iterator<Item = &mut VaultItem> {
-        self.items.values_mut()
+        self.items.values_mut().flatten()
     }
 
     /// Get an iterator over all notes in the vault
@@ -223,6 +223,10 @@ impl Vault {
         fs::write(&abs_path, content.into_content())?;
         self.register_note(&abs_path);
         Ok(abs_path)
+    }
+
+    fn insert_item(&mut self, name: String, item: VaultItem) {
+        self.items.entry(name).or_default().push(item);
     }
 
     /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
@@ -313,8 +317,33 @@ impl Vault {
 
         // Update the vault item index
         {
-            self.items.remove(&normalized_old);
-            self.items.insert(normalized_new, VaultItem::Note { note });
+            // TODO: Test this
+            if let Some(mut items) = self.items.remove(&normalized_old) {
+                // Get the index of the note in the items vector (there can be multiple items with the same name)
+                let index = items
+                    .iter()
+                    .position(|item| match item {
+                        VaultItem::Note { note: n } => n.name == new_name,
+                        _ => false,
+                    })
+                    .ok_or_else(|| {
+                        io::Error::new(
+                            io::ErrorKind::NotFound,
+                            format!("Note '{}' not found in vault items", old_name),
+                        )
+                    })?;
+
+                // Remove the note from the items vector
+                let _item = items.remove(index);
+
+                // Re-insert the remaining items (if any)
+                if !items.is_empty() {
+                    self.items.insert(normalized_old, items);
+                }
+
+                // Insert the renamed note
+                self.insert_item(normalized_new, VaultItem::Note { note });
+            }
         }
 
         Ok(())
@@ -403,15 +432,14 @@ impl Vault {
         };
 
         let normalized_name = normalize(name.to_string());
-        self.items.insert(normalized_name, VaultItem::Note { note });
+        self.insert_item(normalized_name, VaultItem::Note { note });
     }
 
     fn register_attachment(&mut self, path: PathBuf) {
         let name = normalize(path.file_name().unwrap().to_str().unwrap().to_string());
         let relpath = path.strip_prefix(&self.path).unwrap().to_path_buf();
         let attachment = Attachment { path: relpath };
-        self.items
-            .insert(name, VaultItem::Attachment { attachment });
+        self.insert_item(name, VaultItem::Attachment { attachment });
     }
 
     /// Add a directory to the vault. This will recursively add all markdown files as note
@@ -504,12 +532,18 @@ impl Vault {
         }
     }
 
+    // TODO: Handle multiple items with the same name
     fn get_item(&self, normalized_name: &str) -> Option<&VaultItem> {
-        self.items.get(normalized_name)
+        self.items
+            .get(normalized_name)
+            .and_then(|items| items.first())
     }
 
+    // TODO: Handle multiple items with the same name
     fn get_item_mut(&mut self, normalized_name: &str) -> Option<&mut VaultItem> {
-        self.items.get_mut(normalized_name)
+        self.items
+            .get_mut(normalized_name)
+            .and_then(|items| items.first_mut())
     }
 
     /// Get a note by its normalized name.
