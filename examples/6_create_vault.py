@@ -17,7 +17,7 @@ UTILS = [
     "more", "less", "chmod", "ps", "top", "free", "df", "du", "uname",
     "sudo", "su", "passwd", "id", "ping", "ssh", "wget", "curl", "kill",
     "tar", "gzip", "zip", "mount", "nano", "echo", "clear", "man",
-    "exit", "reboot", "date"
+    "reboot", "date"
 ]
 
 # Sort utilities for consistent order
@@ -70,8 +70,10 @@ if __name__ == "__main__":
         print(f"Usage: python {sys.argv[0]} <vault_name>")
         exit(1)
 
+    vault_path = sys.argv[1]
+
     # Open the vault, creating it if it doesn't exist
-    vault = ovault.Vault(sys.argv[1], create=True)
+    vault = ovault.Vault(vault_path, create=True)
 
     print("Getting manual pages for utilities...")
     pages = {}
@@ -93,4 +95,4 @@ if __name__ == "__main__":
     print("Re-indexing vault...")
     vault.index()
 
-    print(f"\nVault created successfully at '{vault.path}' with {len(vault.notes())} notes!")
+    print(f"\nVault created successfully at '{vault_path}' with {len(vault.notes())} notes!")

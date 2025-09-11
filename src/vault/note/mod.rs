@@ -403,24 +403,24 @@ impl Note {
         !self.__eq__(other)
     }
 
-    /// Compare two notes for ordering based on their names.
+    /// Compare two notes for ordering based on their paths.
     pub fn __lt__(&self, other: &Note) -> bool {
-        self.name < other.name
+        self.path < other.path
     }
 
-    /// Compare two notes for ordering based on their names.
+    /// Compare two notes for ordering based on their paths.
     pub fn __le__(&self, other: &Note) -> bool {
-        self.name <= other.name
+        self.path <= other.path
     }
 
-    /// Compare two notes for ordering based on their names.
+    /// Compare two notes for ordering based on their paths.
     pub fn __gt__(&self, other: &Note) -> bool {
-        self.name > other.name
+        self.path > other.path
     }
 
-    /// Compare two notes for ordering based on their names.
+    /// Compare two notes for ordering based on their paths.
     pub fn __ge__(&self, other: &Note) -> bool {
-        self.name >= other.name
+        self.path >= other.path
     }
 
     /// Get the length of the note in characters.
