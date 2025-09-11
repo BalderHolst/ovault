@@ -225,6 +225,7 @@ fn test_get_note_by_path() {
 }
 
 #[test]
+#[serial]
 fn test_name_collisions() {
     let base = TestVaultBase::SimpleVault;
     let test_vault = TestVault::new(base).expect("Failed to create test vault");
