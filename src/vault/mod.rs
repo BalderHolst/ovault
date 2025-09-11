@@ -112,10 +112,22 @@ impl Vault {
     }
 
     /// Create a new vault without parsing the ignore file, adding the vault directory or indexing it.
-    fn new_raw(path: &Path) -> Self {
-        let ignored = HashSet::from_iter(Self::DEFAULT_IGNORED.iter().map(PathBuf::from));
+    fn new_raw(vault_path: &Path) -> Self {
+        let mut ignored = HashSet::new();
+
+        for def in Self::DEFAULT_IGNORED {
+            let matches = Self::eval_glob(vault_path, def)
+                .expect("Default ignore pattern should always be valid");
+
+            for path in matches.filter_map(Result::ok) {
+                let abs_path = path.canonicalize().unwrap();
+                let rel_path = abs_path.strip_prefix(vault_path).unwrap();
+                ignored.insert(rel_path.to_path_buf());
+            }
+        }
+
         Self {
-            path: path.to_path_buf(),
+            path: vault_path.to_path_buf(),
             dangling_links: HashMap::new(),
             items: HashMap::new(),
             tags: HashMap::new(),
@@ -185,6 +197,15 @@ impl Vault {
         })
     }
 
+    fn eval_glob(vault_path: &Path, gstr: &str) -> Result<glob::Paths, glob::PatternError> {
+        let vault_path = vault_path.display();
+        let input = match gstr.starts_with("/") {
+            true => format!("{}{}", vault_path, gstr),
+            false => format!("{}/**/{}", vault_path, gstr),
+        };
+        glob(&input)
+    }
+
     /// Parse the `.vault-ignore` file in the vault directory.
     pub fn parse_ignore_file(&mut self, path: &PathBuf) -> io::Result<()> {
         if !path.exists() {
@@ -200,12 +221,7 @@ impl Vault {
                 continue;
             }
 
-            let gstr = match line.starts_with("/") {
-                true => format!("{}{}", self.path.display(), line),
-                false => format!("{}/**/{}", self.path.display(), line),
-            };
-
-            let Ok(ignored_paths) = glob(&gstr) else {
+            let Ok(ignored_paths) = Self::eval_glob(&self.path, line) else {
                 warn!(
                     "Could not parse line {} in ignore file '{}'",
                     i + 1,
@@ -213,6 +229,7 @@ impl Vault {
                 );
                 continue;
             };
+
             ignored_paths.filter_map(Result::ok).for_each(|path| {
                 let abs_path = path.canonicalize().unwrap();
                 let rel_path = abs_path.strip_prefix(&self.path).unwrap();
@@ -465,7 +482,7 @@ impl Vault {
             return Ok(());
         };
 
-        if self.ignored.contains(rel_path) {
+        if path != self.path && self.ignored.contains(rel_path) {
             return Ok(());
         }
 
