@@ -272,7 +272,7 @@ impl Vault {
             };
 
             let mut links = backlink_note
-                .tokens()?
+                .all_tokens()?
                 .filter_map(|token| {
                     if let Token::InternalLink { span, link, .. } = token {
                         if normalize(link.dest.clone()) == normalized_old {

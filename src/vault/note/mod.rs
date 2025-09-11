@@ -94,6 +94,41 @@ impl Note {
         Ok(Lexer::new(content))
     }
 
+    /// Get an iterator of all tokens in the note, including those nested
+    /// within other tokens (e.g. callouts, quotes, lists).
+    pub fn all_tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
+        Ok(self.tokens()?.flat_map(|token| {
+            let mut tokens = vec![token.clone()];
+            match token {
+                Token::Callout { callout, .. } => {
+                    tokens.extend(callout.tokens.iter().cloned());
+                }
+                Token::Quote {
+                    tokens: qtokens, ..
+                } => {
+                    tokens.extend(qtokens.iter().cloned());
+                }
+                Token::List { items, .. } => {
+                    for item in items {
+                        tokens.extend(item.tokens.iter().cloned());
+                    }
+                }
+                Token::NumericList { items, .. } => {
+                    for item in items {
+                        tokens.extend(item.tokens.iter().cloned());
+                    }
+                }
+                Token::CheckList { items, .. } => {
+                    for item in items {
+                        tokens.extend(item.tokens.iter().cloned());
+                    }
+                }
+                _ => {}
+            }
+            tokens.into_iter()
+        }))
+    }
+
     /// Add a note to the internal list of linked notes.
     pub fn add_link(&mut self, to: String) {
         self.links.insert(to);
