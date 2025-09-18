@@ -20,13 +20,36 @@ pip install .
 ```python
 import ovault
 
-v = ovault.Vault("path/to/vault")
+ # Open a vault at a given path
+vault = ovault.Vault("test-vaults/simple_vault")
 
 print()
-print("path        :", v.path)
-print("notes       :", len(v.notes()))
-print("attachments :", len(v.attachments()))
-print("tags        :", v.tags())
+print("Vault Path  :", vault.path)
+print("Notes       :", len(vault.notes()))
+print("Attachments :", len(vault.attachments()))
+print("Tags        :", sorted(vault.tags()))
+print()
+
+# Get the note named 'first_note'
+note = vault.note("first_note")
+
+print("Note Name   :", note.name)
+print("Note Path   :", note.path)
+print("Note Tokens :", note.tokens())
+
+```
+
+*Output:*
+```
+
+Vault Path  : /home/balder/projects/ovault/test-vaults/simple_vault
+Notes       : 11
+Attachments : 0
+Tags        : ['callout4youtag', 'frontmatter-tag1', 'frontmatter-tag2', 'linksaregood']
+
+Note Name   : first_note
+Note Path   : first_note.md
+Note Tokens : [Header(# FIRST NOTE!), Text(Wuhuuuuuuuuuuu!Thi...), InternalLink(second note), Text(.Takes a look at t...), InternalLink(sub/todo), Text()]
 ```
 
 ## Features
@@ -42,39 +65,52 @@ print("tags        :", v.tags())
 
 ##### Access & Properties
 - **Access Notes & Attachments:** Retrieve all notes or attachments in the vault as Python objects.
-- **Note Properties:** Access key information for each note, including its full path, relative path, name, character length, associated tags, internal links, and backlinks.
-- **Content Access:** Read the raw content of any note.
-- **Frontmatter Extraction:** Easily retrieve YAML frontmatter from notes.
+- **Frontmatter Extraction:** Manipulate YAML frontmatter from notes.
+
 ##### Modification
-- **Dynamic Note Modification:** Programmatically insert text into notes at specific character positions, or intelligently before/after recognized markdown tokens.
+- **Dynamic Note Modification:** Programmatically insert or replace parts of a note
 
 #### Tag Management
+
 ##### Querying Tags
-- **List All Tags:** Get a complete list of all unique tags present across your entire vault.
-- **Filter by Tag:** Efficiently retrieve all notes associated with a specific tag.
+- **List All Tags:** Get a complete list of tags present in your vault.
+- **Filter by Tag:** Retrieve all notes associated with a specific tag.
 
 #### Markdown Parsing & Tokenization
+
 ##### Token Representation
 - **Rich Token Representation:** Notes are parsed into a detailed stream of `Token` objects, representing various markdown elements.
 - **Available Tokens**:
+    - **Plain Text:** This is text
     - **Headers:** (`# Heading`)
+    - **Internal Links:** (`[[Note Name]]`, `![[Image.png]]`)
+    - **External Links:** (`[link text](url)`, `![image alt](url)`)
     - **Tags:** (`#tag`)
     - **Code Blocks:** (fenced code, `inline code`)
     - **Quotes:** (`> Quote`)
     - **Math:** (`$inline$` and `$$display$$` LaTeX)
     - **Dividers:** (`---`)
     - **Callouts:** (`> [!type] Title`)
-    - **Plain Text:**
     - **Frontmatter:** (YAML metadata)
-    - **Internal Links:** (`[[Note Name]]`, `![[Image.png]]`)
-    - **External Links:** (`[link text](url)`, `![image alt](url)`)
+    - **List**: `- item 1\n- item 2`
+    - **NumericList**: `1. first\n2. second`
+    - **CheckList**: `- [x] done\n- [ ] not done`
     - **TemplaterCommand**: (`<% code goes here %>`)
 
+See [`lexer/tokens.rs`](./src/lexer/tokens.rs) for token definitions.
+
+## Contributing
+I would be more than happy if anyone finds this useful enough to add to, or modify this code.
 
 ## Development
 Install `ovault` and development dependencies with
 ```bash
 pip install -e ".[dev]"
+```
+
+or use the nix flake
+```bash
+nix develop
 ```
 
 ### Build for Testing
@@ -95,5 +131,6 @@ maturin develop --release --features python
 ### Release
 1. Bump version in `Cargo.toml`
 2. Commit change and push
-3. Create a git tag with the same version: `git tag <version>`
-4. Push new tag: `git push --tags`
+3. Merge `dev` into `main` and push
+4. Create a git tag with the same version: `git tag <version>`
+5. Push new tag: `git push --tags`
