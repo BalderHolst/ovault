@@ -12,7 +12,6 @@ use std::{collections::HashSet, fs, io, path::PathBuf};
 
 use frontmatter::{Frontmatter, FrontmatterItem};
 
-// TODO: Add `hash` method (also for python)
 /// A note in an Obsidian vault.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyclass(get_all))]
@@ -247,7 +246,6 @@ impl Note {
                 Token::InternalLink { link, .. } => {
                     // if `dest` field is empty, the link points to heading in itself
                     // and we don't have to do anything in that case.
-                    // TODO: Maybe add the link anyway?
                     if link.dest.is_empty() {
                         continue;
                     }

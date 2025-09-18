@@ -426,6 +426,22 @@ fn test_vault_links() {
 
 #[test]
 #[serial]
+fn test_rename_note() {
+    let base = TestVaultBase::SimpleVault;
+    let mut test_vault = TestVault::new(base).unwrap();
+    let vault = &mut test_vault.vault;
+
+    assert!(vault.get_note("FIRST").is_none());
+    assert!(vault.get_note("first_note").is_some());
+
+    vault.rename_note("first_note", "FIRST").unwrap();
+
+    assert!(vault.get_note("first_note").is_none());
+    assert!(vault.get_note("FIRST").is_some());
+}
+
+#[test]
+#[serial]
 fn test_rename_collision() {
     let base = TestVaultBase::SimpleVault;
     let mut test_vault = TestVault::new(base).unwrap();

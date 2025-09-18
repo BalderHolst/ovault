@@ -367,7 +367,6 @@ impl Vault {
 
         // Update the vault item index
         {
-            // TODO: Test this
             if let Some(mut items) = self.items.remove(&normalized_old) {
                 // Get the index of the note in the items vector (there can be multiple items with the same name)
                 let index = items
@@ -559,7 +558,6 @@ impl Vault {
                     continue;
                 };
 
-                // TODO: Add path instead of link
                 from_note.add_link(to.clone());
             }
 

@@ -118,7 +118,6 @@ impl<'py> FromPyObject<'py> for FrontmatterItem {
                     .collect::<PyResult<Vec<_>>>()?;
                 Ok(FrontmatterItem::Array(list))
             }
-            // TODO: Not sure if this should exist as dict does not keep order.
             obj if obj.is_instance_of::<PyDict>() => {
                 let mut map = Frontmatter::default();
                 for (k, v) in obj.downcast::<PyDict>()?.iter() {
