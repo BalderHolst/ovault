@@ -92,7 +92,7 @@ jobs:
             echo "The new version $NEW_VERSION is greater than the latest version $LATEST_VERSION on PyPI."
           fi
 
-  build:
+  build-linux:
     needs: [details, check_pypi, check_crate_version]
     runs-on: ubuntu-latest
     steps:
@@ -114,22 +114,54 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-linux
+          path: target/wheels
+
+  build-windows:
+    needs: [details, check_pypi, check_crate_version]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Maturin
+        run: |
+          pip install maturin
+
+      - name: Build source and wheel distribution
+        run: |
+          maturin build --release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-windows
           path: target/wheels
 
   pypi_publish:
     name: Upload release to PyPI
-    needs: [build, details]
+    needs: [build-linux, build-windows, details]
     runs-on: ubuntu-latest
     environment:
       name: release
     permissions:
       id-token: write
     steps:
-      - name: Download artifacts
+
+      - name: Download Linux Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: dist-linux
+          path: dist/
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-windows
           path: dist/
 
       - name: Publish distribution to PyPI
@@ -137,7 +169,7 @@ jobs:
 
   github_release:
     name: Create GitHub Release
-    needs: [build, details]
+    needs: [build-linux, build-windows, details]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -147,10 +179,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download artifacts
+      - name: Download Linux Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: dist-linux
+          path: dist/
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-windows
           path: dist/
 
       - name: Create GitHub Release
