@@ -9,12 +9,15 @@ cd "$ROOT"
 # Pull submodules
 git submodule update --init --recursive
 
-# Build all feature combinations
-cargo build --all-features
-
 # Test all feature combinations
 cargo test --release --all-features
 
 # Run python tests
 maturin develop --release --features python
 pytest tests
+
+# Check all feature combinations
+cargo hack check --feature-powerset
+
+# Check Build
+cargo build --all-features

@@ -104,35 +104,67 @@ impl Vault {
     ///
     /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed.
     pub fn new(path: &Path) -> io::Result<Self> {
-        let mut v = Self::new_raw(path);
-        v.parse_ignore_file(&path.join(Self::IGNORE_FILE))?;
-        v.register_dir(path)?;
-        v.index();
-        Ok(v)
+        Self::new_raw(path, None, &[])
+    }
+
+    /// Create a new vault from the given path, using a custom ignore file.
+    pub fn new_with_ignore_file(path: &Path, ignore_file: PathBuf) -> io::Result<Self> {
+        Self::new_raw(path, Some(ignore_file), &[])
+    }
+
+    /// Create a new vault from the given path, using custom ignore patterns.
+    pub fn new_with_ignore_patterns(path: &Path, ignore: &[&str]) -> io::Result<Self> {
+        Self::new_raw(path, None, ignore)
     }
 
     /// Create a new vault without parsing the ignore file, adding the vault directory or indexing it.
-    fn new_raw(vault_path: &Path) -> Self {
-        let mut ignored = HashSet::new();
+    fn new_raw(
+        vault_path: &Path,
+        ignore_file: Option<PathBuf>,
+        ignore: &[&str],
+    ) -> io::Result<Self> {
+        // Merge specified ignore patterns with the default ones
+        let ignore = ignore
+            .iter()
+            .copied()
+            .chain(Self::DEFAULT_IGNORED.iter().copied())
+            .collect::<Vec<_>>();
 
-        for def in Self::DEFAULT_IGNORED {
+        let mut ignored_files = HashSet::new();
+
+        for def in ignore {
             let matches = Self::eval_glob(vault_path, def)
                 .expect("Default ignore pattern should always be valid");
 
             for path in matches.filter_map(Result::ok) {
                 let abs_path = path.canonicalize().unwrap();
                 let rel_path = abs_path.strip_prefix(vault_path).unwrap();
-                ignored.insert(rel_path.to_path_buf());
+                ignored_files.insert(rel_path.to_path_buf());
             }
         }
 
-        Self {
+        let mut v = Self {
             path: vault_path.to_path_buf(),
             dangling_links: HashMap::new(),
             items: HashMap::new(),
             tags: HashMap::new(),
-            ignored,
+            ignored: ignored_files,
+        };
+
+        let mut ignore_file = ignore_file.unwrap_or_else(|| PathBuf::from(Self::IGNORE_FILE));
+
+        if ignore_file.is_relative() {
+            ignore_file = vault_path.join(ignore_file);
         }
+
+        debug_assert!(ignore_file.is_absolute());
+
+        v.parse_ignore_file(&ignore_file)?;
+
+        v.register_dir(vault_path)?;
+        v.index();
+
+        Ok(v)
     }
 
     fn path_to_norm_name(&self, mut path: &Path) -> Option<String> {
@@ -207,7 +239,7 @@ impl Vault {
     }
 
     /// Parse the `.vault-ignore` file in the vault directory.
-    pub fn parse_ignore_file(&mut self, path: &PathBuf) -> io::Result<()> {
+    fn parse_ignore_file(&mut self, path: &Path) -> io::Result<()> {
         if !path.exists() {
             return Ok(());
         }
@@ -682,13 +714,20 @@ impl Vault {
 impl Vault {
     /// Create a new vault from the given path. The path must be an existing directory.
     ///
-    /// The `create` argument determines whether the vault directory should be created
-    /// if it does not exist.
-    ///
-    /// The vault will be indexed on creation, and the `.vault-ignore` file will be parsed
+    /// Arguments:
+    /// - `path`: Path to the vault directory.
+    /// - `ignore`: A list of glob patterns to ignore when indexing the vault.
+    /// - `ignore_file`: Path to a custom ignore file. If not provided,
+    ///   the `.vault-ignore` file in the vault directory will be used.
+    /// - `create`: Whether to create the vault directory if it does not exist.
     #[new]
-    #[pyo3(signature = (path, create = false))]
-    pub fn py_new(path: &str, create: bool) -> PyResult<Self> {
+    #[pyo3(signature = (path, ignore = vec![], ignore_file = None, create = false))]
+    pub fn py_new(
+        path: &str,
+        ignore: Vec<String>,
+        ignore_file: Option<String>,
+        create: bool,
+    ) -> PyResult<Self> {
         let path = PathBuf::from(path);
 
         if create && !path.exists() {
@@ -708,7 +747,11 @@ impl Vault {
                 e
             ))
         })?;
-        Ok(Self::new(&path)?)
+
+        let ignore_refs = ignore.iter().map(String::as_str).collect::<Vec<_>>();
+        let ignore_file = ignore_file.map(PathBuf::from);
+
+        Ok(Self::new_raw(&path, ignore_file, &ignore_refs)?)
     }
 
     /// Get a list of all notes in the vault. Order is not guaranteed.

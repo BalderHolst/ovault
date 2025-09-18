@@ -1,4 +1,5 @@
 import ovault
+import tempfile
 
 def test_open_all_test_vaults(vaults: list[ovault.Vault]):
     """
@@ -107,3 +108,60 @@ def test_rename_note_in_uni_vault(uni_notes_vault: ovault.Vault):
         for link in backlink_note.links:
             print(f"{backlink} -> {link}")
             assert link != old_note_name, "Backlinks should be updated to the new note name"
+
+def test_vault_ignore(simple_vault: ovault.Vault):
+    vault_path = str(simple_vault.path)
+
+    def note_paths(notes):
+        return sorted([str(note.path) for note in notes])
+
+    def create_ignore_file(contents: str) -> tempfile.NamedTemporaryFile:
+        ignore_file = tempfile.NamedTemporaryFile("w+")
+        ignore_file.write(contents)
+        ignore_file.flush()
+        return ignore_file
+
+    # ============== No ignore ==============
+
+    default = ovault.Vault(vault_path, ignore = [], ignore_file=None)
+    default_paths = note_paths(default.notes())
+    print("Default (no ignore):")
+    print(default_paths)
+
+    default_ignore_file = create_ignore_file("")
+    default_f = ovault.Vault(vault_path, ignore = [], ignore_file=default_ignore_file.name)
+    default_f_paths = note_paths(default_f.notes())
+    print("\nDefault (no ignore) from file:")
+    print(default_f_paths)
+
+    assert default_paths == default_f_paths
+
+    # ============== Ignore todo.md ==============
+
+    no_todos = ovault.Vault(vault_path, ignore = ["todo.md"])
+    no_todos_paths = note_paths(no_todos.notes())
+    print("\nIgnoring 'todo.md':")
+    print(no_todos_paths)
+
+    no_todos_ignore_file = create_ignore_file("todo.md")
+    no_todos_f = ovault.Vault(vault_path, ignore = [], ignore_file=no_todos_ignore_file.name)
+    no_todos_f_paths = note_paths(no_todos_f.notes())
+    print("\nIgnoring 'todo.md' from file:")
+    print(no_todos_f_paths)
+
+    assert no_todos_paths == no_todos_f_paths
+
+    # ============== Ignore /sub directory ==============
+
+    no_sub = ovault.Vault(vault_path, ignore = ["/sub"])
+    no_sub_paths = note_paths(no_sub.notes())
+    print("\nIgnoring '/sub' directory:")
+    print(no_sub_paths)
+
+    no_sub_ignore_file = create_ignore_file("/sub")
+    no_sub_f = ovault.Vault(vault_path, ignore = [], ignore_file=no_sub_ignore_file.name)
+    no_sub_f_paths = note_paths(no_sub_f.notes())
+    print("\nIgnoring '/sub' directory from file:")
+    print(no_sub_f_paths)
+
+    assert no_sub_paths == no_sub_f_paths

@@ -238,13 +238,16 @@ class Vault:
     dangling_links: Dict[str, List[str]]
     ignored: Set[str]
 
-    def __init__(self, path: str, create: bool = False) -> None:
+    def __init__(self, path: str, ignore = [], ignore_file = None, create: bool = False) -> None:
         """
         Create a new vault from the given path. The path must be an existing directory.
 
         Args:
-            path: Path to the vault directory.
-            create: Whether to create the directory if it does not exist.
+        - `path`: Path to the vault directory.
+        - `ignore`: A list of glob patterns to ignore when indexing the vault.
+        - `ignore_file`: Path to a custom ignore file.
+          If not provided, the `.vault-ignore` file in the vault directory will be used.
+        - `create`: Whether to create the vault directory if it does not exist.
         """
         ...
 
