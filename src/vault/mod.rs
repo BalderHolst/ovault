@@ -258,8 +258,9 @@ impl Vault {
         self.items.entry(name).or_default().push(item);
     }
 
-    // TODO: Names should be treated as a paths, not names
     /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
+    ///
+    /// The inputs are treated as paths relative to the vault root.
     pub fn rename_note(&mut self, old_name: &str, new_name: &str) -> io::Result<()> {
         let normalized_old = normalize(old_name.to_string());
         let normalized_new = normalize(new_name.to_string());
@@ -274,7 +275,7 @@ impl Vault {
         let old_path = note.full_path();
 
         // Update the note's path
-        note.path = note.path.with_file_name(new_name).with_extension("md");
+        note.path = PathBuf::from(new_name).with_extension("md");
 
         let new_path = note.full_path();
 
@@ -292,7 +293,9 @@ impl Vault {
         fs::rename(&old_path, &new_path).map_err(|e| {
             io::Error::other(format!(
                 "Could not rename note '{}' to '{}': {}",
-                old_name, new_name, e
+                old_path.display(),
+                new_path.display(),
+                e
             ))
         })?;
 

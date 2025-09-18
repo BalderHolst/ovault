@@ -432,7 +432,7 @@ fn test_rename_collision() {
     let vault = &mut test_vault.vault;
 
     // vault.rename_note("sub/todo", "sub/second_note").unwrap();
-    vault.rename_note("sub/todo", "second_note").unwrap();
+    vault.rename_note("sub/todo", "sub/second_note").unwrap();
 
     let first_note = vault.get_note("first_note").unwrap();
 
