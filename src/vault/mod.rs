@@ -757,8 +757,14 @@ impl Vault {
 
     /// Get note by its name.
     #[pyo3(name = "get_note_by_name")]
-    pub fn py_get_note(&self, name: &str) -> Option<Note> {
+    pub fn py_get_note_by_name(&self, name: &str) -> Option<Note> {
         self.get_note(&normalize(name.to_string())).cloned()
+    }
+
+    /// Get note by its name.
+    #[pyo3(name = "note")]
+    pub fn py_note(&self, name: &str) -> Option<Note> {
+        self.py_get_note_by_name(name)
     }
 
     /// Get note by its path in the vault. Either absolute or relative to the vault path.

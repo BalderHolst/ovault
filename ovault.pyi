@@ -272,6 +272,10 @@ class Vault:
         """Get all notes that have the given tag."""
         ...
 
+    def note(self, name: str) -> Optional[Note]:
+        """Get note by its name."""
+        ...
+
     def get_note_by_name(self, name: str) -> Optional[Note]:
         """Get note by its name."""
         ...
