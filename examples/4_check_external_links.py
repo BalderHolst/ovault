@@ -14,6 +14,8 @@ if len(sys.argv) != 2:
 
 vault = ovault.Vault(sys.argv[1])
 
+HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0'}
+
 # Terninal Colors
 GREEN  = "\033[92m"
 YELLOW = "\033[93m"
@@ -33,7 +35,7 @@ for note in vault.notes():
             continue
 
         try:
-            resp = requests.get(url, timeout=5)
+            resp = requests.get(url, headers=HEADERS, timeout=5)
         except requests.RequestException as e:
             print(f"{RED}INVALID URL{RESET} ({e})")
             continue
