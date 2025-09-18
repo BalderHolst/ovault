@@ -258,6 +258,7 @@ impl Vault {
         self.items.entry(name).or_default().push(item);
     }
 
+    // TODO: Names should be treated as a paths, not names
     /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
     pub fn rename_note(&mut self, old_name: &str, new_name: &str) -> io::Result<()> {
         let normalized_old = normalize(old_name.to_string());
@@ -297,7 +298,13 @@ impl Vault {
 
         let note = note.clone();
 
-        // TODO: Some check if the patched links need to use full note paths to avoid collisions.
+        // Check if there are other items with the same name,
+        // if so, we need to use full paths for the links to avoid collisions
+        let use_full_path = self
+            .items
+            .get(&normalized_new)
+            .is_some_and(|items| !items.is_empty());
+
         // Update notes that link to this note
         for backlink in note.backlinks.clone() {
             let Some(backlink_note) = self.get_note_mut(&backlink) else {
@@ -324,7 +331,17 @@ impl Vault {
                 if link.show_how.is_none() {
                     link.show_how = Some(old_dest);
                 }
-                link.dest = new_name.to_string();
+                match use_full_path {
+                    false => link.dest = new_name.to_string(),
+                    true => {
+                        link.dest = note
+                            .path
+                            .with_extension("")
+                            .to_str()
+                            .unwrap_or(new_name)
+                            .to_string()
+                    }
+                }
                 let text = link.to_markdown();
                 backlink_note.replace_span(span, text)?;
             }

@@ -423,3 +423,32 @@ fn test_vault_links() {
         );
     }
 }
+
+#[test]
+#[serial]
+fn test_rename_collision() {
+    let base = TestVaultBase::SimpleVault;
+    let mut test_vault = TestVault::new(base).unwrap();
+    let vault = &mut test_vault.vault;
+
+    // vault.rename_note("sub/todo", "sub/second_note").unwrap();
+    vault.rename_note("sub/todo", "second_note").unwrap();
+
+    let first_note = vault.get_note("first_note").unwrap();
+
+    let links: Vec<_> = first_note
+        .tokens()
+        .unwrap()
+        .filter_map(|token| {
+            if let Token::InternalLink { link, .. } = token {
+                Some(link)
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    assert_eq!(links.len(), 2);
+    assert_eq!(&links[0].dest, "second_note");
+    assert_eq!(&links[1].dest, "sub/second_note");
+}
