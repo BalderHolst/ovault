@@ -10,10 +10,10 @@ cd "$ROOT"
 git submodule update --init --recursive
 
 # Build all feature combinations
-cargo hack build --feature-powerset
+cargo build --all-features
 
 # Test all feature combinations
-cargo hack test --release --feature-powerset
+cargo test --release --all-features
 
 # Run python tests
 maturin develop --release --features python
