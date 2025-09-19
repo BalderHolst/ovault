@@ -142,9 +142,35 @@ jobs:
           name: dist-windows
           path: target/wheels
 
+  build-macos:
+    needs: [details, check_pypi, check_crate_version]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Maturin
+        run: |
+          pip install maturin
+
+      - name: Build source and wheel distribution
+        run: |
+          maturin build --release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-macos
+          path: target/wheels
+
+
   pypi_publish:
     name: Upload release to PyPI
-    needs: [build-linux, build-windows, details]
+    needs: [build-linux, build-windows, build-macos, details]
     runs-on: ubuntu-latest
     environment:
       name: release
@@ -164,12 +190,18 @@ jobs:
           name: dist-windows
           path: dist/
 
+      - name: Download Macos Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-macos
+          path: dist/
+
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
   github_release:
     name: Create GitHub Release
-    needs: [build-linux, build-windows, details]
+    needs: [build-linux, build-windows, build-macos, details]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -189,6 +221,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-windows
+          path: dist/
+
+      - name: Download Macos Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-macos
           path: dist/
 
       - name: Create GitHub Release
