@@ -1,3 +1,7 @@
+"""
+Check all external links to websites in an Obsidian vault and report any broken links.
+"""
+
 from . import ovault
 import sys
 import os
