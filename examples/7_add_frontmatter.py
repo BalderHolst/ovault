@@ -1,6 +1,6 @@
-# Example 8: Add frontmatter to all notes that don't have it
+# Example 7: Add frontmatter to all notes that don't have it
 
-# Usage: python 8_add_frontmatter.py <vault_name>
+# Usage: python 7_add_frontmatter.py <vault_name>
 
 # NOTE: Sorting is only done to make the output stable for testing purposes.
 
@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 if len(sys.argv) != 2:
-    print("Usage: python 8_add_frontmatter.py <vault_name>")
+    print("Usage: python 7_add_frontmatter.py <vault_name>")
     sys.exit(1)
 
 vault = ovault.Vault(sys.argv[1])

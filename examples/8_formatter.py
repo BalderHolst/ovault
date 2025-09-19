@@ -1,6 +1,6 @@
-# Example 9: Standardize note formatting
+# Example 8: Standardize note formatting
 
-# Usage: python 9_formatter.py [--vault] <path>
+# Usage: python 8_formatter.py [--vault] <path>
 
 # Supply a markdown file with the `<path>` argument.
 # If `--vault` is provided, `<path>` is treated as a vault path.

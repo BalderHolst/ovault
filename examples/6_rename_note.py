@@ -1,12 +1,12 @@
-# Example 7: Rename a note in an Obsidian vault
+# Example 6: Rename a note in an Obsidian vault
 
-# Usage: python 7_rename_note.py <vault_name> <old_note_path> <new_note_path>
+# Usage: python 6_rename_note.py <vault_name> <old_note_path> <new_note_path>
 
 import ovault
 import sys
 
 if len(sys.argv) != 4:
-    print("Usage: python 7_rename_note.py <vault_name> <old_note_name> <new_note_name>")
+    print("Usage: python 6_rename_note.py <vault_name> <old_note_name> <new_note_name>")
     sys.exit(1)
 
 vault = ovault.Vault(sys.argv[1])

@@ -1,6 +1,6 @@
-# Example 5: Generates `dot` code for a connection graph of of the vault
+# Example 4: Generates `dot` code for a connection graph of of the vault
 
-# Usage: `python3 examples/5_graph_image.py <vault> | neato -Tpng > graph.png`
+# Usage: `python3 examples/4_graph_image.py <vault> | neato -Tpng > graph.png`
 
 # NOTE: Sorting is only done to make the output stable for testing purposes.
 

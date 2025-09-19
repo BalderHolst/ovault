@@ -1,11 +1,11 @@
-# Example 6: Generate an Obsidian Vault
+# Example 5: Generate an Obsidian Vault
 
 # This script generates an obsidian vault containing manual entries
 # for common GNU/Linux utilities
 
 # NOTE: This will only work on GNU/Linux systems with the `man` command available.
 
-# Usage: python 6_create_vault.py <vault_name>
+# Usage: python 5_create_vault.py <vault_name>
 
 import ovault
 import subprocess
