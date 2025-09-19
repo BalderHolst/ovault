@@ -239,6 +239,7 @@ impl Note {
                         };
                         self.tags.insert(tag.clone());
                     }
+                    // TODO: handle `links` field in frontmatter
                 }
                 Token::Tag { tag, .. } => {
                     self.tags.insert(tag.clone());
