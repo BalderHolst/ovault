@@ -68,7 +68,7 @@ def main():
 
 
     if not broken_links:
-        print(f"{GREEN}All external links are valid!{RESET}")
+        print(f"\n{GREEN}All external links are valid!{RESET}")
         exit(0)
 
     print(RED, end="")
