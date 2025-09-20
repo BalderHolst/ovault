@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Check that the code does not contain "dbg!' statements
+if grep -rn --include="*.rs" "dbg!(" src/ ;
+then
+  echo "Debug statements found in the code. Please remove them before committing."
+  exit 1
+fi
+
 # Check formatting
 cargo fmt --all -- --check || {
   echo "Code formatting issues found. Please run 'cargo fmt' to fix them."
