@@ -3,19 +3,6 @@ A python library for accessing and editing your [Obsidian](https://obsidian.md) 
 
 Check out the [examples](https://github.com/BalderHolst/ovault/tree/main/examples)!
 
-## Install
-```bash
-pip install ovault
-```
-
-or locally
-
-```bash
-git pull https://github.com/BalderHolst/ovault
-cd ovault
-pip install .
-```
-
 ## Example
 ```python
 import ovault
@@ -50,6 +37,19 @@ Tags        : ['callout4youtag', 'frontmatter-tag1', 'frontmatter-tag2', 'linksa
 Note Name   : first_note
 Note Path   : first_note.md
 Note Tokens : [Header(# FIRST NOTE!), Text(Wuhuuuuuuuuuuu!Thi...), InternalLink(second note), Text(.Takes a look at t...), InternalLink(sub/todo), Text()]
+```
+
+## Install
+```bash
+pip install ovault
+```
+
+or locally
+
+```bash
+git pull https://github.com/BalderHolst/ovault
+cd ovault
+pip install .
 ```
 
 ## Features
@@ -120,12 +120,12 @@ maturin develop --release --features python
 
 ### Test
 ```bash
-./test.sh
+./scripts/test.sh
 ```
 
 ### Build Documentation
 ```bash
-./docs/build.py
+./scripts/build-docs.py
 ```
 
 ### Release
