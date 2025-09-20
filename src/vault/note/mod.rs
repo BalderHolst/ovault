@@ -34,6 +34,26 @@ pub struct Note {
 
 // Rust specific methods
 impl Note {
+    /// Create a new note object
+    pub fn new(vault_path: PathBuf, path: PathBuf) -> Self {
+        let name = path
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_string();
+        let mut note = Note {
+            vault_path,
+            path,
+            name,
+            length: 0,
+            tags: HashSet::new(),
+            backlinks: HashSet::new(),
+            links: HashSet::new(),
+        };
+        note.index();
+        note
+    }
+
     /// Get the full absolute path to the note file
     pub fn full_path(&self) -> PathBuf {
         self.vault_path.join(&self.path)
@@ -296,6 +316,13 @@ use yaml_rust2::{Yaml, YamlLoader};
 #[cfg(feature = "python")]
 #[pymethods]
 impl Note {
+    /// Create a new note object
+    #[new]
+    #[pyo3(signature = (path, vault_path = ""))]
+    pub fn py_new(path: String, vault_path: &str) -> Self {
+        Note::new(PathBuf::from(vault_path), PathBuf::from(path))
+    }
+
     /// Get content note as a list of tokens.
     #[pyo3(name = "tokens")]
     pub fn py_tokens(&self) -> PyResult<Vec<Token>> {

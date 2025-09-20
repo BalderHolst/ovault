@@ -10,10 +10,8 @@ import requests
 def main():
     if len(sys.argv) != 2:
         submod_name = os.path.basename(__file__.rstrip(".py"))
-        print(f"Usage: python -m {__package__}.{submod_name} <vault_path>")
+        print(f"Usage: python -m {__package__}.{submod_name} <vault_or_note_path>")
         sys.exit(1)
-
-    vault = ovault.Vault(sys.argv[1])
 
     # Set the user agent to mimic a real browser
     HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0'}
@@ -25,9 +23,21 @@ def main():
     BLUE   = "\033[94m"
     RESET  = "\033[0m"
 
-    broken_links = []
+    path = sys.argv[1]
 
-    notes = vault.notes()
+    notes = None
+
+    if os.path.isdir(path):
+        vault = ovault.Vault(path)
+        notes = vault.notes()
+    elif os.path.isfile(path) and path.endswith(".md"):
+        notes = [ovault.Note(path)]
+
+    if not notes:
+        print(f"Error: No notes found in the specified path '{path}'.")
+        sys.exit(1)
+
+    broken_links = []
 
     # Prints centered text in terminal width using '=' characters
     def label(msg, color=None):

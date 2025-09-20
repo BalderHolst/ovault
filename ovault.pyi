@@ -156,6 +156,15 @@ class Note:
     backlinks: Set[str]
     links: Set[str]
 
+    def __init__(self, path: str, vault_path: str = "") -> None:
+        """
+        Create a new note object.
+
+        NOTE: Do not use this to generate notes in a vault. Use `Vault.add_note` instead.
+
+        """
+        ...
+
     def __repr__(self) -> str:
         """Get a string representation of the note."""
         ...
