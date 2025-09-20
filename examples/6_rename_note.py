@@ -14,7 +14,7 @@ vault = ovault.Vault(sys.argv[1])
 old_note_name = sys.argv[2]
 new_note_name = sys.argv[3]
 
-note = vault.rename_note(old_note_name, new_note_name)
+note = vault.rename(old_note_name, new_note_name)
 
 print(f"Renamed note from '{old_note_name}' to '{new_note_name}' in vault '{vault.path}'\n")
 

@@ -8,9 +8,24 @@ use crate::{
     vault::IntoNoteContent,
     warn,
 };
-use std::{collections::HashSet, fs, io, path::PathBuf};
+use std::{
+    collections::HashSet,
+    fs, io,
+    path::{Path, PathBuf},
+};
 
 use frontmatter::{Frontmatter, FrontmatterItem};
+
+pub(crate) fn note_name_from_str(path: &str) -> String {
+    note_name_from_path(&PathBuf::from(path))
+}
+
+pub(crate) fn note_name_from_path(path: &Path) -> String {
+    path.file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("")
+        .to_string()
+}
 
 /// A note in an Obsidian vault.
 #[derive(Debug, Clone, PartialEq)]
@@ -36,11 +51,7 @@ pub struct Note {
 impl Note {
     /// Create a new note object
     pub fn new(vault_path: PathBuf, path: PathBuf) -> Self {
-        let name = path
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("")
-            .to_string();
+        let name = note_name_from_path(&path);
         let mut note = Note {
             vault_path,
             path,
@@ -379,6 +390,12 @@ impl Note {
     #[pyo3(name = "read")]
     pub fn py_read(&self) -> io::Result<String> {
         self.content()
+    }
+
+    /// Read the content of the note and return it as bytes
+    #[pyo3(name = "read_bytes")]
+    pub fn py_read_bytes(&self) -> io::Result<Vec<u8>> {
+        fs::read(self.full_path())
     }
 
     /// Inserts a string at a position in the note.

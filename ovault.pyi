@@ -69,7 +69,21 @@ class Attachment:
     An attachment in an Obsidian vault. An attachment is any
     file that is not a markdown file.
     """
+    vault_path: str
     path: str
+    backlinks: Set[str]
+
+    def full_path(self) -> str:
+        """Get the full (absolute) path to the attachment file."""
+        ...
+
+    def read_bytes(self) -> bytes:
+        """Read the content of the attachment and return it as bytes."""
+        ...
+
+    def __repr__(self) -> str: ...
+    def __eq__(self, other: 'Attachment') -> bool: ...
+
 
 FrontmatterValue = Union[str, int, float, bool, List[Any]]
 
@@ -280,6 +294,17 @@ class Vault:
         """
         ...
 
+    def add_note(self, vault_path: str, content: str, reindex: bool = False) -> str:
+        """
+        Add a note to the vault.
+
+        Args:
+            vault_path: The relative path of the new note within the vault.
+            content: The content of the note.
+            reindex: Whether to reindex the vault after adding the note.
+        """
+        ...
+
     def get_notes_by_tag(self, tag: str) -> List[Note]:
         """Get all notes that have the given tag."""
         ...
@@ -296,6 +321,18 @@ class Vault:
         """Get note by its path in the vault. Either absolute or relative to the vault path."""
         ...
 
+    def attachment(self, name: str) -> Optional[Attachment]:
+        """Get attachment by its name."""
+        ...
+
+    def get_attachment_by_name(self, name: str) -> Optional[Attachment]:
+        """Get attachment by its name."""
+        ...
+
+    def get_attachment_by_path(self, path: str) -> Optional[Attachment]:
+        """Get attachment by its path in the vault. Either absolute or relative to the vault path."""
+        ...
+
     def add_note(self, vault_path: str, content: str, reindex: bool = False) -> str:
         """
         Add a note to the vault.
@@ -307,16 +344,13 @@ class Vault:
         """
         ...
 
-    def rename_note(self, old_name: str, new_name: str) -> Note:
+    def rename(self, old_name: str, new_name: str) -> None:
         """
-        Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
+        Rename a note or attachment in the vault. This will update the item's name, path, and all backlinks to the note.
 
         Args:
-            old_name: The current name of the note.
-            new_name: The new name for the note.
-
-        Returns:
-            The renamed Note object.
+            old_name: The current name of the items
+            new_name: The new name for the item.
         """
         ...
 

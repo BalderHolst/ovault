@@ -434,7 +434,7 @@ fn test_rename_note() {
     assert!(vault.get_note("FIRST").is_none());
     assert!(vault.get_note("first_note").is_some());
 
-    vault.rename_note("first_note", "FIRST").unwrap();
+    vault.rename("first_note", "FIRST").unwrap();
 
     assert!(vault.get_note("first_note").is_none());
     assert!(vault.get_note("FIRST").is_some());
@@ -448,7 +448,7 @@ fn test_rename_collision() {
     let vault = &mut test_vault.vault;
 
     // vault.rename_note("sub/todo", "sub/second_note").unwrap();
-    vault.rename_note("sub/todo", "sub/second_note").unwrap();
+    vault.rename("sub/todo", "sub/second_note").unwrap();
 
     let first_note = vault.get_note("first_note").unwrap();
 

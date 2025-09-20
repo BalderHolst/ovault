@@ -41,11 +41,40 @@ pub enum VaultItem {
 
 impl VaultItem {
     /// Get the path of the vault item
-    pub fn path(&self) -> &PathBuf {
+    pub fn get_path(&self) -> &PathBuf {
         match self {
             VaultItem::Note { note } => &note.path,
             VaultItem::Attachment { attachment } => &attachment.path,
         }
+    }
+
+    /// Get a mutable reference to the path of the vault item
+    pub fn get_path_mut(&mut self) -> &mut PathBuf {
+        match self {
+            VaultItem::Note { note } => &mut note.path,
+            VaultItem::Attachment { attachment } => &mut attachment.path,
+        }
+    }
+
+    /// Get the full (absolute) path of the vault item
+    pub fn full_path(&self) -> PathBuf {
+        match self {
+            VaultItem::Note { note } => note.full_path(),
+            VaultItem::Attachment { attachment } => attachment.full_path(),
+        }
+    }
+
+    /// Get the backlinks of the vault item
+    pub fn backlinks(&self) -> &HashSet<String> {
+        match self {
+            VaultItem::Note { note } => &note.backlinks,
+            VaultItem::Attachment { attachment, .. } => &attachment.backlinks,
+        }
+    }
+
+    /// Check if the vault item is a note
+    pub fn is_note(&self) -> bool {
+        matches!(self, VaultItem::Note { .. })
     }
 }
 
@@ -167,7 +196,8 @@ impl Vault {
         Ok(v)
     }
 
-    fn path_to_norm_name(&self, mut path: &Path) -> Option<String> {
+    /// Strips the vault path from the given path (if absolute) and normalizes the vault path.
+    fn path_to_norm_vault_path(&self, mut path: &Path) -> Option<String> {
         if path.is_absolute() {
             path = path.strip_prefix(&self.path).ok()?;
         }
@@ -177,15 +207,19 @@ impl Vault {
 
     /// Get a note by its path in the vault. Either absolute or relative to the vault path.
     pub fn get_note_by_path(&self, path: &Path) -> Option<&Note> {
-        dbg!(path);
-        let norm_name = self.path_to_norm_name(path)?;
-        dbg!(&norm_name);
+        let norm_name = self.path_to_norm_vault_path(path)?;
         self.get_note(&norm_name)
+    }
+
+    /// Get a attachment by its path in the vault. Either absolute or relative to the vault path.
+    pub fn get_attachment_by_path(&self, path: &Path) -> Option<&Attachment> {
+        let norm_name = self.path_to_norm_vault_path(path)?;
+        self.get_attachment(&norm_name)
     }
 
     /// Get a mutable reference to a note by its path in the vault. Either absolute or relative to the vault path.
     pub fn get_note_by_path_mut(&mut self, path: &Path) -> Option<&mut Note> {
-        let norm_name = self.path_to_norm_name(path)?;
+        let norm_name = self.path_to_norm_vault_path(path)?;
         self.get_note_mut(&norm_name)
     }
 
@@ -293,45 +327,51 @@ impl Vault {
     /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
     ///
     /// The inputs are treated as paths relative to the vault root.
-    pub fn rename_note(&mut self, old_name: &str, new_name: &str) -> io::Result<()> {
+    pub fn rename(&mut self, old_name: &str, new_name: &str) -> io::Result<()> {
         let normalized_old = normalize(old_name.to_string());
         let normalized_new = normalize(new_name.to_string());
 
-        let Some(note) = self.get_note_mut(&normalized_old) else {
+        let Some(vault_item) = self.get_item_mut(&normalized_old) else {
             return Err(io::Error::new(
                 io::ErrorKind::NotFound,
-                format!("Note '{}' not found", old_name),
+                format!("Vault item '{}' not found", old_name),
             ));
         };
 
-        let old_path = note.full_path();
+        let old_path = vault_item.full_path();
 
-        // Update the note's path
-        note.path = PathBuf::from(new_name).with_extension("md");
+        // Update the item's path
+        *vault_item.get_path_mut() = PathBuf::from(new_name);
 
-        let new_path = note.full_path();
+        if vault_item.is_note() {
+            vault_item.get_path_mut().set_extension("md");
+        }
 
-        if fs::exists(&new_path)? {
-            note.path = old_path; // Restore the old path
+        let new_full_path = vault_item.full_path();
+
+        if fs::exists(&new_full_path)? {
+            *vault_item.get_path_mut() = old_path; // Restore the old path
             return Err(io::Error::new(
                 io::ErrorKind::AlreadyExists,
-                format!("Path '{}' already exists", new_name),
+                format!("Path '{}' already exists", new_full_path.display()),
             ));
         }
 
-        note.name = new_name.to_string();
+        if let VaultItem::Note { note } = vault_item {
+            note.name = note::note_name_from_str(&normalized_new);
+        }
 
         // Rename the file on disk
-        fs::rename(&old_path, &new_path).map_err(|e| {
+        fs::rename(&old_path, &new_full_path).map_err(|e| {
             io::Error::other(format!(
                 "Could not rename note '{}' to '{}': {}",
                 old_path.display(),
-                new_path.display(),
+                new_full_path.display(),
                 e
             ))
         })?;
 
-        let note = note.clone();
+        let vault_item = vault_item.clone();
 
         // Check if there are other items with the same name,
         // if so, we need to use full paths for the links to avoid collisions
@@ -340,8 +380,8 @@ impl Vault {
             .get(&normalized_new)
             .is_some_and(|items| !items.is_empty());
 
-        // Update notes that link to this note
-        for backlink in note.backlinks.clone() {
+        // Update notes that link to this vault item
+        for backlink in vault_item.backlinks().clone() {
             let Some(backlink_note) = self.get_note_mut(&backlink) else {
                 warn!("Could not find note '{}' to update backlink", backlink);
                 continue;
@@ -367,10 +407,12 @@ impl Vault {
                     link.show_how = Some(old_dest);
                 }
                 match use_full_path {
-                    false => link.dest = new_name.to_string(),
+                    false => {
+                        link.dest = new_name.strip_suffix(".md").unwrap_or(new_name).to_string()
+                    }
                     true => {
-                        link.dest = note
-                            .path
+                        link.dest = vault_item
+                            .get_path()
                             .with_extension("")
                             .to_str()
                             .unwrap_or(new_name)
@@ -382,14 +424,16 @@ impl Vault {
             }
         }
 
-        // Update the vault tag index
-        {
+        let new_path = vault_item.get_path();
+
+        // Update the vault tag index (only notes can contain tags)
+        if let VaultItem::Note { note: vault_note } = &vault_item {
             self.tags.retain(|_, notes| {
                 notes.retain(|note_name| note_name != &normalized_old);
                 !notes.is_empty()
             });
 
-            for tag in note.tags.iter() {
+            for tag in vault_note.tags.iter() {
                 self.tags
                     .entry(tag.clone())
                     .or_default()
@@ -398,32 +442,33 @@ impl Vault {
         }
 
         // Update the vault item index
+        let old_bucket = normalized_old.rsplit('/').next().unwrap_or(&normalized_old);
+        let new_bucket = normalized_new.rsplit('/').next().unwrap_or(&normalized_new);
         {
-            if let Some(mut items) = self.items.remove(&normalized_old) {
+            if let Some(mut items) = self.items.remove(old_bucket) {
                 // Get the index of the note in the items vector (there can be multiple items with the same name)
                 let index = items
                     .iter()
-                    .position(|item| match item {
-                        VaultItem::Note { note: n } => n.name == new_name,
-                        _ => false,
-                    })
+                    .position(|item| item.get_path() == new_path)
                     .ok_or_else(|| {
                         io::Error::new(
                             io::ErrorKind::NotFound,
-                            format!("Note '{}' not found in vault items", old_name),
+                            format!("Item '{}' not found in vault items", old_name),
                         )
                     })?;
 
                 // Remove the note from the items vector
-                let _item = items.remove(index);
+                let vault_item = items.remove(index);
 
                 // Re-insert the remaining items (if any)
                 if !items.is_empty() {
-                    self.items.insert(normalized_old, items);
+                    self.items.insert(old_bucket.to_string(), items);
                 }
 
                 // Insert the renamed note
-                self.insert_item(normalized_new, VaultItem::Note { note });
+                self.insert_item(new_bucket.to_string(), vault_item);
+            } else if cfg!(debug_assertions) {
+                panic!("Could not remove {old_name} from vault. It was not found.");
             }
         }
 
@@ -519,7 +564,7 @@ impl Vault {
     fn register_attachment(&mut self, path: PathBuf) {
         let name = normalize(path.file_name().unwrap().to_str().unwrap().to_string());
         let relpath = path.strip_prefix(&self.path).unwrap().to_path_buf();
-        let attachment = Attachment { path: relpath };
+        let attachment = Attachment::new(self.path.clone(), relpath);
         self.insert_item(name, VaultItem::Attachment { attachment });
     }
 
@@ -628,7 +673,7 @@ impl Vault {
 
         // Try to find the item with a matching vault path
         for candidate in candidates {
-            let str_path = candidate.path().to_str()?;
+            let str_path = candidate.get_path().to_str()?;
             let norm_path = normalize(str_path.to_string());
             if norm_path == normalized_name {
                 return Some(candidate);
@@ -638,7 +683,7 @@ impl Vault {
         // Fallback, return the candidate with the shortest path
         candidates
             .iter()
-            .min_by_key(|item| item.path().components().count())
+            .min_by_key(|item| item.get_path().components().count())
     }
 
     fn get_item_mut(&mut self, name: &str) -> Option<&mut VaultItem> {
@@ -659,7 +704,7 @@ impl Vault {
         let matched = candidates
             .iter_mut()
             .find(|candidate| {
-                let Some(str_path) = candidate.path().to_str() else {
+                let Some(str_path) = candidate.get_path().to_str() else {
                     return false;
                 };
                 let norm_path = normalize(str_path.to_string());
@@ -675,7 +720,7 @@ impl Vault {
         // Fallback, return the candidate with the shortest path
         candidates
             .iter_mut()
-            .min_by_key(|item| item.path().components().count())
+            .min_by_key(|item| item.get_path().components().count())
     }
 
     /// Get a note by its normalized name.
@@ -816,6 +861,24 @@ impl Vault {
         self.get_note_by_path(&PathBuf::from(path)).cloned()
     }
 
+    /// Get attachment by its name. Eg. "image.png" or "folder/image.png"
+    #[pyo3(name = "get_attachment_by_name")]
+    pub fn py_get_attachment_by_name(&self, name: &str) -> Option<Attachment> {
+        self.get_attachment(name).cloned()
+    }
+
+    /// Get attachment by its name. Eg. "image.png" or "folder/image.png"
+    #[pyo3(name = "attachment")]
+    pub fn py_attachment(&self, name: &str) -> Option<Attachment> {
+        self.py_get_attachment_by_name(name)
+    }
+
+    /// Get an attachment by its path in the vault. Either absolute or relative to the vault path.
+    #[pyo3(name = "get_attachment_by_path")]
+    pub fn py_get_attachment_by_path(&self, path: &str) -> Option<Attachment> {
+        self.get_attachment_by_path(&PathBuf::from(path)).cloned()
+    }
+
     /// Add a note to the vault.
     ///
     /// Use the `reindex` flag or call the `index` method to reindex the vault after adding notes.
@@ -846,23 +909,14 @@ impl Vault {
     }
 
     /// Rename a note in the vault. This will update the note's name, path, and all backlinks to the note.
-    #[pyo3(name = "rename_note")]
-    pub fn py_rename_note(&mut self, old_name: &str, new_name: &str) -> PyResult<Note> {
-        self.rename_note(old_name, new_name).map_err(|e| {
+    #[pyo3(name = "rename")]
+    pub fn py_rename(&mut self, old_name: &str, new_name: &str) -> PyResult<()> {
+        self.rename(old_name, new_name).map_err(|e| {
             pyo3::exceptions::PyIOError::new_err(format!(
                 "Could not rename note from '{}' to '{}': {}",
                 old_name, new_name, e
             ))
-        })?;
-
-        self.get_note(&normalize(new_name.to_string()))
-            .cloned()
-            .ok_or_else(|| {
-                pyo3::exceptions::PyKeyError::new_err(format!(
-                    "Note '{}' not found after renaming",
-                    new_name
-                ))
-            })
+        })
     }
 
     /// Rename a tag in the vault. This will update all notes that have the tag.

@@ -1,5 +1,6 @@
 import ovault
 import tempfile
+import os
 
 def test_open_all_test_vaults(vaults: list[ovault.Vault]):
     """
@@ -63,7 +64,7 @@ def test_rename_note_in_simple_vault(simple_vault: ovault.Vault):
 
     old_note_content = old_note.read()
 
-    vault.rename_note(old_note_name, new_note_name)
+    vault.rename(old_note_name, new_note_name)
 
     # Old note should not exist anymore
     assert vault.get_note_by_name(old_note_name) is None
@@ -92,7 +93,7 @@ def test_rename_note_in_uni_vault(uni_notes_vault: ovault.Vault):
 
     old_note_content = old_note.read()
 
-    vault.rename_note(old_note_name, new_note_name)
+    vault.rename(old_note_name, new_note_name)
 
     # Old note should not exist anymore
     assert vault.get_note_by_name(old_note_name) is None
@@ -108,6 +109,51 @@ def test_rename_note_in_uni_vault(uni_notes_vault: ovault.Vault):
         for link in backlink_note.links:
             print(f"{backlink} -> {link}")
             assert link != old_note_name, "Backlinks should be updated to the new note name"
+
+def test_get_attachments(simple_vault: ovault.Vault):
+    vault = simple_vault
+
+    attachment_name = "attachment.pdf"
+    a1 = vault.attachment(attachment_name)
+    a2 = vault.get_attachment_by_name(attachment_name)
+
+    assert a1 is not None
+    assert a2 is not None
+
+    assert a1 == a2
+
+    numbers1 = vault.attachment("numbers.txt")
+    numbers2 = vault.attachment("sub/numbers.txt")
+
+    assert numbers1 is not None
+    assert numbers2 is not None
+
+    assert numbers1 != numbers2
+
+def test_rename_attachment(simple_vault: ovault.Vault):
+    vault = simple_vault
+
+    old_attachment_name = "attachment.pdf"
+    new_attachment_name = "ATTACHMENT_RENAMED.pdf"
+
+    old_attachment = vault.get_attachment_by_name(old_attachment_name)
+    assert old_attachment is not None
+
+    old_attachment_content = old_attachment.read_bytes()
+
+    vault.rename(str(old_attachment.path), f"sub/{new_attachment_name}")
+
+    # Old attachment should not exist anymore
+    assert vault.get_attachment_by_name(old_attachment_name) is None
+
+    # New attachment should exist
+    new_attachment = vault.get_attachment_by_name(new_attachment_name)
+
+    assert os.path.exists(os.path.join(vault.path, "sub", new_attachment_name))
+
+    assert new_attachment is not None
+
+    assert new_attachment.read_bytes() == old_attachment_content
 
 def test_vault_ignore(simple_vault: ovault.Vault):
     vault_path = str(simple_vault.path)
