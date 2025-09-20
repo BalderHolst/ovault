@@ -3,7 +3,14 @@
 # Check that the code does not contain "dbg!' statements
 if grep -rn --include="*.rs" "dbg!(" src/ ;
 then
-  echo "Debug statements found in the code. Please remove them before committing."
+  echo -e "\nDebug statements found in the code. Please remove them before committing."
+  exit 1
+fi
+
+# Check that the code does not contain "println!" statements (except `tests.rs` and `logging.rs`)
+if grep -rn --include="*.rs" "println!(" src/ | grep -vE "tests\.rs|logging\.rs" ;
+then
+  echo -e "\nPrint statements found in the code. Please remove them before committing."
   exit 1
 fi
 
