@@ -4,6 +4,7 @@ Show information about an Obsidian vault.
 
 import ovault
 import os
+import sys
 import json
 import argparse
 
@@ -56,7 +57,7 @@ def display_info(info: dict):
 
 def main():
 
-    parser = argparse.ArgumentParser(description="Show information about an Obsidian vault")
+    parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
     parser.add_argument("vault_path", type=str, help="Path to the Obsidian vault")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed information about the vault")
     parser.add_argument("--json", action="store_true", help="Output in JSON format")
