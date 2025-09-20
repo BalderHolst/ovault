@@ -58,7 +58,8 @@ MACOS_SPEC = Spec(
 
 SPECS = [WINDOWS_SPEC, LINUX_SPEC, MACOS_SPEC]
 
-def path(path: Path) -> str:
+def shp(path: Path) -> str:
+    """Show path"""
     try:               return f"{path.relative_to(Path.cwd())}"
     except ValueError: return str(path)
 
@@ -79,7 +80,7 @@ class CaseError(SpecError):
         self.path2 = path2
 
     def msg(self) -> str:
-        return (f"Filenames '{path(self.path1)}' and '{path(self.path2)}' differ only in case, "
+        return (f"Filenames '{shp(self.path1)}' and '{shp(self.path2)}' differ only in case, "
                 f"which is not allowed.")
 
 class LengthError(SpecError):
@@ -88,7 +89,7 @@ class LengthError(SpecError):
         self.path = path
 
     def msg(self) -> str:
-        return (f"Filename of '{path(self.path)}' exceeds the maximum length of "
+        return (f"Filename of '{shp(self.path)}' exceeds the maximum length of "
                 f"{self.spec.max_filename_length} characters.")
 
 class ReservedNameError(SpecError):
@@ -97,7 +98,7 @@ class ReservedNameError(SpecError):
         self.path = path
 
     def msg(self) -> str:
-        return (f"Filename of '{path(self.path)}' is a reserved name.")
+        return (f"Filename of '{shp(self.path)}' is a reserved name.")
 
 class InvalidCharError(SpecError):
     def __init__(self, spec: Spec, path: Path, char: str):
@@ -106,7 +107,7 @@ class InvalidCharError(SpecError):
         self.char = char
 
     def msg(self) -> str:
-        return (f"Filename '{path(self.path)}' contains invalid character '{self.char}'.")
+        return (f"Filename '{shp(self.path)}' contains invalid character '{self.char}'.")
 
 class InvalidTrailingError(SpecError):
     def __init__(self, spec: Spec, path: Path, char: str):
@@ -115,7 +116,7 @@ class InvalidTrailingError(SpecError):
         self.char = char
 
     def msg(self) -> str:
-        return (f"Filename '{path(self.path)}' ends with invalid trailing character '{self.char}'.")
+        return (f"Filename '{shp(self.path)}' ends with invalid trailing character '{self.char}'.")
 
 class InvalidLeadingError(SpecError):
     def __init__(self, spec: Spec, path: Path, char: str):
@@ -124,7 +125,7 @@ class InvalidLeadingError(SpecError):
         self.char = char
 
     def msg(self) -> str:
-        return (f"Filename '{path(self.path)}' starts with invalid leading character '{self.char}'.")
+        return (f"Filename '{shp(self.path)}' starts with invalid leading character '{self.char}'.")
 
 def check_filename(path: Path, names: dict[str, Path]) -> list[SpecError]:
     errors = []
@@ -164,10 +165,18 @@ def check_dir(path: Path) -> list[SpecError]:
     errors = []
     names = {}
     for item in path.iterdir():
-        errors += check_filename(item, names)
-        names[item.name.lower()] = item
-        if item.is_dir():
-            errors += check_dir(item)
+        try:
+
+            errors += check_filename(item, names)
+            names[item.name.lower()] = item
+            if item.is_dir():
+                errors += check_dir(item)
+
+        except PermissionError:
+            print(f"Warning: Permission denied for '{shp(item)}'. Skipping.", file=sys.stderr)
+        except OSError as e:
+            print(f"Warning: OS error for '{shp(item)}': {e}. Skipping.", file=sys.stderr)
+
     return errors
 
 def main():
@@ -185,7 +194,7 @@ def main():
     errors = check_dir(vault_path)
 
     if not errors:
-        print(f"No filename compatibility issues found in '{path(vault_path)}'.")
+        print(f"No filename compatibility issues found in '{shp(vault_path)}'.")
         exit(0)
 
     spec_errors = {spec.os: [] for spec in SPECS}
