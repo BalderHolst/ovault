@@ -23,7 +23,7 @@ def attachment_to_dict(attachment: ovault.Attachment):
 def count_links(vault: ovault.Vault):
     count = 0
     for note in vault.notes():
-        for token in note.tokens():
+        for token in note.all_tokens():
             if isinstance(token, token.InternalLink):
                 count += 1
     return count

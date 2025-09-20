@@ -2,7 +2,7 @@
 Check all external links to websites in an Obsidian vault and report any broken links.
 """
 
-from . import ovault
+import ovault
 import sys
 import os
 import requests
@@ -38,9 +38,11 @@ def main():
         print(f"\n{'=' * left_pad} {msg} {'=' * right_pad}{RESET}")
         if color: print(RESET, end="")
 
+    count = 0
+
     for note in notes:
 
-        note_links = [token.link for token in note.tokens() if isinstance(token, token.ExternalLink)]
+        note_links = [token.link for token in note.all_tokens() if isinstance(token, token.ExternalLink)]
 
         if len(note_links) == 0: continue
 
@@ -55,6 +57,8 @@ def main():
                 print(f"{YELLOW}SKIPPED{RESET}")
                 continue
 
+            count += 1
+
             try:
                 resp = requests.get(url, headers=HEADERS, timeout=5)
             except requests.RequestException as e:
@@ -63,18 +67,19 @@ def main():
             if resp.status_code == 200:
                 print(f"{GREEN}OK{RESET}")
             else:
-                broken_links.append((note.name, url, resp.status_code))
+                broken_links.append((note, url, resp.status_code))
                 print(f"{RED}FAILED{RESET} ({resp.status_code})")
 
+    print(f"\nChecked {count} links in {len(notes)} notes.\n")
 
     if not broken_links:
-        print(f"\n{GREEN}All external links are valid!{RESET}")
+        print(f"{GREEN}All external links are valid!{RESET}")
         exit(0)
 
     print(RED, end="")
-    label(f"Broken links found", color=RED)
-    for note_name, url, status in broken_links:
-        print(f"- {note_name}: {url} (status code: {status})")
+    print(f"Broken links found:")
+    for note, url, status in broken_links:
+        print(f"    {note.name} ({note.path}): {url} (status code: {status})")
     print(RESET, end="")
 
     exit(1)
