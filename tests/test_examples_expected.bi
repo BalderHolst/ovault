@@ -26,7 +26,7 @@ python3 examples/1_overview.py "test-vaults/simple_vault"
 
 path        : test-vaults/simple_vault
 notes       : 11
-attachments : 0
+attachments : 3
 tags        : ['callout4youtag', 'frontmatter-tag1', 'frontmatter-tag2', 'linksaregood']
 
 :b shell 73
@@ -296,7 +296,7 @@ Found heading: Official Help Site at level 2
 Found heading: What is this place? at level 2
 
 :b shell 64
-python3 examples/5_graph_image.py "test-vaults/Obsidian Sandbox"
+python3 examples/4_graph_image.py "test-vaults/Obsidian Sandbox"
 :i returncode 0
 :b stdout 2685
 digraph {
@@ -346,7 +346,7 @@ digraph {
 }
 
 :b shell 69
-python3 examples/5_graph_image.py "test-vaults/BalderHolst_uni-notes"
+python3 examples/4_graph_image.py "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
 :b stdout 34607
 digraph {
@@ -879,7 +879,7 @@ digraph {
 }
 
 :b shell 60
-python3 examples/5_graph_image.py "test-vaults/simple_vault"
+python3 examples/4_graph_image.py "test-vaults/simple_vault"
 :i returncode 0
 :b stdout 660
 digraph {
@@ -907,7 +907,7 @@ digraph {
 }
 
 :b shell 76
-python3 examples/5_graph_image.py "test-vaults/SoRobby_ObsidianStarterVault"
+python3 examples/4_graph_image.py "test-vaults/SoRobby_ObsidianStarterVault"
 :i returncode 0
 :b stdout 10819
 digraph {
@@ -1020,7 +1020,7 @@ digraph {
 }
 
 :b shell 65
-python3 examples/5_graph_image.py "test-vaults/TheJoboReal_Noter"
+python3 examples/4_graph_image.py "test-vaults/TheJoboReal_Noter"
 :i returncode 0
 :b stdout 128757
 digraph {
@@ -2014,7 +2014,7 @@ digraph {
 }
 
 :b shell 74
-python3 examples/6_create_vault.py tmp_test_vault && rm -rf tmp_test_vault
+python3 examples/5_create_vault.py tmp_test_vault && rm -rf tmp_test_vault
 :i returncode 0
 :b stdout 873
 Getting manual pages for utilities...
@@ -2062,17 +2062,17 @@ Re-indexing vault...
 Vault created successfully at 'tmp_test_vault' with 38 notes!
 
 :b shell 77
-python3 examples/7_rename_note.py test-vaults/simle_vault first_note    FIRST
+python3 examples/6_rename_note.py test-vaults/simle_vault first_note    FIRST
 :i returncode 1
 :b stdout 0
 
 :b shell 80
-python3 examples/7_rename_note.py test-vaults/simle_vault first_note.md FIRST.md
+python3 examples/6_rename_note.py test-vaults/simle_vault first_note.md FIRST.md
 :i returncode 1
 :b stdout 0
 
 :b shell 68
-python3 examples/8_add_frontmatter.py "test-vaults/Obsidian Sandbox"
+python3 examples/7_add_frontmatter.py "test-vaults/Obsidian Sandbox"
 :i returncode 0
 :b stdout 1737
 Adding frontmatter to 'From plain-text note-taking' in directory 'Adventurer'
@@ -2105,7 +2105,7 @@ Adding frontmatter to 'Get started with Obsidian' in directory 'Guides'
 Adding frontmatter to 'Link notes' in directory 'Guides'
 
 :b shell 73
-python3 examples/8_add_frontmatter.py "test-vaults/BalderHolst_uni-notes"
+python3 examples/7_add_frontmatter.py "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
 :b stdout 31818
 'Drawing 2022-11-17 12.34.37.excalidraw' already has frontmatter, skipping.
@@ -2617,7 +2617,7 @@ Adding frontmatter to 'distribution' in directory 'Templates'
 Adding frontmatter to 'subject' in directory 'Templates'
 
 :b shell 64
-python3 examples/8_add_frontmatter.py "test-vaults/simple_vault"
+python3 examples/7_add_frontmatter.py "test-vaults/simple_vault"
 :i returncode 0
 :b stdout 149
 'frontmatter' already has frontmatter, skipping.
@@ -2625,7 +2625,7 @@ Adding frontmatter to 'sub-note' in directory 'sub'
 Adding frontmatter to 'todo' in directory 'sub'
 
 :b shell 80
-python3 examples/8_add_frontmatter.py "test-vaults/SoRobby_ObsidianStarterVault"
+python3 examples/7_add_frontmatter.py "test-vaults/SoRobby_ObsidianStarterVault"
 :i returncode 0
 :b stdout 6083
 'Concept Board' already has frontmatter, skipping.
@@ -2730,7 +2730,7 @@ Adding frontmatter to 'Resource' in directory 'resources'
 Adding frontmatter to 'Space home' in directory 'spaces'
 
 :b shell 69
-python3 examples/8_add_frontmatter.py "test-vaults/TheJoboReal_Noter"
+python3 examples/7_add_frontmatter.py "test-vaults/TheJoboReal_Noter"
 :i returncode 1
 :b stdout 7059
 Adding frontmatter to '03-01-2025' in directory 'Calendar'
@@ -2834,13 +2834,13 @@ Adding frontmatter to 'Airmon wifi bruteforce' in directory 'Projects'
 Adding frontmatter to 'Eink Calendar' in directory 'Projects'
 
 :b shell 70
-python3 examples/9_formatter.py test-vaults/simple_vault/first_note.md
+python3 examples/8_formatter.py test-vaults/simple_vault/first_note.md
 :i returncode 0
 :b stdout 56
 Formatting note: test-vaults/simple_vault/first_note.md
 
 :b shell 70
-python3 examples/9_formatter.py --vault "test-vaults/Obsidian Sandbox"
+python3 examples/8_formatter.py --vault "test-vaults/Obsidian Sandbox"
 :i returncode 0
 :b stdout 2242
 Formatting note: test-vaults/Obsidian Sandbox/Adventurer/From plain-text note-taking.md
@@ -2876,7 +2876,7 @@ Formatting note: test-vaults/Obsidian Sandbox/Start Here.md
 Formatting note: test-vaults/Obsidian Sandbox/Vault is just a local folder.md
 
 :b shell 75
-python3 examples/9_formatter.py --vault "test-vaults/BalderHolst_uni-notes"
+python3 examples/8_formatter.py --vault "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
 :b stdout 39582
 Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/Drawing 2022-11-17 12.34.37.excalidraw.md
@@ -3390,7 +3390,7 @@ Formatting note: test-vaults/BalderHolst_uni-notes/Templates/distribution.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Templates/subject.md
 
 :b shell 66
-python3 examples/9_formatter.py --vault "test-vaults/simple_vault"
+python3 examples/8_formatter.py --vault "test-vaults/simple_vault"
 :i returncode 0
 :b stdout 590
 Formatting note: test-vaults/simple_vault/callout.md
@@ -3406,7 +3406,7 @@ Formatting note: test-vaults/simple_vault/todo.md
 Formatting note: test-vaults/simple_vault/websites.md
 
 :b shell 82
-python3 examples/9_formatter.py --vault "test-vaults/SoRobby_ObsidianStarterVault"
+python3 examples/8_formatter.py --vault "test-vaults/SoRobby_ObsidianStarterVault"
 :i returncode 0
 :b stdout 10607
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/README.md
@@ -3512,7 +3512,7 @@ Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates
 Formatting note: test-vaults/SoRobby_ObsidianStarterVault/Vault/_data_/templates/spaces/Space home.md
 
 :b shell 71
-python3 examples/9_formatter.py --vault "test-vaults/TheJoboReal_Noter"
+python3 examples/8_formatter.py --vault "test-vaults/TheJoboReal_Noter"
 :i returncode 0
 :b stdout 103077
 Formatting note: test-vaults/TheJoboReal_Noter/Calendar/03-01-2025.md

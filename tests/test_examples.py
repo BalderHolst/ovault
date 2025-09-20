@@ -28,20 +28,17 @@ SHELLS = [
 
     "python3 examples/3_find_headings.py",
 
-    # "python3 examples/4_check_external_links.py \"test-vaults/Obsidian Sandbox\"",
-    # "python3 examples/4_check_external_links.py test-vaults/simple_vault",
+    "python3 examples/4_graph_image.py <vault>",
 
-    "python3 examples/5_graph_image.py <vault>",
+    "python3 examples/5_create_vault.py tmp_test_vault && rm -rf tmp_test_vault",
 
-    "python3 examples/6_create_vault.py tmp_test_vault && rm -rf tmp_test_vault",
+    "python3 examples/6_rename_note.py test-vaults/simle_vault first_note    FIRST",
+    "python3 examples/6_rename_note.py test-vaults/simle_vault first_note.md FIRST.md",
 
-    "python3 examples/7_rename_note.py test-vaults/simle_vault first_note    FIRST",
-    "python3 examples/7_rename_note.py test-vaults/simle_vault first_note.md FIRST.md",
+    "python3 examples/7_add_frontmatter.py <vault>",
 
-    "python3 examples/8_add_frontmatter.py <vault>",
-
-    "python3 examples/9_formatter.py test-vaults/simple_vault/first_note.md",
-    "python3 examples/9_formatter.py --vault <vault>",
+    "python3 examples/8_formatter.py test-vaults/simple_vault/first_note.md",
+    "python3 examples/8_formatter.py --vault <vault>",
 ]
 
 def unwrap_shells(shells: list[str]) -> list[str]:
