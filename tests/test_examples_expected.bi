@@ -348,7 +348,7 @@ digraph {
 :b shell 69
 python3 examples/4_graph_image.py "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
-:b stdout 34607
+:b stdout 34605
 digraph {
     overlap=false;
     node [shape=box, style=filled, fillcolor="#0099FF25"];
@@ -389,7 +389,7 @@ digraph {
     "32notes/basis" [label="notes/basis"]
     "33notes/bayesian-learning" [label="notes/bayesian-learning"]
     "34notes/bayesian-networks" [label="notes/bayesian-networks"]
-    "35notes/bellman-ford*-algorithm" [label="notes/bellman-ford*-algorithm"]
+    "35notes/bellman-ford-algorithm" [label="notes/bellman-ford-algorithm"]
     "36notes/bessel" [label="notes/bessel"]
     "37notes/bevis-for-2.-løsningsformel" [label="notes/bevis-for-2.-løsningsformel"]
     "38notes/bevis-for-parameterfremstilling" [label="notes/bevis-for-parameterfremstilling"]
@@ -2107,7 +2107,7 @@ Adding frontmatter to 'Link notes' in directory 'Guides'
 :b shell 73
 python3 examples/7_add_frontmatter.py "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
-:b stdout 31818
+:b stdout 31817
 'Drawing 2022-11-17 12.34.37.excalidraw' already has frontmatter, skipping.
 'Truth-table to MUX' already has frontmatter, skipping.
 'fysik PA' already has frontmatter, skipping.
@@ -2142,7 +2142,7 @@ Adding frontmatter to 'Bandwidth' in directory 'Notes'
 Adding frontmatter to 'Basis' in directory 'Notes'
 Adding frontmatter to 'Bayesian Learning' in directory 'Notes'
 Adding frontmatter to 'Bayesian Networks' in directory 'Notes'
-Adding frontmatter to 'Bellman-Ford* Algorithm' in directory 'Notes'
+Adding frontmatter to 'Bellman-Ford Algorithm' in directory 'Notes'
 Adding frontmatter to 'Bessel' in directory 'Notes'
 Adding frontmatter to 'Bevis for 2. Løsningsformel' in directory 'Notes'
 Adding frontmatter to 'Bevis for Parameterfremstilling' in directory 'Notes'
@@ -2878,7 +2878,7 @@ Formatting note: test-vaults/Obsidian Sandbox/Vault is just a local folder.md
 :b shell 75
 python3 examples/8_formatter.py --vault "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
-:b stdout 39582
+:b stdout 39581
 Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/Drawing 2022-11-17 12.34.37.excalidraw.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/Truth-table to MUX.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Excalidraw/fysik PA.md
@@ -2914,7 +2914,7 @@ Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bandwidth.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Basis.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bayesian Learning.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bayesian Networks.md
-Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bellman-Ford* Algorithm.md
+Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bellman-Ford Algorithm.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bessel.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for 2. Løsningsformel.md
 Formatting note: test-vaults/BalderHolst_uni-notes/Notes/Bevis for Parameterfremstilling.md
