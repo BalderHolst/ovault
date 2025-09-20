@@ -72,6 +72,17 @@ impl VaultItem {
         }
     }
 
+    pub fn add_backlink(&mut self, backlink: String) {
+        match self {
+            VaultItem::Note { note } => {
+                note.add_backlink(backlink);
+            }
+            VaultItem::Attachment { attachment } => {
+                attachment.add_backlink(backlink);
+            }
+        }
+    }
+
     /// Check if the vault item is a note
     pub fn is_note(&self) -> bool {
         matches!(self, VaultItem::Note { .. })
@@ -607,8 +618,8 @@ impl Vault {
 
     /// Index the vault. This will clear the current index and re-index the vault.
     pub fn index(&mut self) {
-        let mut tags = vec![];
-        let mut links = vec![];
+        let mut tags = vec![]; // (tag, note_name)
+        let mut links = vec![]; // (from_note_name, to_note_name)
 
         for note in self.notes_mut() {
             note.backlinks.clear();
@@ -618,7 +629,7 @@ impl Vault {
 
             tags.extend(note.tags.iter().map(|tag| (tag.clone(), name.clone())));
 
-            links.extend(note.links.iter().map(|link| (name.clone(), link.clone())))
+            links.extend(note.links.iter().map(|to| (name.clone(), to.clone())))
         }
 
         // Insert the tags
@@ -640,12 +651,8 @@ impl Vault {
 
             // Backlink
             {
-                if let Some(to_note) = self.get_note_mut(&to) {
-                    to_note.add_backlink(from.clone());
-                    continue;
-                };
-
-                if let Some(_to_attachment) = self.get_attachment_mut(&to) {
+                if let Some(to_item) = self.get_item_mut(&to) {
+                    to_item.add_backlink(from.clone());
                     continue;
                 };
 

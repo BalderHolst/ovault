@@ -5,7 +5,6 @@ use std::{collections::HashSet, path::PathBuf};
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
-// TODO: Add `backlinks` field
 /// An attachment in an Obsidian vault. An attachment is any
 /// file that is not a markdown file.
 #[derive(Debug, Clone, PartialEq)]
@@ -17,7 +16,6 @@ pub struct Attachment {
     /// Path to the attachment file.
     pub path: PathBuf,
 
-    // TODO: Actually populate this field.
     /// List of paths to markdown files that link to this attachment.
     pub backlinks: HashSet<String>,
 }
@@ -35,6 +33,10 @@ impl Attachment {
     /// Get the full (absolute) path to the attachment file.
     pub fn full_path(&self) -> PathBuf {
         self.vault_path.join(&self.path)
+    }
+
+    pub(crate) fn add_backlink(&mut self, backlink: String) {
+        self.backlinks.insert(backlink);
     }
 }
 

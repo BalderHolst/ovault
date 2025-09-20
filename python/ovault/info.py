@@ -19,7 +19,10 @@ def note_to_dict(note: ovault.Note):
     }
 
 def attachment_to_dict(attachment: ovault.Attachment):
-    return { "path": str(attachment.path) }
+    return {
+        "path": str(attachment.path),
+        "backlinks": list(attachment.backlinks),
+    }
 
 def count_links(vault: ovault.Vault):
     count = 0
