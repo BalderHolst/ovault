@@ -7,10 +7,9 @@ Check out the [examples](https://github.com/BalderHolst/ovault/tree/main/example
 ```python
 import ovault
 
- # Open a vault at a given path
+# Open a vault at a given path
 vault = ovault.Vault("test-vaults/simple_vault")
 
-print()
 print("Vault Path  :", vault.path)
 print("Notes       :", len(vault.notes()))
 print("Attachments :", len(vault.attachments()))
@@ -28,10 +27,9 @@ print("Note Tokens :", note.tokens())
 
 *Output:*
 ```
-
 Vault Path  : /home/balder/projects/ovault/test-vaults/simple_vault
 Notes       : 11
-Attachments : 0
+Attachments : 3
 Tags        : ['callout4youtag', 'frontmatter-tag1', 'frontmatter-tag2', 'linksaregood']
 
 Note Name   : first_note
