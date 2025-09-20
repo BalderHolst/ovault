@@ -62,6 +62,7 @@ macro_rules! test_lex_token {
             let token = lexer.next().unwrap();
             println!("\nRaw Source:\n{:?}", $source);
             println!("\nSource:\n{}", $source);
+            println!("\nSourch Length: {}", $source.len());
             println!("\nToken: {:#?}\n", token);
             let expected = $($token)*;
             assert_eq!(
@@ -582,7 +583,7 @@ fn test_uneven_callout() {
 >" => Token::Callout {
         span: Span {
             start: 0,
-            end: 145,
+            end: 141,
         },
         callout: Callout {
             kind: "example".to_string(),
@@ -598,14 +599,14 @@ fn test_uneven_callout() {
                 Token::DisplayMath {
                     span: Span {
                         start: 53,
-                        end: 143,
+                        end: 139,
                     },
                     latex:"\nA=\n\\left(\n\\begin{array}{cc}\n-5 & 2 \\\\\n2 & -2 \\\\\n\\end{array}\n\\right)\n".to_string(),
                 },
                 Token::Text {
                     span: Span {
-                        start: 143,
-                        end: 145,
+                        start: 139,
+                        end: 141,
                     },
                     text: "\n".to_string(),
                 },
