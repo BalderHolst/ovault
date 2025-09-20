@@ -31,3 +31,9 @@ RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features || {
   echo "Documntation issues found. Please fix them before committing."
   exit 1
 }
+
+# Check for uncomitted changes
+if [[ -n $(git status --porcelain) ]]; then
+    git status --porcelain
+    echo -e "\nUncommitted changes found. Please commit them."
+fi
