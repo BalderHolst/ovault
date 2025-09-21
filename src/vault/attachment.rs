@@ -67,4 +67,8 @@ impl Attachment {
     fn __eq__(&self, other: &Attachment) -> bool {
         self == other
     }
+
+    fn __lt__(&self, other: &Attachment) -> bool {
+        self.path < other.path
+    }
 }
