@@ -70,8 +70,12 @@ def main():
     parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
     parser.add_argument("vault_path", type=str, help="Path to the Obsidian vault")
     parser.add_argument("--dry-run", action="store_true", help="Show what would be done, but don't actually rename anything.")
+    parser.add_argument("--yes", "-y", action="store_true", help="Skip the backup warning prompt.")
 
     args = parser.parse_args()
+
+    if not args.dry_run and not args.yes:
+        ovault._backup_warning()
 
     vault = ovault.Vault(args.vault_path)
 

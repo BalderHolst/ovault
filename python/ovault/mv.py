@@ -33,8 +33,12 @@ def main():
     parser.add_argument("--vault", type=str, default=None, help="Path to the Obsidian vault. Searches for '.obsidian' if not specified.")
     parser.add_argument("--dry-run", action="store_true", help="Show what would be done, but don't actually rename anything.")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed information about the operations being performed")
+    parser.add_argument("--yes", "-y", action="store_true", help="Skip the backup warning prompt.")
 
     args = parser.parse_args()
+
+    if not args.dry_run and not args.yes:
+        ovault._backup_warning()
 
     src = Path(args.src).resolve()
     dst = Path(args.dst).resolve()
