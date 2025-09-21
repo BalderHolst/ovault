@@ -9,21 +9,49 @@ import ovault
 import argparse
 import sys
 import os
+import colorsys
 from pathlib import Path
 
 from types import ModuleType as Module
+
+def hsv_to_hex(h: float, s: float, v: float) -> str:
+    r, g, b = colorsys.hsv_to_rgb(h, s, v)
+    return '#{:02x}{:02x}{:02x}'.format(int(r * 255), int(g * 255), int(b * 255))
+
+TagColorMap = dict[str, tuple[str, int]]
+
+def generate_tag_colors(vault: ovault.Vault) -> TagColorMap:
+    tags = vault.tags()
+    tag_colors = {}
+    for i, tag in enumerate(sorted(tags)):
+        hue = i / len(tags)
+        saturation = 0.6
+        value = 0.9
+        rgb = hsv_to_hex(hue, saturation, value)
+        priority = -len(vault.get_notes_by_tag(tag))
+        tag_colors[tag] = (rgb, priority)
+    return tag_colors
+
+# Choose the color based on the highest priority tag
+def choose_color(tags: list[str], tag_colors: TagColorMap) -> str:
+    if not tags: return '#999999'
+    best_tag = max(tags, key=lambda t: tag_colors[t][1])
+    return tag_colors[best_tag][0]
 
 def main():
     ovault._import_extra("pyvis")
     from pyvis.network import Network
 
-    def populate_graph(net: Network, vault: ovault.Vault):
+    def populate_graph(net: Network, vault: ovault.Vault, tag_colors: TagColorMap) -> None:
         for note in vault.notes():
             size = len(note.links) + len(note.backlinks) + 5,
+            color = choose_color(note.tags, tag_colors)
+
             net.add_node(str(note.path),
                          size=size,
                          label=note.name,
-                         title=str(note.path))
+                         title=str(note.path),
+                         color=color)
 
         for attachment in vault.attachments():
             size = len(note.backlinks) + 3,
@@ -66,13 +94,15 @@ def main():
     if args.buttons:
         net.show_buttons(filter_=['physics'])
 
-    populate_graph(net, vault)
+    tag_colors = generate_tag_colors(vault)
+
+    populate_graph(net, vault, tag_colors)
 
 
     os.makedirs(args.output, exist_ok=True)
-    index = f"{args.output}/index.html"
-    net.write_html(index, notebook=False)
-    print(f"Graph saved to '{index}'.")
+    os.chdir(args.output)
+    net.write_html("index.html", notebook=False)
+    print(f"Graph saved to '{args.output}'.")
 
 
 
