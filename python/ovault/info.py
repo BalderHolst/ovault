@@ -8,6 +8,8 @@ import sys
 import json
 import argparse
 
+from ovault.ansi import *
+
 def note_to_dict(note: ovault.Note):
     return {
         "name": note.name,

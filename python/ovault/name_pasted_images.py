@@ -10,6 +10,8 @@ import argparse
 import re
 from pathlib import Path
 
+from ovault.ansi import *
+
 def is_pasted_image(path: Path) -> bool:
     return not re.match(r"Pasted image \d{14}\.png", path.name) is None
 

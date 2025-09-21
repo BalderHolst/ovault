@@ -5,8 +5,7 @@ Show a list of all utility modules included in `ovault`.
 from pathlib import Path
 import importlib
 
-BLUE = "\033[94m"
-RESET = "\033[0m"
+from ovault.ansi import *
 
 def main():
 
