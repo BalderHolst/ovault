@@ -347,7 +347,7 @@ impl Note {
     /// within other tokens (e.g. callouts, quotes, lists).
     #[pyo3(name = "all_tokens")]
     pub fn py_all_tokens(&self) -> PyResult<Vec<Token>> {
-        match self.tokens() {
+        match self.all_tokens() {
             Ok(ts) => Ok(ts.collect()),
             Err(e) => Err(e.into()),
         }
