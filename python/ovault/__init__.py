@@ -1,3 +1,9 @@
+# Expose the Rust extension exports
+from . import ovault as _ovault
+__doc__ = _ovault.__doc__
+if hasattr(_ovault, '__all__'):
+    __all__ = _ovault.__all__
+
 # Import the Rust extension as the base
 from .ovault import *
 
