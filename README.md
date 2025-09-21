@@ -1,6 +1,10 @@
 # OVault
 A python library for accessing and editing your [Obsidian](https://obsidian.md) vault.
 
+> [!WARNING]
+> This library can easily make large changes to your vault which may be difficult to reverse.
+> Make sure to have a backup of your vault before using OVault to modify it.
+
 Check out the [examples](https://github.com/BalderHolst/ovault/tree/main/examples)!
 
 ## Code Example
