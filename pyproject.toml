@@ -22,8 +22,11 @@ Repository = "https://github.com/BalderHolst/ovault"
 
 [project.optional-dependencies]
 dev = [
-  "maturin",
-  "pytest",
-  "pdoc3",
-  "requests",
+    "maturin",
+    "pytest",
+    "pdoc3",
+]
+util_deps = [
+    "requests",
+    "pyvis",
 ]

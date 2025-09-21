@@ -26,3 +26,20 @@ def _backup_warning():
         exit(1)
 
     print()
+
+def _import_extra(package: str, pypi_name=None):
+
+    if pypi_name is None:
+        pypi_name = package
+
+    try:
+        __import__(package)
+    except ImportError:
+        print(
+            f"{RED}Error: This utility the '{package}' package, which is not installed.{RESET}\n"
+            f"\n"
+            f"Please install it via {BLUE}`pip install {pypi_name}`{RESET} to run this script.\n"
+            f"\n"
+            f"Alternatively, you can install all utility dependencies via {BLUE}`pip install ovault[util_deps]`{RESET}."
+        )
+        exit(1)

@@ -11,6 +11,7 @@ import os
 from ovault.ansi import *
 
 def main():
+    ovault._import_extra("requests")
     import requests
 
     if len(sys.argv) != 2:
