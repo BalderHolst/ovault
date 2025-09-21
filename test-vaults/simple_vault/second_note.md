@@ -6,5 +6,8 @@ This note links to the [[first_note|first note]].
 
 Here is a link to the non-existent [[third note]].
 
+This is an embedded attachment pdf:
+![[attachment.pdf]]
+
 ---
 #linksaregood
