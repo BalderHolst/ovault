@@ -447,7 +447,6 @@ fn test_rename_collision() {
     let mut test_vault = TestVault::new(base).unwrap();
     let vault = &mut test_vault.vault;
 
-    // vault.rename_note("sub/todo", "sub/second_note").unwrap();
     vault.rename("sub/todo", "sub/second_note").unwrap();
 
     let first_note = vault.get_note("first_note").unwrap();
@@ -463,6 +462,8 @@ fn test_rename_collision() {
             }
         })
         .collect();
+
+    println!("Links found: {:?}", links);
 
     assert_eq!(links.len(), 2);
     assert_eq!(&links[0].dest, "second_note");

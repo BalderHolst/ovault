@@ -343,6 +343,10 @@ impl Vault {
         let normalized_old = normalize(old_name.to_string());
         let normalized_new = normalize(new_name.to_string());
 
+        let new_path = PathBuf::from(new_name);
+
+        self.update_backlinks(old_name, new_name, &new_path)?;
+
         let Some(vault_item) = self.get_item_mut(&normalized_old) else {
             return Err(io::Error::new(
                 io::ErrorKind::NotFound,
@@ -354,7 +358,7 @@ impl Vault {
         let old_full_path = vault_item.full_path();
 
         // Update the item's path
-        *vault_item.get_path_mut() = PathBuf::from(new_name);
+        *vault_item.get_path_mut() = new_path.clone();
 
         // If it's a note, ensure it has the .md extension
         if vault_item.is_note() {
@@ -390,11 +394,82 @@ impl Vault {
 
         let vault_item = vault_item.clone();
 
+        // Update the vault tag index (only notes can contain tags)
+        if let VaultItem::Note { note: vault_note } = &vault_item {
+            self.tags.retain(|_, notes| {
+                notes.retain(|note_name| note_name != &normalized_old);
+                !notes.is_empty()
+            });
+
+            for tag in vault_note.tags.iter() {
+                self.tags
+                    .entry(tag.clone())
+                    .or_default()
+                    .insert(normalized_new.clone());
+            }
+        }
+
+        // Update the vault item index
+        let old_bucket = normalized_old.rsplit('/').next().unwrap_or(&normalized_old);
+        let new_bucket = normalized_new.rsplit('/').next().unwrap_or(&normalized_new);
+        {
+            if let Some(mut items) = self.items.remove(old_bucket) {
+                // Get the index of the note in the items vector (there can be multiple items with the same name)
+                let norm_new_path = normalize_path(&new_path);
+                let index = items
+                    .iter()
+                    .position(|item| normalize_path(item.get_path()) == norm_new_path)
+                    .ok_or_else(|| {
+                        io::Error::new(
+                            io::ErrorKind::NotFound,
+                            format!("Item '{}' not found in vault items", old_name),
+                        )
+                    })?;
+
+                // Remove the note from the items vector
+                let vault_item = items.remove(index);
+
+                // Re-insert the remaining items (if any)
+                if !items.is_empty() {
+                    self.items.insert(old_bucket.to_string(), items);
+                }
+
+                // Insert the renamed note
+                self.insert_item(new_bucket.to_string(), vault_item);
+            } else if cfg!(debug_assertions) {
+                panic!("Could not remove {old_name} from vault. It was not found.");
+            }
+        }
+
+        Ok(())
+    }
+
+    fn update_backlinks(
+        &mut self,
+        old_name: &str,
+        new_name: &str,
+        new_path: &Path,
+    ) -> io::Result<()> {
+        let normalized_old = normalize(old_name.to_string());
+        let normalized_new = normalize(new_name.to_string());
+
+        let Some(vault_item) = self.get_item(&normalized_old).cloned() else {
+            return Err(io::Error::new(
+                io::ErrorKind::NotFound,
+                format!("Vault item '{}' not found", old_name),
+            ));
+        };
+
         // Check if there are other items with the same name,
         // if so, we need to use full paths for the links to avoid collisions
+        let normalized_new_name = normalized_new
+            .rsplit('/')
+            .next()
+            .unwrap_or(&normalized_new)
+            .to_string();
         let use_full_path = self
             .items
-            .get(&normalized_new)
+            .get(&normalized_new_name)
             .is_some_and(|items| !items.is_empty());
 
         // Update notes that link to this vault item
@@ -409,7 +484,7 @@ impl Vault {
                 .filter_map(|token| {
                     if let Token::InternalLink { span, link, .. } = token {
                         let linked_item = self.get_item(&link.dest)?;
-                        if normalize_path(linked_item.get_path())? == normalized_new {
+                        if normalize_path(linked_item.get_path())? == normalized_old {
                             return Some((span, link));
                         }
                     }
@@ -435,62 +510,15 @@ impl Vault {
                         link.dest = new_name.strip_suffix(".md").unwrap_or(new_name).to_string()
                     }
                     true => {
-                        let s = vault_item.get_path().to_str().unwrap_or(new_name);
-                        let s = s.strip_suffix(".md").unwrap_or(s);
+                        let s = new_path.to_str().unwrap().to_string();
+                        let s = s.strip_suffix(".md").unwrap_or(&s);
                         link.dest = s.to_string();
                     }
                 }
+
                 let text = link.to_markdown();
 
                 backlink_note.replace_span(span, text)?;
-            }
-        }
-
-        let new_path = vault_item.get_path();
-
-        // Update the vault tag index (only notes can contain tags)
-        if let VaultItem::Note { note: vault_note } = &vault_item {
-            self.tags.retain(|_, notes| {
-                notes.retain(|note_name| note_name != &normalized_old);
-                !notes.is_empty()
-            });
-
-            for tag in vault_note.tags.iter() {
-                self.tags
-                    .entry(tag.clone())
-                    .or_default()
-                    .insert(normalized_new.clone());
-            }
-        }
-
-        // Update the vault item index
-        let old_bucket = normalized_old.rsplit('/').next().unwrap_or(&normalized_old);
-        let new_bucket = normalized_new.rsplit('/').next().unwrap_or(&normalized_new);
-        {
-            if let Some(mut items) = self.items.remove(old_bucket) {
-                // Get the index of the note in the items vector (there can be multiple items with the same name)
-                let index = items
-                    .iter()
-                    .position(|item| item.get_path() == new_path)
-                    .ok_or_else(|| {
-                        io::Error::new(
-                            io::ErrorKind::NotFound,
-                            format!("Item '{}' not found in vault items", old_name),
-                        )
-                    })?;
-
-                // Remove the note from the items vector
-                let vault_item = items.remove(index);
-
-                // Re-insert the remaining items (if any)
-                if !items.is_empty() {
-                    self.items.insert(old_bucket.to_string(), items);
-                }
-
-                // Insert the renamed note
-                self.insert_item(new_bucket.to_string(), vault_item);
-            } else if cfg!(debug_assertions) {
-                panic!("Could not remove {old_name} from vault. It was not found.");
             }
         }
 
