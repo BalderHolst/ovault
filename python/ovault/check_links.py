@@ -8,6 +8,8 @@ import ovault
 import sys
 import os
 
+from ovault.ansi import *
+
 def main():
     import requests
 
