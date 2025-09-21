@@ -3,7 +3,7 @@ A python library for accessing and editing your [Obsidian](https://obsidian.md) 
 
 Check out the [examples](https://github.com/BalderHolst/ovault/tree/main/examples)!
 
-## Example
+## Code Example
 ```python
 import ovault
 
@@ -35,6 +35,27 @@ Tags        : ['callout4youtag', 'frontmatter-tag1', 'frontmatter-tag2', 'linksa
 Note Name   : first_note
 Note Path   : first_note.md
 Note Tokens : [Header(# FIRST NOTE!), Text(Wuhuuuuuuuuuuu!Thi...), InternalLink(second note), Text(.Takes a look at t...), InternalLink(sub/todo), Text()]
+```
+
+## Included Utilities
+OVault includes runnable modules for common tasks. Get an overview by running the `ovault` module:
+```bash
+python -m ovault
+```
+
+*Output:*
+```
+OVault provies a few utilties out of the box.
+
+You can run them like so: `python3 -m ovault.<module>`
+
+Available modules:
+    ovault.mv                     : Rename a file within an Obsidian vault, updating all links accordingly.
+    ovault.help                   : Show a list of all utility modules included in `ovault`.
+    ovault.check_links            : Check all external links to websites in an Obsidian vault and report any broken links.
+    ovault.name_pasted_images     : Rename pasted images in the vault based on the note they are pasted into.
+    ovault.filename_compatibility : Check filenames for compatibility across different operating systems.
+    ovault.info                   : Show information about an Obsidian vault.
 ```
 
 ## Install
