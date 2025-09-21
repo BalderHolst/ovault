@@ -16,7 +16,7 @@ use glob::glob;
 
 use crate::{
     lexer::{tokens::Token, ToMarkdown},
-    normalize::normalize,
+    normalize::{normalize, normalize_path},
     warn,
 };
 
@@ -349,34 +349,39 @@ impl Vault {
             ));
         };
 
-        let old_path = vault_item.full_path();
+        // Save the old file path
+        let old_full_path = vault_item.full_path();
 
         // Update the item's path
         *vault_item.get_path_mut() = PathBuf::from(new_name);
 
+        // If it's a note, ensure it has the .md extension
         if vault_item.is_note() {
             vault_item.get_path_mut().set_extension("md");
         }
 
+        // Save the new full path
         let new_full_path = vault_item.full_path();
 
+        // Abort if the new path already exists
         if fs::exists(&new_full_path)? {
-            *vault_item.get_path_mut() = old_path; // Restore the old path
+            *vault_item.get_path_mut() = old_full_path; // Restore the old path
             return Err(io::Error::new(
                 io::ErrorKind::AlreadyExists,
                 format!("Path '{}' already exists", new_full_path.display()),
             ));
         }
 
+        // Set the new name of the note (if applicable)
         if let VaultItem::Note { note } = vault_item {
             note.name = note::note_name_from_str(&normalized_new);
         }
 
         // Rename the file on disk
-        fs::rename(&old_path, &new_full_path).map_err(|e| {
+        fs::rename(&old_full_path, &new_full_path).map_err(|e| {
             io::Error::other(format!(
                 "Could not rename note '{}' to '{}': {}",
-                old_path.display(),
+                old_full_path.display(),
                 new_full_path.display(),
                 e
             ))
@@ -392,8 +397,8 @@ impl Vault {
             .is_some_and(|items| !items.is_empty());
 
         // Update notes that link to this vault item
-        for backlink in vault_item.backlinks().clone() {
-            let Some(backlink_note) = self.get_note_mut(&backlink) else {
+        for backlink in vault_item.backlinks() {
+            let Some(backlink_note) = self.get_note(backlink) else {
                 warn!("Could not find note '{}' to update backlink", backlink);
                 continue;
             };
@@ -402,7 +407,8 @@ impl Vault {
                 .all_tokens()?
                 .filter_map(|token| {
                     if let Token::InternalLink { span, link, .. } = token {
-                        if normalize(link.dest.clone()) == normalized_old {
+                        let linked_item = self.get_item(&link.dest)?;
+                        if normalize_path(linked_item.get_path())? == normalized_new {
                             return Some((span, link));
                         }
                     }
@@ -411,6 +417,11 @@ impl Vault {
                 .collect::<Vec<_>>();
 
             links.reverse();
+
+            let Some(backlink_note) = self.get_note_mut(backlink) else {
+                warn!("Could not find note '{}' to update backlink", backlink);
+                continue;
+            };
 
             for (span, mut link) in links {
                 let old_dest = link.dest;
@@ -431,6 +442,7 @@ impl Vault {
                     }
                 }
                 let text = link.to_markdown();
+
                 backlink_note.replace_span(span, text)?;
             }
         }

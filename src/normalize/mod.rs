@@ -1,10 +1,17 @@
 //! Defines the `normalize` function to normalize note names for Obsidian links.
 
+use std::path::Path;
+
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
 #[cfg(test)]
 mod tests;
+
+pub fn normalize_path(path: &Path) -> Option<String> {
+    let path_str = path.to_str()?;
+    Some(normalize(path_str.to_string()))
+}
 
 #[cfg_attr(feature = "python", pyfunction)]
 /// Nomalize a note name or path to be used in Obsidian links.
@@ -19,6 +26,7 @@ pub fn normalize(name: String) -> String {
     let mut name = name.trim();
 
     name = name.strip_prefix('/').unwrap_or(name);
+    name = name.strip_prefix("./").unwrap_or(name);
 
     // Strip ".md" suffix if present
     let name = name.strip_suffix(".md").unwrap_or(name);
