@@ -2,6 +2,8 @@
 Rename a file within an Obsidian vault, updating all links accordingly.
 """
 
+__util__ = True
+
 import ovault
 import argparse
 import sys

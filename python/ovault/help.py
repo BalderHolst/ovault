@@ -2,6 +2,8 @@
 Show a list of all utility modules included in `ovault`.
 """
 
+__util__ = True
+
 from pathlib import Path
 import importlib
 
@@ -9,14 +11,14 @@ from ovault.ansi import *
 
 def main():
 
-    dir = Path(__file__).parent
+    directory = Path(__file__).parent
     modules = []
-    for file in dir.iterdir():
+    for file in directory.iterdir():
         if file.suffix != ".py": continue
-        if file.name == "__init__.py": continue
-        if file.name == "__main__.py": continue
         module_name = file.stem
         module = importlib.import_module(f".{module_name}", package=__package__)
+        if not '__util__' in dir(module): continue
+        if not module.__util__: continue
         modules.append((module_name, module.__doc__))
 
     max_len = max(len(name) for name, _ in modules)

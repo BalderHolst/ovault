@@ -4,6 +4,8 @@ Rename pasted images in the vault based on the note they are pasted into.
 Each image will be named using the above heading if it exists, otherwise the note name is used.
 """
 
+__util__ = True
+
 import ovault
 import sys
 import argparse
@@ -15,8 +17,6 @@ from ovault.ansi import *
 def is_pasted_image(path: Path) -> bool:
     return not re.match(r"Pasted image \d{14}\.png", path.name) is None
 
-YELLOW = "\033[33m"
-RESET = "\033[0m"
 
 warnings = []
 

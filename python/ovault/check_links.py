@@ -2,6 +2,8 @@
 Check all external links to websites in an Obsidian vault and report any broken links.
 """
 
+__util__ = True
+
 import ovault
 import sys
 import os
@@ -15,13 +17,6 @@ def main():
 
     # Set the user agent to mimic a real browser
     HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0'}
-
-    # Terninal Colors
-    GREEN  = "\033[92m"
-    YELLOW = "\033[93m"
-    RED    = "\033[91m"
-    BLUE   = "\033[94m"
-    RESET  = "\033[0m"
 
     path = sys.argv[1]
 

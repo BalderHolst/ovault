@@ -2,6 +2,8 @@
 Check filenames for compatibility across different operating systems.
 """
 
+__util__ = True
+
 from abc import ABC
 import argparse
 import sys

@@ -2,6 +2,8 @@
 Show information about an Obsidian vault.
 """
 
+__util__ = True
+
 import ovault
 import os
 import sys
@@ -50,9 +52,6 @@ def get_info(vault: ovault.Vault):
         "tags": sorted(vault.tags()),
         "link_count": count_links(vault),
     }
-
-BOLD = "\033[1m"
-RESET = "\033[0m"
 
 def display_info(info: dict):
     max_len = max(len(k) for k in info.keys())
