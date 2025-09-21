@@ -7,9 +7,10 @@ __util__ = True
 import ovault
 import sys
 import os
-import requests
 
 def main():
+    import requests
+
     if len(sys.argv) != 2:
         submod_name = os.path.basename(__file__.rstrip(".py"))
         print(f"Usage: python -m {__package__}.{submod_name} <vault_or_note_path>")
