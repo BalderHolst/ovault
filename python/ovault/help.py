@@ -15,6 +15,7 @@ def main():
     for file in dir.iterdir():
         if file.suffix != ".py": continue
         if file.name == "__init__.py": continue
+        if file.name == "__main__.py": continue
         module_name = file.stem
         module = importlib.import_module(f".{module_name}", package=__package__)
         modules.append((module_name, module.__doc__))
