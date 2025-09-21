@@ -430,15 +430,13 @@ impl Vault {
                 }
                 match use_full_path {
                     false => {
+                        let new_name = new_name.rsplit('/').next().unwrap_or(new_name);
                         link.dest = new_name.strip_suffix(".md").unwrap_or(new_name).to_string()
                     }
                     true => {
-                        link.dest = vault_item
-                            .get_path()
-                            .with_extension("")
-                            .to_str()
-                            .unwrap_or(new_name)
-                            .to_string()
+                        let s = vault_item.get_path().to_str().unwrap_or(new_name);
+                        let s = s.strip_suffix(".md").unwrap_or(s);
+                        link.dest = s.to_string();
                     }
                 }
                 let text = link.to_markdown();
