@@ -72,6 +72,7 @@ impl VaultItem {
         }
     }
 
+    /// Add a backlink to the vault item
     pub fn add_backlink(&mut self, backlink: String) {
         match self {
             VaultItem::Note { note } => {
@@ -763,7 +764,8 @@ impl Vault {
         }
     }
 
-    fn get_attachment_mut(&mut self, name: &str) -> Option<&mut Attachment> {
+    /// Get a mutable reference to an attachment by its normalized name.
+    pub fn get_attachment_mut(&mut self, name: &str) -> Option<&mut Attachment> {
         match self.get_item_mut(name) {
             Some(VaultItem::Attachment { attachment }) => Some(attachment),
             _ => None,

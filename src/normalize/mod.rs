@@ -8,6 +8,7 @@ use pyo3::prelude::*;
 #[cfg(test)]
 mod tests;
 
+/// Normalize a path to be used in Obsidian links.
 pub fn normalize_path(path: &Path) -> Option<String> {
     let path_str = path.to_str()?;
     Some(normalize(path_str.to_string()))
