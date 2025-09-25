@@ -20,11 +20,13 @@
             {
                 devShell = pkgs.mkShell {
                     buildInputs = with pkgs; [
+                        # Rust toolchain with extra components for development
                         (rust-bin.stable.latest.default.override {
                             extensions = [ "rust-src" "clippy" "rust-analyzer"];
                         })
-                        cargo-hack
-                        python3
+                        cargo-hack      # run commands with all combinations of features
+                        cargo-tarpaulin # code coverage reports
+                        python3         # python interpreter
                     ];
 
                     shellHook = ''

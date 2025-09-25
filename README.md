@@ -146,6 +146,11 @@ maturin develop --release --features python
 ./scripts/test.sh
 ```
 
+Generate coverage report with
+```bash
+cargo tarpaulin --engine llvm --release --out Html
+```
+
 ### Build Documentation
 ```bash
 ./scripts/build-docs.py
