@@ -7,8 +7,8 @@ then
   exit 1
 fi
 
-# Check that the code does not contain "println!" statements (except `tests.rs` and `logging.rs`)
-if grep -rn --include="*.rs" "println!(" src/ | grep -vE "tests\.rs|logging\.rs" ;
+# Check that the code does not contain "println!" statements (except `tests.rs`, `logging.rs` and files in `tests/` folders)
+if grep -rn --include="*.rs" "println!(" src/ | grep -vE "tests\.rs|logging\.rs|tests/" ;
 then
   echo -e "\nPrint statements found in the code. Please remove them before committing."
   exit 1
@@ -36,4 +36,5 @@ RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features || {
 if [[ -n $(git status --porcelain) ]]; then
     git status --porcelain
     echo -e "\nUncommitted changes found. Please commit them."
+    exit 1
 fi
