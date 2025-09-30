@@ -23,6 +23,12 @@ impl Mark {
     const START: Self = Mark(0);
 }
 
+impl From<Mark> for usize {
+    fn from(val: Mark) -> Self {
+        val.0
+    }
+}
+
 /// A lexer for parsing markdown into tokens.
 pub struct Lexer {
     cursor: usize,
@@ -69,13 +75,9 @@ impl Lexer {
         let mut index = self.cursor as isize;
 
         while offset != 0 {
-            if index < 0 {
-                return None;
-            }
-
             index += offset.signum();
 
-            let (_, _, skipped) = self.chars.get(index as usize)?;
+            let (_, _, skipped) = self.chars.get(usize::try_from(index).ok()?)?;
 
             if !*skipped {
                 offset -= offset.signum();
@@ -138,13 +140,6 @@ impl Lexer {
         self.consume_expect(|c| c == expected)
     }
 
-    fn consume_expected_sequence(&mut self, seq: &str) -> Option<()> {
-        for expected in seq.chars() {
-            self.consume_expected(expected)?;
-        }
-        Some(())
-    }
-
     fn consume_until(&mut self, cond: impl Fn(char) -> bool) -> String {
         let start = self.mark();
         while self.current().is_some_and(|c| !cond(c)) {
@@ -164,6 +159,14 @@ impl Lexer {
         found
     }
 
+    /// Consume a sequence of characters, returning None if the sequence is not found.
+    fn consume_expected_sequence(&mut self, seq: &str) -> Option<()> {
+        for expected in seq.chars() {
+            self.consume_expected(expected)?;
+        }
+        Some(())
+    }
+
     fn consume_until_sequence(&mut self, seq: &str) -> Option<()> {
         while !self.at_sequence(seq) {
             self.consume()?;
@@ -176,11 +179,11 @@ impl Lexer {
     }
 
     fn consume_if(&mut self, cond: impl Fn(char) -> bool) -> bool {
-        if self.current().is_some_and(cond) {
-            self.consume();
-            return true;
+        if !self.current().is_some_and(cond) {
+            return false;
         }
-        false
+        self.consume();
+        true
     }
 
     fn consume_whitespace(&mut self) -> String {
@@ -368,10 +371,10 @@ impl Lexer {
         }
 
         let inner_start = self.mark();
-
         self.consume_until(|c| matches!(c, ']' | '\n'));
+        let inner_end = self.mark();
 
-        if self.peek(1)? != ']' {
+        if inner_start == inner_end {
             return None;
         }
 
@@ -380,10 +383,11 @@ impl Lexer {
             return None;
         }
 
-        let inner = self.extract(inner_start);
+        self.consume_expected(']')
+            .expect(r"We just checked for '\n' and `None`");
+        self.consume_expected(']')?;
 
-        self.consume_expected(']')?;
-        self.consume_expected(']')?;
+        let inner = self.extract_span(Span::new(inner_start, inner_end));
 
         let mut dest;
         let mut position = None;
@@ -392,9 +396,6 @@ impl Lexer {
 
         let fields: Vec<_> = inner.split('|').collect();
         match fields.len() {
-            0 => {
-                dest = "".to_string();
-            }
             1 => {
                 dest = inner;
             }
@@ -532,9 +533,7 @@ impl Lexer {
 
         let start = self.mark();
 
-        self.consume_expected('-')?;
-        self.consume_expected('-')?;
-        self.consume_expected('-')?;
+        self.consume_expected_sequence("---")?;
 
         self.consume_until(|c| c != '-');
         self.consume_until(|c| !c.is_whitespace() || c == '\n');
@@ -543,22 +542,20 @@ impl Lexer {
         let yaml_start = self.mark();
         loop {
             self.consume_until(|c| c == '-');
-            if self.peek(1)? == '-' && self.peek(2)? == '-' {
+            if self.at_sequence("---") {
                 break;
             }
             self.consume()?; // Consume single '-'
         }
         let yaml = self.extract(yaml_start);
 
-        self.consume_expected('-')?;
-        self.consume_expected('-')?;
-        self.consume_expected('-')?;
+        self.consume_expected_sequence("---")?;
 
         self.consume_until(|c| c != '-'); // Consume any remaining '-'
 
         // Consume any white space followed by a newline
         self.consume_until(|c| !c.is_whitespace() || c == '\n');
-        self.consume_expected('\n')?;
+        self.consume_if(|c| c == '\n');
 
         let span = self.span(start);
 
@@ -587,9 +584,7 @@ impl Lexer {
     fn try_lex_code(&mut self) -> Option<Token> {
         let start = self.mark();
 
-        self.consume_expected('`')?;
-        self.consume_expected('`')?;
-        self.consume_expected('`')?;
+        self.consume_expected_sequence("```")?;
 
         let lang = self.consume_until(|c| c == '\n');
         self.consume()?; // consume newline
@@ -600,13 +595,12 @@ impl Lexer {
         };
 
         let code_start = self.mark();
-        self.consume_until_sequence("```");
+        self.consume_until_sequence("```")?;
 
         let code = self.extract(code_start);
 
-        self.consume_expected('`')?;
-        self.consume_expected('`')?;
-        self.consume_expected('`')?;
+        self.consume_expected_sequence("```")
+            .expect("We just checked for '```'");
         self.consume_if(|c| c == '\n');
 
         let span = self.span(start);
@@ -617,24 +611,16 @@ impl Lexer {
     fn try_lex_display_math(&mut self) -> Option<Token> {
         let start = self.mark();
 
-        self.consume_expected('$')?;
-        self.consume_expected('$')?;
+        self.consume_expected_sequence("$$")?;
 
         let latex_start = self.mark();
-        loop {
-            self.consume_until(|c| c == '$');
-            if self.peek(1)? == '$' {
-                break;
-            }
 
-            // Move past the single '$'
-            self.consume()?;
-        }
+        self.consume_until_sequence("$$")?;
 
         let latex = self.extract(latex_start);
 
-        self.consume_expected('$')?;
-        self.consume_expected('$')?;
+        self.consume_expected_sequence("$$")
+            .expect("We just checked for '$$'");
 
         let span = self.span(start);
 
@@ -645,14 +631,6 @@ impl Lexer {
         let start = self.mark();
 
         self.consume_expected('$')?;
-
-        // Make sure this is not a display match
-        #[cfg(test)]
-        {
-            if matches!(self.current(), Some('$')) {
-                panic!("Please try to parse display math before inline math.")
-            }
-        }
 
         let latex = self.consume_until(|c| c == '$');
 
@@ -830,16 +808,16 @@ impl Lexer {
     fn try_lex_templater_command(&mut self) -> Option<Token> {
         let start = self.mark();
 
-        self.consume_expected('<')?;
-        self.consume_expected('%')?;
+        self.consume_expected_sequence("<%")?;
 
         let command_start = self.mark();
-        self.consume_until(|c| c == '%');
+
+        self.consume_until_sequence("%>")?;
 
         let command = self.extract(command_start).trim().to_string();
 
-        self.consume_expected('%')?;
-        self.consume_expected('>')?;
+        self.consume_expected_sequence("%>")
+            .expect("We just checked for '%>'");
 
         let span = self.span(start);
 

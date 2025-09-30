@@ -57,18 +57,48 @@ fn test_callout_peeking() {
 }
 
 macro_rules! test_lex_token {
-        ($source:expr => $($token:tt)*) => {
-            let mut lexer = Lexer::new($source);
-            let token = lexer.next().unwrap();
+        ($source:expr => [$($tokens:tt)*]) => {
+            let lexer = Lexer::new($source);
+            let tokens = lexer.collect::<Vec<_>>();
             println!("\nRaw Source:\n{:?}", $source);
             println!("\nSource:\n{}", $source);
             println!("\nSourch Length: {}", $source.len());
-            println!("\nToken: {:#?}\n", token);
-            let expected = $($token)*;
-            assert_eq!(
-                expected,
-                token,
-            );
+
+            if tokens.len() == 1 {
+                println!("\nToken: {:#?}\n", tokens[0]);
+                let expected = vec![$($tokens)*][0].clone();
+                assert_eq!(
+                    expected,
+                    tokens[0],
+                );
+            } else {
+                println!("\nTokens: {:#?}\n", tokens);
+                let expected = vec![$($tokens)*];
+
+                if expected.len() != tokens.len() {
+                    eprintln!(
+                        "\nExpected Tokens: {:#?}\n",
+                        expected
+                    );
+                    panic!(
+                        "Number of tokens does not match: expected {}, got {}",
+                        expected.len(),
+                        tokens.len()
+                    );
+                }
+
+                for (i, (expected, actual)) in expected.iter().zip(tokens.iter()).enumerate() {
+                    assert_eq!(
+                        expected,
+                        actual,
+                        "Token {} does not match",
+                        i
+                    );
+                }
+            }
+        };
+        ($source:expr => $($tokens:tt)*) => {
+            test_lex_token!($source => [$($tokens)*]);
         };
         ($source:expr) => {
             let mut lexer = Lexer::new($source);
@@ -81,11 +111,37 @@ macro_rules! test_lex_token {
 #[test]
 fn test_lex_front_matter() {
     test_lex_token! {
-        "---\nkey: value\n-----\n# this is a heading"
-        => Token::Frontmatter {
-            span: Span { start: 0, end: 21 },
-            yaml: "key: value\n".to_string()
-        }
+        "---\nkey: value\n---\n# this is a heading"
+        => [
+            Token::Frontmatter {
+                span: Span { start: 0, end: 19 },
+                yaml: "key: value\n".to_string()
+            },
+            Token::Header {
+                span: Span { start: 19, end: 38 },
+                level: 1,
+                heading: "this is a heading".to_string()
+            }
+        ]
+    };
+
+    test_lex_token! {
+        "---\nkey: value"
+        => [
+            Token::Divider {
+                span: Span {
+                    start: 0,
+                    end: 4,
+                },
+            },
+            Token::Text {
+                span: Span {
+                    start: 4,
+                    end: 14,
+                },
+                text: "key: value".to_string(),
+            }
+        ]
     };
 }
 
@@ -127,6 +183,17 @@ fn test_lex_tag() {
             tag: "tag4you".to_string()
         }
     }
+
+    test_lex_token! {
+        "this is not a tag: #@notag"
+        => Token::Text {
+            span: Span {
+                start: 0,
+                end: 26,
+            },
+            text: "this is not a tag: #@notag".to_string(),
+        }
+    }
 }
 
 #[test]
@@ -158,6 +225,17 @@ fn test_lex_external_link() {
             }
         }
     }
+
+    test_lex_token! {
+        "[unfinished link](This is missing a closing parenthesis"
+            => Token::Text {
+            span: Span {
+                start: 0,
+                end: 55,
+            },
+            text: "[unfinished link](This is missing a closing parenthesis".to_string(),
+        }
+    }
 }
 
 #[test]
@@ -178,16 +256,25 @@ fn test_lex_internal_link() {
 
     test_lex_token! {
         "![[other_note]]."
-        => Token::InternalLink {
-            span: Span { start: 0, end: 15 },
-            link: InternalLink {
-                dest: "other_note".to_string(),
-                position: None,
-                show_how: None,
-                options: None,
-                render: true
+        => [
+            Token::InternalLink {
+                span: Span { start: 0, end: 15 },
+                link: InternalLink {
+                    dest: "other_note".to_string(),
+                    position: None,
+                    show_how: None,
+                    options: None,
+                    render: true
+                }
+            },
+            Token::Text {
+                span: Span {
+                    start: 15,
+                    end: 16,
+                },
+                text: ".".to_string(),
             }
-        }
+        ]
     }
 
     test_lex_token! {
@@ -229,6 +316,60 @@ fn test_lex_internal_link() {
                 options: Some("center".to_string()),
                 render: false
             }
+        }
+    }
+
+    test_lex_token! {
+        "[[link\nwith newline]]"
+            => Token::Text {
+            span: Span {
+                start: 0,
+                end: 21,
+            },
+            text: "[[link\nwith newline]]".to_string(),
+        }
+    }
+
+    test_lex_token! {
+        "[[unfinished link]"
+            => Token::Text {
+            span: Span {
+                start: 0,
+                end: 18,
+            },
+            text: "[[unfinished link]".to_string(),
+        }
+    }
+    test_lex_token! {
+        "[[very unfinished link "
+            => Token::Text {
+            span: Span {
+                start: 0,
+                end: 23,
+            },
+            text: "[[very unfinished link ".to_string(),
+        }
+    }
+
+    test_lex_token! {
+        "[[]]"
+            => Token::Text {
+            span: Span {
+                start: 0,
+                end: 4,
+            },
+            text: "[[]]".to_string(),
+        }
+    }
+
+    test_lex_token! {
+        "[[don't|know|what|to do here]]"
+            => Token::Text {
+            span: Span {
+                start: 0,
+                end: 30,
+            },
+            text: "[[don't|know|what|to do here]]".to_string(),
         }
     }
 }
@@ -289,6 +430,25 @@ fn test_lex_display_math() {
         => Token::DisplayMath {
             span: Span { start: 0, end: 7 },
             latex: "a=b".to_string()
+        }
+    }
+
+    test_lex_token! {
+        "$$not ended"
+        =>
+        Token::InlineMath {
+            span: Span {
+                start: 0,
+                end: 2,
+            },
+            latex: "".to_string(),
+        },
+        Token::Text {
+            span: Span {
+                start: 2,
+                end: 11,
+            },
+            text: "not ended".to_string(),
         }
     }
 }
@@ -369,6 +529,14 @@ fn test_lex_templater_command() {
             command: "tp.file.include('path/to/file.md')".to_string(),
         }
     }
+
+    test_lex_token! {
+        "<% unended command"
+        => Token::Text {
+            span: Span { start: 0, end: 18 },
+            text: "<% unended command".to_string(),
+        }
+    }
 }
 
 #[test]
@@ -393,6 +561,32 @@ fn test_lex_callout() {
                 foldable: true,
             }
         }
+    }
+
+    test_lex_token! {
+        "> [!broken" =>
+            Token::Quote {
+                span: Span { start: 0, end: 10 },
+                tokens: vec![
+                    Token::Text {
+                        span: Span { start: 0, end: 10 },
+                        text: "[!broken".to_string(),
+                    }
+                ],
+            }
+    }
+
+    test_lex_token! {
+        "> [!info] Hello" =>
+            Token::Quote {
+                span: Span { start: 0, end: 15 },
+                tokens: vec![
+                    Token::Text {
+                        span: Span { start: 0, end: 15 },
+                        text: "[!info] Hello".to_string(),
+                    }
+                ],
+            }
     }
 }
 

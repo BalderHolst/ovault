@@ -3,3 +3,4 @@
 .direnv/
 __pycache__/
 *.so
+tarpaulin-*

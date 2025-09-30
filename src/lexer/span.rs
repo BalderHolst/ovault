@@ -16,6 +16,14 @@ impl Span {
     #[allow(unused)]
     pub const ZERO: Self = Span { start: 0, end: 0 };
 
+    /// Creates a new span from start and end indices.
+    pub fn new<S: Into<usize>, E: Into<usize>>(start: S, end: E) -> Self {
+        Span {
+            start: start.into(),
+            end: end.into(),
+        }
+    }
+
     /// Shifts the span by a given offset.
     pub fn shift(&mut self, offset: isize) {
         let start = self.start as isize + offset;
