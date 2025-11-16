@@ -30,6 +30,7 @@ blockquote {
     border-left: 3px solid #bfc4ce;
     padding-left: 12px;
     margin-left: 0;
+    margin-right: 0;
     color: #555;
     font-style: italic;
     background: #f0f0f0;
@@ -112,4 +113,11 @@ hr {
 /* Change color on hover if foldable */
 .foldable .callout-title:hover {
     background: #d0e4ff;
+}
+
+/* Set maximum width for images */
+img {
+    margin: 0.5em 0;
+    max-width: 100%;
+    height: auto;
 }

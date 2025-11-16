@@ -41,22 +41,23 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
         case token.InternalLink():
             link = token.link
 
-            if link.render:
-                print("WARNING: InternalLink with render=True not implemented yet.")
-
             if link.options:
                 print(f"WARNING: Option(s) '{link.options}' were ignored in internal link to '{link.dest}'.")
 
             dest = None
 
-            dest_note = vault.note(link.dest)
-            if dest_note: dest = dest_note.path
+            if link.dest != "":
+                dest_note = vault.note(link.dest)
+                if dest_note: dest = dest_note.path
 
-            dest_attachment = vault.attachment(link.dest)
-            if dest_attachment: dest = dest_attachment.path
+                dest_attachment = vault.attachment(link.dest)
+                if dest_attachment: dest = dest_attachment.path
+
+                if dest is None:
+                    print(f"WARNING: Internal link to '{link.dest}' not found in vault.")
+
 
             if dest is None:
-                print(f"WARNING: Internal link to '{link.dest}' not found in vault.")
                 dest = str(link.dest)
             else:
                 dest = vault_path_to_site_path(dest)
@@ -65,6 +66,10 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                 dest += "#" + link.position
 
             dest = "/" + dest
+
+            if link.render:
+                w.write_line(html.img(dest));
+                return
 
             if len(link.dest) == 0 and link.position:
                 dest = "#" + link.position

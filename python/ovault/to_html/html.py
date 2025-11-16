@@ -36,3 +36,11 @@ def h(level: int, heading: str, id=None) -> str:
 
 def a(href: str, text: str) -> str:
     return f'<a href="{href}">{text}</a>'
+
+def img(src: str, alt: str = "", width: int = None, height: int = None) -> str:
+    s = f'<img src="{src}" alt="{alt}"'
+    if width is not None:  s += f' width="{width}"'
+    if height is not None: s += f' height="{height}"'
+    s += ' />'
+    return s
+
