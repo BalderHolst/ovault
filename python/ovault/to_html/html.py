@@ -27,8 +27,12 @@ class HtmlWriter:
         with open(path, "w", encoding="utf-8") as f:
             f.write(self.content)
 
-def h(level: int, heading: str) -> str:
-    return f'<h{level}>{heading}</h{level}>'
+def h(level: int, heading: str, id=None) -> str:
+    s = ''
+    s += f'<h{level}'
+    if id is not None: s += f' id="{id}"'
+    s += f'>{heading}</h{level}>'
+    return s
 
 def a(href: str, text: str) -> str:
     return f'<a href="{href}">{text}</a>'

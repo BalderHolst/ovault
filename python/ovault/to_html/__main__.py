@@ -62,12 +62,17 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                 dest = vault_path_to_site_path(dest)
 
             if link.position:
-                dest += f"#{link.position}"
+                dest += "#" + link.position
 
-            text = Path(dest).with_suffix("").name
+            dest = "/" + dest
+
+            if len(link.dest) == 0 and link.position:
+                dest = "#" + link.position
+
+            text = dest.removesuffix(".html").removeprefix("#").removeprefix("/")
             if link.show_how: text = link.show_how
 
-            w.write_line(html.a("/" + dest, text))
+            w.write_line(html.a(dest, text))
 
         case token.ExternalLink():
             link = token.link
@@ -85,7 +90,7 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
             w.write_line(html.a(url, link.show_how))
 
         case token.Header():
-            w.write_line(html.h(token.level, token.heading))
+            w.write_line(html.h(token.level, token.heading, id=token.heading))
 
         case token.InlineMath():
             w.write_line(f'\\({token.latex}\\)')
