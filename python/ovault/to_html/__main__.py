@@ -13,8 +13,9 @@ import ovault
 
 import ovault.to_html.html as html
 
-with open(os.path.dirname(__file__) + "/style.css", 'r') as f:
-    CSS = f.readlines()
+CSS_FILE_NAME = "style.css"
+
+CSS_FILE = os.path.join(os.path.dirname(__file__), CSS_FILE_NAME)
 
 def vault_path_to_site_path(note_path: str, site_dir: str = "") -> str:
     note_path = Path(note_path)
@@ -22,8 +23,8 @@ def vault_path_to_site_path(note_path: str, site_dir: str = "") -> str:
     if note_path.suffix == ".md":
         note_path = Path(note_path).with_suffix(".html")
 
-    if site_dir == "": return note_path
-    return os.path.join(site_dir, note_path)
+    if site_dir == "": return str(note_path)
+    return str(os.path.join(site_dir, note_path))
 
 def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) -> str:
     match token:
@@ -43,8 +44,8 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
             if link.render:
                 print("WARNING: InternalLink with render=True not implemented yet.")
 
-            if link.position: raise NotImplementedError("InternalLink with position")
-            if link.options: raise NotImplementedError("InternalLink with option")
+            if link.options:
+                print(f"WARNING: Option(s) '{link.options}' were ignored in internal link to '{link.dest}'.")
 
             dest = None
 
@@ -56,42 +57,63 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
 
             if dest is None:
                 print(f"WARNING: Internal link to '{link.dest}' not found in vault.")
-                dest = link.dest
+                dest = str(link.dest)
             else:
                 dest = vault_path_to_site_path(dest)
+
+            if link.position:
+                dest += f"#{link.position}"
 
             text = Path(dest).with_suffix("").name
             if link.show_how: text = link.show_how
 
-            w.write_line(html.a(dest, text))
+            w.write_line(html.a("/" + dest, text))
 
         case token.ExternalLink():
             link = token.link
 
             if link.render: print("WARNING: ExternalLink with render=True not implemented yet.")
-            if link.position: raise NotImplementedError("ExternalLink with position")
-            if link.options: raise NotImplementedError("ExternalLink with option")
 
-            w.write_line(html.a(link.url, link.show_how))
+            if link.options:
+                print(f"WARNING: Option(s) '{link.options}' were ignored in external link to '{link.url}'.")
+
+            url = link.url
+
+            if link.position:
+                url += f"#{link.position}"
+
+            w.write_line(html.a(url, link.show_how))
 
         case token.Header():
             w.write_line(html.h(token.level, token.heading))
+
+        case token.InlineMath():
+            w.write_line(f'\\({token.latex}\\)')
+
+        case token.DisplayMath():
+            w.write_line(f'\\[{token.latex}\\]')
 
         case token.List():
 
             w.write_line('<ul>', indent=True)
             for item in token.items:
-                assert(item.indent == 0)  # TODO: Implement nested lists
+
+                if item.indent != 0:
+                    print("WARNING: Nested lists not implemented yet.")
+
                 w.write_line('<li>', indent=True)
                 tokens_to_html(vault, w, item.tokens)
                 w.write_line('</li>', dedent=True)
+
 
             w.write_line('</ul>', dedent=True)
 
         case token.CheckList():
             w.write_line('<div class="checklist">', indent=True)
             for item in token.items:
-                assert(item.indent == 0)  # TODO: Implement nested lists
+
+                if item.indent != 0:
+                    print("WARNING: Nested checked lists not implemented yet.")
 
                 extra = '';
                 if item.checked: extra = 'checked'
@@ -102,6 +124,19 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                 w.write_line('</label><br>', dedent=True)
 
             w.write_line('</div>', dedent=True)
+
+        case token.NumericList():
+            w.write_line('<ol>', indent=True)
+            for item in token.items:
+
+                if item.indent != 0:
+                    print("WARNING: Nested numeric lists not implemented yet.")
+
+                w.write_line('<li>', indent=True)
+                tokens_to_html(vault, w, item.tokens)
+                w.write_line('</li>', dedent=True)
+
+            w.write_line('</ol>', dedent=True)
 
         case token.Callout():
             clases = ["callout", f'callout-kind-{token.callout.kind}']
@@ -145,10 +180,13 @@ def html_head(w: html.HtmlWriter, title: str) -> None:
     w.write_line('<meta charset="UTF-8">')
     w.write_line(f"<title>{title.title()}</title>")
 
-    w.write_line('<style>', indent=True);
-    for line in CSS: w.write_line(line)
-    w.write_line('</style>', dedent=True);
+    w.write_line(f'<link rel="stylesheet" href="/{CSS_FILE_NAME}">')
 
+    # LaTeX support via KaTeX
+    w.write_line(f'<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>')
+    w.write_line('<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" \
+            onload="renderMathInElement(document.body);"></script>')
+    w.write_line('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">')
 
     w.write_line("</head>", dedent=True)
 
@@ -161,13 +199,13 @@ def convert_note_to_html(vault: ovault.Vault, note: ovault.Note, site_dir: str, 
 
     html_head(w, note.name)
 
-    w.write_line("<body>", indent=True)
+    w.write_line("<body><main>", indent=True)
 
     if filename_title: w.write_line(f"<h1>{note.name}</h1>")
 
     tokens_to_html(vault, w, note.tokens())
 
-    w.write_line("</body>", dedent=True)
+    w.write_line("</main></body>", dedent=True)
 
     w.write_line("</html>", dedent=True)
 
@@ -175,8 +213,10 @@ def convert_note_to_html(vault: ovault.Vault, note: ovault.Note, site_dir: str, 
 
 
 
-def convert_vault_to_html(vault_path: str, site_dir: str) -> None:
-    print(f"Converting vault at '{vault_path}' to HTML site in '{site_dir}'...")
+def convert_vault_to_html(vault_path: str, site_dir: str, args: argparse.Namespace) -> None:
+
+    if args.verbose:
+        print(f"Converting vault at '{vault_path}' to HTML site in '{site_dir}'...")
 
     os.makedirs(site_dir, exist_ok=True)
 
@@ -191,16 +231,30 @@ def convert_vault_to_html(vault_path: str, site_dir: str) -> None:
 
     vault = ovault.Vault(vault_path)
 
+    # Convert notes
     for note in sorted(vault.notes()):
+        if args.verbose: print(f"  Converting note '{note.path}'...")
         convert_note_to_html(vault, note, site_dir)
 
+    # Copy attachments
     for attachment in vault.attachments():
+        if args.verbose: print(f"  Copying attachment '{attachment.path}'...")
         dest_path = vault_path_to_site_path(attachment.path, site_dir)
         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
         with open(attachment.full_path(), "rb") as src_file:
             with open(dest_path, "wb") as dest_file:
                 dest_file.write(src_file.read())
+
+    # Add CSS file
+    if args.verbose: print(f"  Adding CSS file...")
+    dest_css_path = os.path.join(site_dir, CSS_FILE_NAME)
+    with open(CSS_FILE, "r", encoding="utf-8") as src_css_file:
+        with open(dest_css_path, "w", encoding="utf-8") as dest_css_file:
+            dest_css_file.write(src_css_file.read())
+
+    if args.verbose:
+        print("DONE!")
 
 
 def main():
@@ -209,10 +263,11 @@ def main():
     # Arguments
     parser.add_argument("vault", type=str, help="Path to your Obsidian vault")
     parser.add_argument("--output", "-o", type=str, help="Output directory for the HTML site", default="site")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose output")
 
     args = parser.parse_args()
 
-    convert_vault_to_html(args.vault, args.output)
+    convert_vault_to_html(args.vault, args.output, args)
 
 if __name__ == "__main__":
     main()
