@@ -82,6 +82,9 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                     print("Rendering internal link as embedded note: " + dest)
                     emded_note(w, vault, dest_note)
                     return
+                elif dest_attachment and str(dest_attachment.path).lower().endswith(".pdf"):
+                    print("Rendering internal link as embedded PDF: " + dest)
+                    w.write_line(f'<iframe class="embedded-pdf" src="{vault_path_to_site_path(dest_attachment.path)}" width="100%" height="600px"></iframe>')
 
                 w.write_line(html.img(dest));
                 return
