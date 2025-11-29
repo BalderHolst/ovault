@@ -101,6 +101,7 @@ pub enum Token {
         code: String
     },
 
+    // TODO: Lex `\-` as author field.
     /// Represents a block quote in the note.
     Quote {
         /// The span of the quote in the source text.

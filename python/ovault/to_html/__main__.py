@@ -79,14 +79,11 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
 
             if link.render:
                 if dest_note:
-                    print("Rendering internal link as embedded note: " + dest)
                     emded_note(w, vault, dest_note)
-                    return
                 elif dest_attachment and str(dest_attachment.path).lower().endswith(".pdf"):
-                    print("Rendering internal link as embedded PDF: " + dest)
                     w.write_line(f'<iframe class="embedded-pdf" src="{vault_path_to_site_path(dest_attachment.path)}" width="100%" height="600px"></iframe>')
-
-                w.write_line(html.img(dest));
+                else:
+                    w.write_line(html.img(dest));
                 return
 
             if len(link.dest) == 0 and link.position:
@@ -218,6 +215,57 @@ def html_head(w: html.HtmlWriter, title: str) -> None:
 
     w.write_line("</head>", dedent=True)
 
+def create_sidebar(w: html.HtmlWriter, vault: ovault.Vault, note: ovault.Note) -> None:
+
+    w.write_line('<aside class="sidebar">')
+    w.write_line('<h3>Tags</h3>')
+    w.write_line('<div class="tag-list">')
+
+    if len(note.tags) == 0:
+        w.write_line('<div>(no tags)</div>')
+
+    for tag in note.tags:
+        w.write_line('<div class="tag-item">', indent=True)
+        w.write_line(f'<span class="tag">#{tag}</span>')
+
+    w.write_line('</div>', dedent=True)
+
+    w.write_line('</div>')
+    w.write_line('')
+    w.write_line('<h3>Links</h3>')
+    w.write_line('<ul>')
+
+    for link in note.links:
+
+        dest = None
+        disp = None
+
+        linked_note = vault.note(link)
+        if linked_note:
+            dest = linked_note.path
+            disp = linked_note.name
+
+        linked_attachment = vault.attachment(link)
+        if linked_attachment:
+            dest = linked_attachment.path
+            disp = os.path.basename(linked_attachment.path)
+
+        if dest is not None and disp is not None:
+            w.write_line(f'<li><a href="/{vault_path_to_site_path(dest)}">{disp}</a></li>')
+
+
+    w.write_line('</ul>')
+    w.write_line('')
+    w.write_line('<h3>Backlinks</h3>')
+    w.write_line('<ul>')
+
+    for backlink in note.backlinks:
+        backlink_note = vault.note(backlink)
+        w.write_line(f'<li><a href="/{vault_path_to_site_path(backlink_note.path)}">{backlink_note.name}</a></li>')
+
+    w.write_line('</ul>')
+    w.write_line('</aside>')
+
 def convert_note_to_html(vault: ovault.Vault, note: ovault.Note, site_dir: str, filename_title=False) -> str:
     output_path = vault_path_to_site_path(note.path, site_dir)
 
@@ -232,6 +280,8 @@ def convert_note_to_html(vault: ovault.Vault, note: ovault.Note, site_dir: str, 
     if filename_title: w.write_line(f"<h1>{note.name}</h1>")
 
     tokens_to_html(vault, w, note.tokens())
+
+    create_sidebar(w, vault, note)
 
     w.write_line("</main></body>", dedent=True)
 
