@@ -1,9 +1,3 @@
-"""
-Convert an obsidian vault to a simple static HTML site.
-"""
-
-__util__ = True
-
 import argparse
 import sys
 import os
@@ -26,6 +20,19 @@ def vault_path_to_site_path(note_path: str, site_dir: str = "") -> str:
     if site_dir == "": return str(note_path)
     return str(os.path.join(site_dir, note_path))
 
+def emded_note(w: html.HtmlWriter, vault: ovault.Vault, note: ovault.Note) -> str:
+    w.write_line('<div class="embedded-note">', indent=True)
+    w.write_line(f'<a href="/{vault_path_to_site_path(note.path)}" class="embedded-note-link">', indent=True)
+    w.write_line(f'<div class="embedded-note-title">{note.name}</div>')
+    w.write_line('</a>', dedent=True)
+
+    w.write_line('<div class="embedded-note-content">', indent=True)
+    tokens_to_html(vault, w, note.tokens())
+    w.write_line('</div>', dedent=True)
+
+    w.write_line('</div>', dedent=True)
+
+
 def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) -> str:
     match token:
         case token.Frontmatter():
@@ -46,6 +53,9 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
 
             dest = None
 
+            dest_note       = None
+            dest_attachment = None
+
             if link.dest != "":
                 dest_note = vault.note(link.dest)
                 if dest_note: dest = dest_note.path
@@ -56,11 +66,11 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                 if dest is None:
                     print(f"WARNING: Internal link to '{link.dest}' not found in vault.")
 
-
             if dest is None:
                 dest = str(link.dest)
             else:
                 dest = vault_path_to_site_path(dest)
+
 
             if link.position:
                 dest += "#" + link.position
@@ -68,6 +78,11 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
             dest = "/" + dest
 
             if link.render:
+                if dest_note:
+                    print("Rendering internal link as embedded note: " + dest)
+                    emded_note(w, vault, dest_note)
+                    return
+
                 w.write_line(html.img(dest));
                 return
 

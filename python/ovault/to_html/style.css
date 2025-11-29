@@ -77,6 +77,7 @@ hr {
 }
 
 .callout-content {
+    cursor: default;
     padding: 12px 16px 16px 16px;
     margin: 0;
     color: #2b2b2b;
@@ -121,3 +122,47 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+/* Embedded note container */
+.embedded-note {
+    border: 1px solid #d3d3d3;
+    border-left: 4px solid #8080b0;
+    background: #f7faff;
+    padding: 14px 18px;
+    margin: 24px 0;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.embedded-note-title {
+    font-weight: 600;
+    font-size: 1em;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 4px;
+    text-decoration: none;
+}
+
+/* Content styling */
+.embedded-note-content {
+    color: #2b2b2b;
+    line-height: 1.5;
+}
+
+/* Optional: neutralize inner margins */
+.embedded-note-content h1,
+.embedded-note-content h2,
+.embedded-note-content h3 {
+    margin-top: 0.5em;
+}
+
+/* Links inside embedded note */
+.embedded-note-content a {
+    color: #4b78e6;
+    text-decoration: none;
+}
+.embedded-note-content a:hover {
+    text-decoration: underline;
+}
+
