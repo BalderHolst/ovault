@@ -14,19 +14,17 @@ def main():
     directory = Path(__file__).parent
     modules = []
     for file in directory.iterdir():
-
         module_name = None
-
-        if (file / "__init__.py").exists():
-            module_name = file.name
 
         if file.suffix == ".py":
             module_name = file.stem
 
-        if not module_name: continue
+        if (file / "__init__.py").exists():
+            module_name = file.name
 
-        module_name = file.stem
+        if not module_name: continue
         module = importlib.import_module(f".{module_name}", package=__package__)
+
         if not '__util__' in dir(module): continue
         if not module.__util__: continue
         modules.append((module_name, module.__doc__))
