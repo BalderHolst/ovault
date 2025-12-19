@@ -10,6 +10,14 @@ use super::ToMarkdown;
 
 use super::Span;
 
+// TODO: Add Italic, Bold, Strikethrough, Highlight, Underline tokens.
+// TODO: Add footnote support
+// TODO: `\` escape character support (See "test-vaults/Obsidian Sandbox/Guides/Create your first note.md")
+// TODO: Add inline code support
+// TODO: Add table support
+// TODO: Support `___` and `***` horizontal divider
+// TODO: Support `%%comment%%` comments
+// TODO: Add "author" field support in quotes
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
 /// ## Example - Token Stream

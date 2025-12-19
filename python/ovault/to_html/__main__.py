@@ -150,6 +150,7 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
 
             w.write_line('</div>', dedent=True)
 
+        # TODO: Re-enumerate numeric lists
         case token.NumericList():
             w.write_line('<ol>', indent=True)
             for item in token.items:
