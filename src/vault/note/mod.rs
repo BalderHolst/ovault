@@ -155,6 +155,7 @@ impl Note {
                 }
                 Token::Frontmatter { .. }
                 | Token::Text { .. }
+                | Token::Bold { .. } // TODO: Change this if bold can contain nested tokens
                 | Token::Tag { .. }
                 | Token::Header { .. }
                 | Token::Code { .. }
@@ -308,6 +309,7 @@ impl Note {
                 }
                 Token::Text { .. }
                 | Token::Header { .. }
+                | Token::Bold { .. }
                 | Token::Divider { .. }
                 | Token::InlineMath { .. }
                 | Token::DisplayMath { .. }

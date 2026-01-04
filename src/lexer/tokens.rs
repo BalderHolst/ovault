@@ -10,7 +10,6 @@ use super::ToMarkdown;
 
 use super::Span;
 
-// TODO: Add Italic, Bold, Strikethrough, Highlight, Underline tokens.
 // TODO: Add footnote support
 // TODO: `\` escape character support (See "test-vaults/Obsidian Sandbox/Guides/Create your first note.md")
 // TODO: Add inline code support
@@ -89,6 +88,12 @@ pub enum Token {
         level: usize,
         /// The heading text of the header.
         heading: String
+    },
+
+    // TODO: Maybe content should be Vec<Token> to allow nested formatting?
+    Bold {
+        span: Span,
+        text: String,
     },
 
     /// Represents a code block in the note.
@@ -229,6 +234,7 @@ impl fmt::Display for Token {
             Token::Text { .. } => "Text",
             Token::Tag { .. } => "Tag",
             Token::Header { .. } => "Header",
+            Token::Bold { .. } => "Bold",
             Token::InternalLink { .. } => "InternalLink",
             Token::ExternalLink { .. } => "ExternalLink",
             Token::Code { .. } => "Code",
@@ -273,6 +279,7 @@ impl Token {
             Token::Header { level, heading, .. } => {
                 format!("Header({} {})", "#".repeat(*level), string_repr(heading))
             }
+            Token::Bold { text, .. } => format!("Bold({})", string_repr(text)),
             Token::InternalLink { link, .. } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link, .. } => format!("ExternalLink({})", link.label()),
             Token::Code { lang, code, .. } => match lang {
@@ -343,55 +350,54 @@ impl Token {
     }
 }
 
+macro_rules! impl_token_span_method {
+    [$($variant:ident),*] => {
+        impl Token {
+            /// Get the span of the token.
+            pub fn span(&self) -> &Span {
+                match self {
+                    $(Token::$variant { span, .. } => span,)*
+                }
+            }
+
+            /// Get a mutable reference to the span of the token.
+            pub fn span_mut(&mut self) -> &mut Span {
+                match self {
+                    $(Token::$variant { span, .. } => span,)*
+                }
+            }
+       }
+    };
+
+}
+
+impl_token_span_method!(
+    Frontmatter,
+    Text,
+    Tag,
+    Header,
+    Code,
+    Quote,
+    InlineMath,
+    DisplayMath,
+    Divider,
+    Callout,
+    InternalLink,
+    ExternalLink,
+    List,
+    NumericList,
+    CheckList,
+    TemplaterCommand,
+    Bold
+);
+
 impl Token {
-    /// Get the span of the token.
-    pub fn span(&self) -> &Span {
-        match self {
-            Token::Frontmatter { span, .. }
-            | Token::Text { span, .. }
-            | Token::Tag { span, .. }
-            | Token::Header { span, .. }
-            | Token::Code { span, .. }
-            | Token::Quote { span, .. }
-            | Token::InlineMath { span, .. }
-            | Token::DisplayMath { span, .. }
-            | Token::Divider { span, .. }
-            | Token::Callout { span, .. }
-            | Token::InternalLink { span, .. }
-            | Token::ExternalLink { span, .. }
-            | Token::List { span, .. }
-            | Token::NumericList { span, .. }
-            | Token::CheckList { span, .. }
-            | Token::TemplaterCommand { span, .. } => span,
-        }
-    }
-
-    /// Get a mutable reference to the span of the token.
-    pub fn span_mut(&mut self) -> &mut Span {
-        match self {
-            Token::Frontmatter { span, .. }
-            | Token::Text { span, .. }
-            | Token::Tag { span, .. }
-            | Token::Header { span, .. }
-            | Token::Code { span, .. }
-            | Token::Quote { span, .. }
-            | Token::InlineMath { span, .. }
-            | Token::DisplayMath { span, .. }
-            | Token::Divider { span, .. }
-            | Token::Callout { span, .. }
-            | Token::InternalLink { span, .. }
-            | Token::ExternalLink { span, .. }
-            | Token::List { span, .. }
-            | Token::NumericList { span, .. }
-            | Token::CheckList { span, .. }
-            | Token::TemplaterCommand { span, .. } => span,
-        }
-    }
-
     /// Check if the token is a whitespace token.
     pub fn is_whitespace(&self) -> bool {
         match self {
-            Token::Text { text, .. } => text.chars().all(char::is_whitespace),
+            Token::Text { text, .. } | Token::Bold { text, .. } => {
+                text.chars().all(char::is_whitespace)
+            }
             Token::Tag { .. }
             | Token::Header { .. }
             | Token::InternalLink { .. }

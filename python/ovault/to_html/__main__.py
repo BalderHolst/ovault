@@ -112,6 +112,9 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
         case token.Header():
             w.write_line(html.h(token.level, token.heading, id=token.heading))
 
+        case token.Bold():
+            w.write_line(f'<strong>{token.text}</strong>')
+
         case token.InlineMath():
             w.write_line(f'\\({token.latex}\\)')
 

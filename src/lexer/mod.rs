@@ -149,14 +149,12 @@ impl Lexer {
     }
 
     fn at_sequence(&self, seq: &str) -> bool {
-        let mut found = true;
         for (i, c) in seq.chars().enumerate() {
             if self.peek(i as isize) != Some(c) {
-                found = false;
-                break;
+                return false;
             }
         }
-        found
+        true
     }
 
     /// Consume a sequence of characters, returning None if the sequence is not found.
@@ -288,6 +286,32 @@ impl Lexer {
             level,
             heading,
         })
+    }
+
+    // TODO: Add Italic, Bold, Strikethrough, Highlight, Underline tokens.
+    fn try_lex_bold(&mut self) -> Option<Token> {
+        const BOLD_MARKERS: &[&str] = &["__", "**"];
+
+        // Check that we are at a start marker
+        let start_marker = BOLD_MARKERS.iter().find(|s| self.at_sequence(s))?;
+
+        let start = self.mark();
+
+        self.consume_expected_sequence(start_marker)
+            .expect("We just checked for start marker");
+
+        let content_start = self.mark();
+
+        self.consume_until_sequence(start_marker)?;
+
+        let text = self.extract(content_start);
+
+        self.consume_expected_sequence(start_marker)
+            .expect("We just checked for end marker");
+
+        let span = self.span(start);
+
+        Some(Token::Bold { span, text })
     }
 
     fn try_lex_tag(&mut self) -> Option<Token> {
@@ -869,6 +893,7 @@ impl Iterator for Lexer {
             }
 
             please!(try_lex_heading);
+            please!(try_lex_bold);
             please!(try_lex_tag);
             please!(try_lex_code);
             please!(try_lex_display_math);
