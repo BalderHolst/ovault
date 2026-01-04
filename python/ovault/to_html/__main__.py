@@ -122,6 +122,21 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
             tokens_to_html(vault, w, token.tokens)
             w.write_line(f'</i>', dedent=True)
 
+        case token.Strikethrough():
+            w.write_line(f'<s>', indent=True)
+            tokens_to_html(vault, w, token.tokens)
+            w.write_line(f'</s>', dedent=True)
+
+        case token.Highlight():
+            w.write_line(f'<mark>', indent=True)
+            tokens_to_html(vault, w, token.tokens)
+            w.write_line(f'</mark>', dedent=True)
+
+        case token.InlineCode():
+            w.write_line(f'<pre>', indent=True)
+            tokens_to_html(vault, w, token.tokens)
+            w.write_line(f'</pre>', dedent=True)
+
         case token.InlineMath():
             w.write_line(f'\\({token.latex}\\)')
 

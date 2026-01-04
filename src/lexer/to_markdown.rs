@@ -32,6 +32,15 @@ impl ToMarkdown for Token {
             Token::Italic { span: _, tokens } => {
                 format!("_{}_", tokens_to_markdown(tokens))
             }
+            Token::Strikethrough { tokens, .. } => {
+                format!("~~{}~~", tokens_to_markdown(tokens))
+            }
+            Token::Highlight { tokens, .. } => {
+                format!("=={}==", tokens_to_markdown(tokens))
+            }
+            Token::InlineCode { tokens, .. } => {
+                format!("`{}`", tokens_to_markdown(tokens))
+            }
             Token::Code {
                 span: _,
                 lang,

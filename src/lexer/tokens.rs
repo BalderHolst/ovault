@@ -12,7 +12,6 @@ use super::Span;
 
 // TODO: Add footnote support
 // TODO: `\` escape character support (See "test-vaults/Obsidian Sandbox/Guides/Create your first note.md")
-// TODO: Add inline code support
 // TODO: Add table support
 // TODO: Support `___` and `***` horizontal divider
 // TODO: Support `%%comment%%` comments
@@ -96,6 +95,21 @@ pub enum Token {
     },
 
     Italic {
+        span: Span,
+        tokens: Vec<Token>,
+    },
+
+    Strikethrough {
+        span: Span,
+        tokens: Vec<Token>,
+    },
+
+    Highlight {
+        span: Span,
+        tokens: Vec<Token>,
+    },
+
+    InlineCode {
         span: Span,
         tokens: Vec<Token>,
     },
@@ -240,6 +254,9 @@ impl fmt::Display for Token {
             Token::Header { .. } => "Header",
             Token::Bold { .. } => "Bold",
             Token::Italic { .. } => "Italic",
+            Token::Strikethrough { .. } => "Strikethrough",
+            Token::Highlight { .. } => "Highlight",
+            Token::InlineCode { .. } => "InlineCode",
             Token::InternalLink { .. } => "InternalLink",
             Token::ExternalLink { .. } => "ExternalLink",
             Token::Code { .. } => "Code",
@@ -286,6 +303,11 @@ impl Token {
             }
             Token::Bold { tokens, .. } => format!("Bold({})", tokens_repr(tokens)),
             Token::Italic { tokens, .. } => format!("Italic({})", tokens_repr(tokens)),
+            Token::Strikethrough { tokens, .. } => {
+                format!("Strikethrough({})", tokens_repr(tokens))
+            }
+            Token::Highlight { tokens, .. } => format!("Highlight({})", tokens_repr(tokens)),
+            Token::InlineCode { tokens, .. } => format!("InlineCode({})", tokens_repr(tokens)),
             Token::InternalLink { link, .. } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link, .. } => format!("ExternalLink({})", link.label()),
             Token::Code { lang, code, .. } => match lang {
@@ -384,6 +406,9 @@ impl_token_span_method!(
     Header,
     Bold,
     Italic,
+    Strikethrough,
+    Highlight,
+    InlineCode,
     Code,
     Quote,
     InlineMath,
@@ -401,25 +426,29 @@ impl_token_span_method!(
 impl Token {
     /// Check if the token is a whitespace token.
     pub fn is_whitespace(&self) -> bool {
+        use Token::*;
         match self {
-            Token::Text { text, .. } => text.chars().all(char::is_whitespace),
-            Token::Tag { .. }
-            | Token::Bold { .. }
-            | Token::Italic { .. }
-            | Token::Header { .. }
-            | Token::InternalLink { .. }
-            | Token::ExternalLink { .. }
-            | Token::Code { .. }
-            | Token::Callout { .. }
-            | Token::Quote { .. }
-            | Token::Frontmatter { .. }
-            | Token::Divider { .. }
-            | Token::InlineMath { .. }
-            | Token::DisplayMath { .. }
-            | Token::List { .. }
-            | Token::NumericList { .. }
-            | Token::CheckList { .. }
-            | Token::TemplaterCommand { .. } => false,
+            Text { text, .. } => text.chars().all(char::is_whitespace),
+            Tag { .. }
+            | Bold { .. }
+            | Italic { .. }
+            | Strikethrough { .. }
+            | Highlight { .. }
+            | InlineCode { .. }
+            | Header { .. }
+            | InternalLink { .. }
+            | ExternalLink { .. }
+            | Code { .. }
+            | Callout { .. }
+            | Quote { .. }
+            | Frontmatter { .. }
+            | Divider { .. }
+            | InlineMath { .. }
+            | DisplayMath { .. }
+            | List { .. }
+            | NumericList { .. }
+            | CheckList { .. }
+            | TemplaterCommand { .. } => false,
         }
     }
 }

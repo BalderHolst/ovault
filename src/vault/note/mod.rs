@@ -130,7 +130,11 @@ impl Note {
         Ok(Lexer::new(content).flat_map(|token| {
             let mut all_tokens = vec![token.clone()];
             match token {
-                Token::Bold { tokens, .. } | Token::Italic { tokens, .. } => {
+                Token::Bold { tokens, .. }
+                | Token::Italic { tokens, .. }
+                | Token::Strikethrough { tokens, .. }
+                | Token::Highlight { tokens, .. }
+                | Token::InlineCode { tokens, .. } => {
                     all_tokens.extend(tokens.iter().cloned());
                 }
                 Token::Callout { callout, .. } => {
@@ -288,7 +292,11 @@ impl Note {
                     let to = normalize(link.dest.clone());
                     self.add_link(to);
                 }
-                Token::Bold { tokens, .. } | Token::Italic { tokens, .. } => {
+                Token::Bold { tokens, .. }
+                | Token::Italic { tokens, .. }
+                | Token::Strikethrough { tokens, .. }
+                | Token::Highlight { tokens, .. }
+                | Token::InlineCode { tokens, .. } => {
                     self.index_tokens(tokens.iter().cloned());
                 }
                 Token::Callout { callout, .. } => {

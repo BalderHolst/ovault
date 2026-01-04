@@ -219,6 +219,94 @@ fn test_lex_bold_and_italic() {
 }
 
 #[test]
+fn test_lex_strikethrough() {
+    test_lex_token! {
+        "~~this has a *line* through it!~~"
+            => Token::Strikethrough {
+            span: Span {
+                start: 0,
+                end: 33,
+            },
+            tokens: vec![
+                Token::Text {
+                    span: Span {
+                        start: 2,
+                        end: 13,
+                    },
+                    text: "this has a ".to_string(),
+                },
+                Token::Italic {
+                    span: Span {
+                        start: 13,
+                        end: 19,
+                    },
+                    tokens: vec![
+                        Token::Text {
+                            span: Span {
+                                start: 12,
+                                end: 16,
+                            },
+                            text: "line".to_string(),
+                        },
+                    ],
+                },
+                Token::Text {
+                    span: Span {
+                        start: 19,
+                        end: 31,
+                    },
+                    text: " through it!".to_string(),
+                },
+            ],
+        }
+    }
+}
+
+#[test]
+fn test_lex_highlight() {
+    test_lex_token! {
+        "==highlighted!=="
+        => Token::Highlight {
+            span: Span {
+                start: 0,
+                end: 16,
+            },
+            tokens: [
+                Token::Text {
+                    span: Span {
+                        start: 2,
+                        end: 14,
+                    },
+                    text: "highlighted!".to_string(),
+                },
+            ].to_vec(),
+        }
+    }
+}
+
+#[test]
+fn test_inline_code() {
+    test_lex_token! {
+        "`inline code!`"
+        => Token::InlineCode {
+            span: Span {
+                start: 0,
+                end: 14,
+            },
+            tokens: [
+                Token::Text {
+                    span: Span {
+                        start: 1,
+                        end: 13,
+                    },
+                    text: "inline code!".to_string(),
+                },
+            ].to_vec(),
+        }
+    }
+}
+
+#[test]
 fn test_lex_tag() {
     test_lex_token! {
         "#tag"

@@ -304,8 +304,11 @@ macro_rules! lex_inline_fn {
 
 // Methods that construct tokens
 impl Lexer {
-    lex_inline_fn!(try_lex_bold:   ["__", "**"] => Bold);
-    lex_inline_fn!(try_lex_italic: ["_", "*"]   => Italic);
+    lex_inline_fn!(try_lex_bold:          ["__", "**"] => Bold);
+    lex_inline_fn!(try_lex_italic:        ["_", "*"]   => Italic);
+    lex_inline_fn!(try_lex_strikethrough: ["~~"]       => Strikethrough);
+    lex_inline_fn!(try_lex_highlight:     ["=="]       => Highlight);
+    lex_inline_fn!(try_lex_inline_code:   ["`"]        => InlineCode);
 
     fn try_lex_heading(&mut self) -> Option<Token> {
         let start = self.mark();
@@ -926,8 +929,11 @@ impl Iterator for Lexer {
             please!(try_lex_heading);
             please!(try_lex_bold);
             please!(try_lex_italic);
+            please!(try_lex_strikethrough);
+            please!(try_lex_highlight);
             please!(try_lex_tag);
             please!(try_lex_code);
+            please!(try_lex_inline_code);
             please!(try_lex_display_math);
             please!(try_lex_inline_math);
             please!(try_lex_internal_link);
