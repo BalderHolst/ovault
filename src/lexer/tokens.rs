@@ -90,10 +90,9 @@ pub enum Token {
         heading: String
     },
 
-    // TODO: Maybe content should be Vec<Token> to allow nested formatting?
     Bold {
         span: Span,
-        text: String,
+        tokens: Vec<Token>,
     },
 
     /// Represents a code block in the note.
@@ -279,7 +278,7 @@ impl Token {
             Token::Header { level, heading, .. } => {
                 format!("Header({} {})", "#".repeat(*level), string_repr(heading))
             }
-            Token::Bold { text, .. } => format!("Bold({})", string_repr(text)),
+            Token::Bold { tokens, .. } => format!("Bold({})", tokens_repr(tokens)),
             Token::InternalLink { link, .. } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link, .. } => format!("ExternalLink({})", link.label()),
             Token::Code { lang, code, .. } => match lang {
@@ -395,10 +394,9 @@ impl Token {
     /// Check if the token is a whitespace token.
     pub fn is_whitespace(&self) -> bool {
         match self {
-            Token::Text { text, .. } | Token::Bold { text, .. } => {
-                text.chars().all(char::is_whitespace)
-            }
+            Token::Text { text, .. } => text.chars().all(char::is_whitespace),
             Token::Tag { .. }
+            | Token::Bold { .. }
             | Token::Header { .. }
             | Token::InternalLink { .. }
             | Token::ExternalLink { .. }

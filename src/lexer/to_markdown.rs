@@ -26,8 +26,8 @@ impl ToMarkdown for Token {
                 level,
                 heading,
             } => format!("{} {heading}\n", "#".repeat(*level)),
-            Token::Bold { span: _, text } => {
-                format!("**{}**", text)
+            Token::Bold { span: _, tokens } => {
+                format!("**{}**", tokens_to_markdown(tokens))
             }
             Token::Code {
                 span: _,

@@ -167,6 +167,35 @@ fn test_lex_heading() {
 }
 
 #[test]
+fn test_lex_bold() {
+    test_lex_token! {
+        "**bold text**"
+        => Token::Bold {
+            span: Span {
+                start: 0,
+                end: 13,
+            },
+            tokens: vec![
+                Token::Text {
+                    span: Span {
+                        start: 2,
+                        end: 11,
+                    },
+                    text: "bold text".to_string(),
+                },
+            ],
+        }
+    }
+}
+
+#[test]
+fn test_lex_bold_and_italic() {
+    test_lex_token! {
+        "***bold and italic text***"
+    }
+}
+
+#[test]
 fn test_lex_tag() {
     test_lex_token! {
         "#tag"

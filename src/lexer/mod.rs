@@ -21,6 +21,10 @@ impl Copy for Mark {}
 
 impl Mark {
     const START: Self = Mark(0);
+
+    pub fn as_usize(&self) -> usize {
+        self.0
+    }
 }
 
 impl From<Mark> for usize {
@@ -30,6 +34,7 @@ impl From<Mark> for usize {
 }
 
 /// A lexer for parsing markdown into tokens.
+#[derive(Clone)]
 pub struct Lexer {
     cursor: usize,
     slow_cursor: usize,
@@ -304,14 +309,30 @@ impl Lexer {
 
         self.consume_until_sequence(start_marker)?;
 
-        let text = self.extract(content_start);
+        let mut content_span = self.span(content_start);
+
+        // Find the rightmost matching end marker
+        loop {
+            let last_pos = self.mark();
+            self.consume();
+            if !self.at_sequence(start_marker) {
+                self.rewind(last_pos);
+                break;
+            }
+
+            content_span.end = self.cursor;
+        }
+
+        let content = self.extract_span(content_span);
+        let mut tokens = Lexer::new(&content).run();
+        Self::shift_tokens(&mut tokens, content_span.start as isize);
 
         self.consume_expected_sequence(start_marker)
             .expect("We just checked for end marker");
 
         let span = self.span(start);
 
-        Some(Token::Bold { span, text })
+        Some(Token::Bold { span, tokens })
     }
 
     fn try_lex_tag(&mut self) -> Option<Token> {
@@ -479,6 +500,13 @@ impl Lexer {
         Some(())
     }
 
+    /// Shift the spans of an array of tokens by an offset
+    fn shift_tokens(tokens: &mut [Token], offset: isize) {
+        for token in tokens {
+            token.span_mut().shift(offset);
+        }
+    }
+
     /// Extract the text contained within a block prefixed with '>'
     fn try_extract_block(&mut self) -> Option<Vec<Token>> {
         self.at_block_start()?;
@@ -499,9 +527,7 @@ impl Lexer {
 
         // Shift all token spans by the start position
         let Mark(offset) = start;
-        for token in &mut tokens {
-            token.span_mut().shift(offset as isize);
-        }
+        Self::shift_tokens(&mut tokens, offset as isize);
 
         Some(tokens)
     }
@@ -867,6 +893,7 @@ impl Iterator for Lexer {
                     let start = self.cursor;
                     let token = self.$method();
                     if let Some(token) = token {
+                        // Add text between yielded tokens if any
                         if self.slow_cursor != start {
                             let span = Span {
                                 start: self.slow_cursor,
@@ -875,6 +902,8 @@ impl Iterator for Lexer {
                             let text = self.extract_span(span);
                             self.queue.push_back(Token::Text { span, text });
                         }
+
+                        // Push the found token to the queue
                         self.queue.push_back(token);
                         self.slow_cursor = self.cursor;
 
