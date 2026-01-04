@@ -29,6 +29,9 @@ impl ToMarkdown for Token {
             Token::Bold { span: _, tokens } => {
                 format!("**{}**", tokens_to_markdown(tokens))
             }
+            Token::Italic { span: _, tokens } => {
+                format!("_{}_", tokens_to_markdown(tokens))
+            }
             Token::Code {
                 span: _,
                 lang,

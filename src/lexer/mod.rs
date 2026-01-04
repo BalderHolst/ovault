@@ -21,10 +21,6 @@ impl Copy for Mark {}
 
 impl Mark {
     const START: Self = Mark(0);
-
-    pub fn as_usize(&self) -> usize {
-        self.0
-    }
 }
 
 impl From<Mark> for usize {
@@ -261,8 +257,56 @@ mod skip_funcs {
     }
 }
 
+macro_rules! lex_inline_fn {
+    ($name:ident: [$($marker:expr),*] => $output:ident) => {
+        fn $name(&mut self) -> Option<Token> {
+            const MARKERS: &[&str] = &[$($marker),*];
+
+            // Check that we are at a start marker
+            let start_marker = MARKERS.iter().find(|s| self.at_sequence(s))?;
+
+            let start = self.mark();
+
+            self.consume_expected_sequence(start_marker)
+                .expect("We just checked for start marker");
+
+            let content_start = self.mark();
+
+            self.consume_until_sequence(start_marker)?;
+
+            let mut content_span = self.span(content_start);
+
+            // Find the rightmost matching end marker
+            loop {
+                let last_pos = self.mark();
+                self.consume();
+                if !self.at_sequence(start_marker) {
+                    self.rewind(last_pos);
+                    break;
+                }
+
+                content_span.end = self.cursor;
+            }
+
+            let content = self.extract_span(content_span);
+            let mut tokens = Lexer::new(&content).run();
+            Self::shift_tokens(&mut tokens, content_span.start as isize);
+
+            self.consume_expected_sequence(start_marker)
+                .expect("We just checked for end marker");
+
+            let span = self.span(start);
+
+            Some(Token::$output { span, tokens })
+        }
+    };
+}
+
 // Methods that construct tokens
 impl Lexer {
+    lex_inline_fn!(try_lex_bold:   ["__", "**"] => Bold);
+    lex_inline_fn!(try_lex_italic: ["_", "*"]   => Italic);
+
     fn try_lex_heading(&mut self) -> Option<Token> {
         let start = self.mark();
         self.consume_expected('#')?;
@@ -291,48 +335,6 @@ impl Lexer {
             level,
             heading,
         })
-    }
-
-    // TODO: Add Italic, Bold, Strikethrough, Highlight, Underline tokens.
-    fn try_lex_bold(&mut self) -> Option<Token> {
-        const BOLD_MARKERS: &[&str] = &["__", "**"];
-
-        // Check that we are at a start marker
-        let start_marker = BOLD_MARKERS.iter().find(|s| self.at_sequence(s))?;
-
-        let start = self.mark();
-
-        self.consume_expected_sequence(start_marker)
-            .expect("We just checked for start marker");
-
-        let content_start = self.mark();
-
-        self.consume_until_sequence(start_marker)?;
-
-        let mut content_span = self.span(content_start);
-
-        // Find the rightmost matching end marker
-        loop {
-            let last_pos = self.mark();
-            self.consume();
-            if !self.at_sequence(start_marker) {
-                self.rewind(last_pos);
-                break;
-            }
-
-            content_span.end = self.cursor;
-        }
-
-        let content = self.extract_span(content_span);
-        let mut tokens = Lexer::new(&content).run();
-        Self::shift_tokens(&mut tokens, content_span.start as isize);
-
-        self.consume_expected_sequence(start_marker)
-            .expect("We just checked for end marker");
-
-        let span = self.span(start);
-
-        Some(Token::Bold { span, tokens })
     }
 
     fn try_lex_tag(&mut self) -> Option<Token> {
@@ -923,6 +925,7 @@ impl Iterator for Lexer {
 
             please!(try_lex_heading);
             please!(try_lex_bold);
+            please!(try_lex_italic);
             please!(try_lex_tag);
             please!(try_lex_code);
             please!(try_lex_display_math);

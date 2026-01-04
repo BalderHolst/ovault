@@ -95,6 +95,11 @@ pub enum Token {
         tokens: Vec<Token>,
     },
 
+    Italic {
+        span: Span,
+        tokens: Vec<Token>,
+    },
+
     /// Represents a code block in the note.
     ///
     /// Example:
@@ -234,6 +239,7 @@ impl fmt::Display for Token {
             Token::Tag { .. } => "Tag",
             Token::Header { .. } => "Header",
             Token::Bold { .. } => "Bold",
+            Token::Italic { .. } => "Italic",
             Token::InternalLink { .. } => "InternalLink",
             Token::ExternalLink { .. } => "ExternalLink",
             Token::Code { .. } => "Code",
@@ -279,6 +285,7 @@ impl Token {
                 format!("Header({} {})", "#".repeat(*level), string_repr(heading))
             }
             Token::Bold { tokens, .. } => format!("Bold({})", tokens_repr(tokens)),
+            Token::Italic { tokens, .. } => format!("Italic({})", tokens_repr(tokens)),
             Token::InternalLink { link, .. } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link, .. } => format!("ExternalLink({})", link.label()),
             Token::Code { lang, code, .. } => match lang {
@@ -375,6 +382,8 @@ impl_token_span_method!(
     Text,
     Tag,
     Header,
+    Bold,
+    Italic,
     Code,
     Quote,
     InlineMath,
@@ -386,8 +395,7 @@ impl_token_span_method!(
     List,
     NumericList,
     CheckList,
-    TemplaterCommand,
-    Bold
+    TemplaterCommand
 );
 
 impl Token {
@@ -397,6 +405,7 @@ impl Token {
             Token::Text { text, .. } => text.chars().all(char::is_whitespace),
             Token::Tag { .. }
             | Token::Bold { .. }
+            | Token::Italic { .. }
             | Token::Header { .. }
             | Token::InternalLink { .. }
             | Token::ExternalLink { .. }

@@ -128,34 +128,36 @@ impl Note {
     pub fn all_tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
         let content = self.content()?;
         Ok(Lexer::new(content).flat_map(|token| {
-            let mut tokens = vec![token.clone()];
+            let mut all_tokens = vec![token.clone()];
             match token {
+                Token::Bold { tokens, .. } | Token::Italic { tokens, .. } => {
+                    all_tokens.extend(tokens.iter().cloned());
+                }
                 Token::Callout { callout, .. } => {
-                    tokens.extend(callout.tokens.iter().cloned());
+                    all_tokens.extend(callout.tokens.iter().cloned());
                 }
                 Token::Quote {
                     tokens: qtokens, ..
                 } => {
-                    tokens.extend(qtokens.iter().cloned());
+                    all_tokens.extend(qtokens.iter().cloned());
                 }
                 Token::List { items, .. } => {
                     for item in items {
-                        tokens.extend(item.tokens.iter().cloned());
+                        all_tokens.extend(item.tokens.iter().cloned());
                     }
                 }
                 Token::NumericList { items, .. } => {
                     for item in items {
-                        tokens.extend(item.tokens.iter().cloned());
+                        all_tokens.extend(item.tokens.iter().cloned());
                     }
                 }
                 Token::CheckList { items, .. } => {
                     for item in items {
-                        tokens.extend(item.tokens.iter().cloned());
+                        all_tokens.extend(item.tokens.iter().cloned());
                     }
                 }
                 Token::Frontmatter { .. }
                 | Token::Text { .. }
-                | Token::Bold { .. } // TODO: Change this if bold can contain nested tokens
                 | Token::Tag { .. }
                 | Token::Header { .. }
                 | Token::Code { .. }
@@ -168,7 +170,7 @@ impl Note {
                     // These tokens do not contain nested tokens
                 }
             }
-            tokens.into_iter()
+            all_tokens.into_iter()
         }))
     }
 
@@ -286,6 +288,9 @@ impl Note {
                     let to = normalize(link.dest.clone());
                     self.add_link(to);
                 }
+                Token::Bold { tokens, .. } | Token::Italic { tokens, .. } => {
+                    self.index_tokens(tokens.iter().cloned());
+                }
                 Token::Callout { callout, .. } => {
                     self.index_tokens(callout.tokens.iter().cloned());
                 }
@@ -309,7 +314,6 @@ impl Note {
                 }
                 Token::Text { .. }
                 | Token::Header { .. }
-                | Token::Bold { .. }
                 | Token::Divider { .. }
                 | Token::InlineMath { .. }
                 | Token::DisplayMath { .. }

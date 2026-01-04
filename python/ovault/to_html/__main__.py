@@ -113,7 +113,14 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
             w.write_line(html.h(token.level, token.heading, id=token.heading))
 
         case token.Bold():
-            w.write_line(f'<strong>{token.text}</strong>')
+            w.write_line(f'<strong>', indent=True)
+            tokens_to_html(vault, w, token.tokens)
+            w.write_line(f'</strong>', dedent=True)
+
+        case token.Italic():
+            w.write_line(f'<i>', indent=True)
+            tokens_to_html(vault, w, token.tokens)
+            w.write_line(f'</i>', dedent=True)
 
         case token.InlineMath():
             w.write_line(f'\\({token.latex}\\)')
