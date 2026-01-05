@@ -175,7 +175,7 @@ fn test_lex_bold() {
                 start: 0,
                 end: 13,
             },
-            marker: "**",
+            marker: "**".to_string(),
             tokens: vec![
                 Token::Text {
                     span: Span {
@@ -198,14 +198,14 @@ fn test_lex_bold_and_italic() {
                 start: 0,
                 end: 26,
             },
-            marker: "**",
+            marker: "**".to_string(),
             tokens: vec![
                 Token::Italic {
                     span: Span {
                         start: 2,
                         end: 24,
                     },
-                    marker: "*",
+                    marker: "*".to_string(),
                     tokens: vec![
                         Token::Text {
                             span: Span {
@@ -230,7 +230,7 @@ fn test_lex_strikethrough() {
                 start: 0,
                 end: 33,
             },
-            marker: "~~",
+            marker: "~~".to_string(),
             tokens: vec![
                 Token::Text {
                     span: Span {
@@ -244,7 +244,7 @@ fn test_lex_strikethrough() {
                         start: 13,
                         end: 19,
                     },
-                    marker: "*",
+                    marker: "*".to_string(),
                     tokens: vec![
                         Token::Text {
                             span: Span {
@@ -268,6 +268,20 @@ fn test_lex_strikethrough() {
 }
 
 #[test]
+fn test_lex_comment() {
+    test_lex_token! {
+        "%% This is a comment %%"
+        => Token::Comment {
+            span: Span {
+                start: 0,
+                end: 23,
+            },
+            comment: " This is a comment ".to_string(),
+        }
+    }
+}
+
+#[test]
 fn test_lex_highlight() {
     test_lex_token! {
         "==highlighted!=="
@@ -276,7 +290,7 @@ fn test_lex_highlight() {
                 start: 0,
                 end: 16,
             },
-            marker: "==",
+            marker: "==".to_string(),
             tokens: [
                 Token::Text {
                     span: Span {

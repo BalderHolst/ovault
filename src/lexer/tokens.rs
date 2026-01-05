@@ -14,7 +14,6 @@ use super::Span;
 // TODO: `\` escape character support (See "test-vaults/Obsidian Sandbox/Guides/Create your first note.md")
 // TODO: Add table support
 // TODO: Support `___` and `***` horizontal divider
-// TODO: Support `%%comment%%` comments
 // TODO: Add "author" field support in quotes
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
@@ -54,6 +53,17 @@ pub enum Token {
         yaml: String
     },
 
+    /// Represents a comment in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// %% This is a comment %%
+    /// ```
+    Comment {
+        span: Span,
+        comment: String
+    },
+
     /// Represents a block of text in the note.
     Text {
         /// The span of the frontmatter in the source text.
@@ -91,25 +101,25 @@ pub enum Token {
 
     Bold {
         span: Span,
-        marker: &'static str,
+        marker: String,
         tokens: Vec<Token>,
     },
 
     Italic {
         span: Span,
-        marker: &'static str,
+        marker: String,
         tokens: Vec<Token>,
     },
 
     Strikethrough {
         span: Span,
-        marker: &'static str,
+        marker: String,
         tokens: Vec<Token>,
     },
 
     Highlight {
         span: Span,
-        marker: &'static str,
+        marker: String,
         tokens: Vec<Token>,
     },
 
@@ -273,6 +283,7 @@ impl fmt::Display for Token {
             Token::List { .. } => "List",
             Token::NumericList { .. } => "NumericList",
             Token::CheckList { .. } => "CheckList",
+            Token::Comment { .. } => "Comment",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
         write!(f, "{}", name)
@@ -419,6 +430,9 @@ impl Token {
                     .collect();
                 format!("CheckList([{}])", item_strs.join(", "))
             }
+            Token::Comment { comment, .. } => {
+                format!("Comment({})", string_repr(comment))
+            }
             Token::TemplaterCommand { command, .. } => {
                 format!("TemplaterCommand({})", string_repr(command))
             }
@@ -474,6 +488,7 @@ impl_token_span_method!(
     List,
     NumericList,
     CheckList,
+    Comment,
     TemplaterCommand
 );
 
@@ -483,6 +498,7 @@ impl Token {
         use Token::*;
         match self {
             Text { text, .. } => text.chars().all(char::is_whitespace),
+            Comment { .. } => true,
             Tag { .. }
             | Bold { .. }
             | Italic { .. }

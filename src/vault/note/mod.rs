@@ -125,6 +125,7 @@ impl Note {
 
     /// Get an iterator of all tokens in the note, including those nested
     /// within other tokens (e.g. callouts, quotes, lists).
+    // TODO: Use `Token.iter_inner`
     pub fn all_tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
         let content = self.content()?;
         Ok(Lexer::new(content).flat_map(|token| {
@@ -170,6 +171,7 @@ impl Note {
                 | Token::Divider { .. }
                 | Token::InternalLink { .. }
                 | Token::ExternalLink { .. }
+                | Token::Comment { .. }
                 | Token::TemplaterCommand { .. } => {
                     // These tokens do not contain nested tokens
                 }
@@ -327,6 +329,7 @@ impl Note {
                 | Token::InlineCode { .. }
                 | Token::Code { .. }
                 | Token::ExternalLink { .. }
+                | Token::Comment { .. }
                 | Token::TemplaterCommand { .. } => {}
             }
         }

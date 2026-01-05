@@ -303,7 +303,7 @@ macro_rules! lex_inline_fn {
 
             let span = self.span(start);
 
-            Some(Token::$output { span, marker, tokens })
+            Some(Token::$output { span, marker: marker.to_string(), tokens })
         }
     };
 }
@@ -620,6 +620,23 @@ impl Lexer {
         let span = self.span(start);
 
         Some(Token::Frontmatter { span, yaml })
+    }
+
+    fn try_lex_comment(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        self.consume_expected_sequence("%%")?;
+
+        let comment_start = self.mark();
+        self.consume_until_sequence("%%")?;
+
+        let comment = self.extract(comment_start);
+
+        self.consume_expected_sequence("%%")?;
+
+        let span = self.span(start);
+
+        Some(Token::Comment { span, comment })
     }
 
     fn try_lex_divider(&mut self) -> Option<Token> {
@@ -967,6 +984,7 @@ impl Iterator for Lexer {
             please!(try_lex_checklist);
             please!(try_lex_list);
             please!(try_lex_numeric_list);
+            please!(try_lex_comment);
             please!(try_lex_templater_command);
 
             // Check if we are at the end of the file

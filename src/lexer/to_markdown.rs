@@ -68,6 +68,7 @@ impl ToMarkdown for Token {
                 .map(CheckListItem::to_markdown)
                 .collect::<Vec<_>>()
                 .join(""),
+            Token::Comment { span: _, comment } => format!("%%{comment}%%"),
             Token::TemplaterCommand { span: _, command } => format!("<% {command} %>"),
         }
     }
