@@ -117,42 +117,26 @@ impl Drop for TestVault {
     }
 }
 
-fn zero_tokens(tokens: Vec<Token>) -> Vec<Token> {
-    tokens.into_iter().map(zero_span).collect()
-}
-
 fn zero_span(mut token: Token) -> Token {
     let span = token.span_mut();
     *span = Span::ZERO;
 
-    match token {
-        Token::Quote { ref mut tokens, .. } => {
-            *tokens = zero_tokens(tokens.clone());
+    for inner_token in token.iter_inner_mut() {
+        *inner_token = zero_span(inner_token.clone());
+    }
+
+    {
+        // Handle extra spans in certain tokens
+        let extra_spans: Vec<_> = match &mut token {
+            Token::List { items, .. } => items.iter_mut().map(|i| &mut i.span).collect(),
+            Token::NumericList { items, .. } => items.iter_mut().map(|i| &mut i.span).collect(),
+            Token::CheckList { items, .. } => items.iter_mut().map(|i| &mut i.span).collect(),
+            _ => vec![],
+        };
+
+        for extra_span in extra_spans {
+            *extra_span = Span::ZERO;
         }
-        Token::Callout {
-            ref mut callout, ..
-        } => {
-            callout.tokens = zero_tokens(callout.tokens.clone());
-        }
-        Token::List { ref mut items, .. } => {
-            for item in items {
-                item.span = Span::ZERO;
-                item.tokens = zero_tokens(item.tokens.clone());
-            }
-        }
-        Token::NumericList { ref mut items, .. } => {
-            for item in items {
-                item.span = Span::ZERO;
-                item.tokens = zero_tokens(item.tokens.clone());
-            }
-        }
-        Token::CheckList { ref mut items, .. } => {
-            for item in items {
-                item.span = Span::ZERO;
-                item.tokens = zero_tokens(item.tokens.clone());
-            }
-        }
-        _ => {}
     }
 
     token
@@ -316,6 +300,15 @@ fn test_to_markdown() {
                     new,
                     new.span().extract(&text)
                 );
+
+                let inner_tokens: Vec<_> = new.iter_inner().collect();
+                if !inner_tokens.is_empty() {
+                    println!("  Inner tokens:");
+                    for inner in &inner_tokens {
+                        println!("    - {:?}", inner);
+                    }
+                }
+
                 let new = zero_span(new.clone());
                 assert_eq!(old, &new);
             }

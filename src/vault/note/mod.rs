@@ -133,8 +133,7 @@ impl Note {
                 Token::Bold { tokens, .. }
                 | Token::Italic { tokens, .. }
                 | Token::Strikethrough { tokens, .. }
-                | Token::Highlight { tokens, .. }
-                | Token::InlineCode { tokens, .. } => {
+                | Token::Highlight { tokens, .. } => {
                     all_tokens.extend(tokens.iter().cloned());
                 }
                 Token::Callout { callout, .. } => {
@@ -164,6 +163,7 @@ impl Note {
                 | Token::Text { .. }
                 | Token::Tag { .. }
                 | Token::Header { .. }
+                | Token::InlineCode { .. }
                 | Token::Code { .. }
                 | Token::InlineMath { .. }
                 | Token::DisplayMath { .. }
@@ -295,8 +295,7 @@ impl Note {
                 Token::Bold { tokens, .. }
                 | Token::Italic { tokens, .. }
                 | Token::Strikethrough { tokens, .. }
-                | Token::Highlight { tokens, .. }
-                | Token::InlineCode { tokens, .. } => {
+                | Token::Highlight { tokens, .. } => {
                     self.index_tokens(tokens.iter().cloned());
                 }
                 Token::Callout { callout, .. } => {
@@ -325,6 +324,7 @@ impl Note {
                 | Token::Divider { .. }
                 | Token::InlineMath { .. }
                 | Token::DisplayMath { .. }
+                | Token::InlineCode { .. }
                 | Token::Code { .. }
                 | Token::ExternalLink { .. }
                 | Token::TemplaterCommand { .. } => {}

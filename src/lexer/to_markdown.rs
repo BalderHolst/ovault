@@ -26,20 +26,17 @@ impl ToMarkdown for Token {
                 level,
                 heading,
             } => format!("{} {heading}\n", "#".repeat(*level)),
-            Token::Bold { span: _, tokens } => {
-                format!("**{}**", tokens_to_markdown(tokens))
+            Token::Bold { tokens, marker, .. }
+            | Token::Italic { tokens, marker, .. }
+            | Token::Strikethrough { tokens, marker, .. }
+            | Token::Highlight { tokens, marker, .. } => {
+                format!(
+                    "{marker}{content}{marker}",
+                    content = tokens_to_markdown(tokens)
+                )
             }
-            Token::Italic { span: _, tokens } => {
-                format!("_{}_", tokens_to_markdown(tokens))
-            }
-            Token::Strikethrough { tokens, .. } => {
-                format!("~~{}~~", tokens_to_markdown(tokens))
-            }
-            Token::Highlight { tokens, .. } => {
-                format!("=={}==", tokens_to_markdown(tokens))
-            }
-            Token::InlineCode { tokens, .. } => {
-                format!("`{}`", tokens_to_markdown(tokens))
+            Token::InlineCode { code, .. } => {
+                format!("`{}`", code)
             }
             Token::Code {
                 span: _,

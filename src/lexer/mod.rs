@@ -263,24 +263,31 @@ macro_rules! lex_inline_fn {
             const MARKERS: &[&str] = &[$($marker),*];
 
             // Check that we are at a start marker
-            let start_marker = MARKERS.iter().find(|s| self.at_sequence(s))?;
+            let marker = MARKERS.iter().find(|s| self.at_sequence(s))?;
 
             let start = self.mark();
 
-            self.consume_expected_sequence(start_marker)
+            self.consume_expected_sequence(marker)
                 .expect("We just checked for start marker");
 
             let content_start = self.mark();
 
-            self.consume_until_sequence(start_marker)?;
+
+            while !self.at_sequence(marker) {
+                let c = self.consume()?;
+                if c == '\n' {
+                    // Inline markers cannot span newlines
+                    return None;
+                }
+            }
 
             let mut content_span = self.span(content_start);
 
             // Find the rightmost matching end marker
             loop {
                 let last_pos = self.mark();
-                self.consume();
-                if !self.at_sequence(start_marker) {
+                self.consume()?;
+                if !self.at_sequence(marker) {
                     self.rewind(last_pos);
                     break;
                 }
@@ -292,12 +299,11 @@ macro_rules! lex_inline_fn {
             let mut tokens = Lexer::new(&content).run();
             Self::shift_tokens(&mut tokens, content_span.start as isize);
 
-            self.consume_expected_sequence(start_marker)
-                .expect("We just checked for end marker");
+            self.consume_expected_sequence(marker).expect("We just checked for end marker");
 
             let span = self.span(start);
 
-            Some(Token::$output { span, tokens })
+            Some(Token::$output { span, marker, tokens })
         }
     };
 }
@@ -308,7 +314,6 @@ impl Lexer {
     lex_inline_fn!(try_lex_italic:        ["_", "*"]   => Italic);
     lex_inline_fn!(try_lex_strikethrough: ["~~"]       => Strikethrough);
     lex_inline_fn!(try_lex_highlight:     ["=="]       => Highlight);
-    lex_inline_fn!(try_lex_inline_code:   ["`"]        => InlineCode);
 
     fn try_lex_heading(&mut self) -> Option<Token> {
         let start = self.mark();
@@ -634,6 +639,23 @@ impl Lexer {
         let span = self.span(start);
 
         Some(Token::Divider { span })
+    }
+
+    fn try_lex_inline_code(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        self.consume_expected('`')?;
+
+        let code_start = self.mark();
+        self.consume_until(|c| c == '`');
+
+        let code = self.extract(code_start);
+
+        self.consume_expected('`')?;
+
+        let span = self.span(start);
+
+        Some(Token::InlineCode { span, code })
     }
 
     fn try_lex_code(&mut self) -> Option<Token> {

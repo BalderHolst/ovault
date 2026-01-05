@@ -91,27 +91,31 @@ pub enum Token {
 
     Bold {
         span: Span,
+        marker: &'static str,
         tokens: Vec<Token>,
     },
 
     Italic {
         span: Span,
+        marker: &'static str,
         tokens: Vec<Token>,
     },
 
     Strikethrough {
         span: Span,
+        marker: &'static str,
         tokens: Vec<Token>,
     },
 
     Highlight {
         span: Span,
+        marker: &'static str,
         tokens: Vec<Token>,
     },
 
     InlineCode {
         span: Span,
-        tokens: Vec<Token>,
+        code: String,
     },
 
     /// Represents a code block in the note.
@@ -275,6 +279,56 @@ impl fmt::Display for Token {
     }
 }
 
+impl Token {
+    /// Iterate over the inner tokens of the token, if any.
+    pub fn iter_inner(&self) -> Box<dyn Iterator<Item = &Token> + '_> {
+        match self {
+            Token::Bold { tokens, .. }
+            | Token::Italic { tokens, .. }
+            | Token::Strikethrough { tokens, .. }
+            | Token::Highlight { tokens, .. }
+            | Token::Quote { tokens, .. }
+            | Token::Callout {
+                callout: Callout { tokens, .. },
+                ..
+            } => Box::new(tokens.iter()),
+            Token::List { items, .. } => Box::new(items.iter().flat_map(|item| item.tokens.iter())),
+            Token::NumericList { items, .. } => {
+                Box::new(items.iter().flat_map(|item| item.tokens.iter()))
+            }
+            Token::CheckList { items, .. } => {
+                Box::new(items.iter().flat_map(|item| item.tokens.iter()))
+            }
+            _ => Box::new([].iter()),
+        }
+    }
+
+    /// Iterate over the inner tokens *mutably* of the token, if any.
+    pub fn iter_inner_mut(&mut self) -> Box<dyn Iterator<Item = &mut Token> + '_> {
+        match self {
+            Token::Bold { tokens, .. }
+            | Token::Italic { tokens, .. }
+            | Token::Strikethrough { tokens, .. }
+            | Token::Highlight { tokens, .. }
+            | Token::Quote { tokens, .. }
+            | Token::Callout {
+                callout: Callout { tokens, .. },
+                ..
+            } => Box::new(tokens.iter_mut()),
+            Token::List { items, .. } => {
+                Box::new(items.iter_mut().flat_map(|item| item.tokens.iter_mut()))
+            }
+            Token::NumericList { items, .. } => {
+                Box::new(items.iter_mut().flat_map(|item| item.tokens.iter_mut()))
+            }
+            Token::CheckList { items, .. } => {
+                Box::new(items.iter_mut().flat_map(|item| item.tokens.iter_mut()))
+            }
+            _ => Box::new([].iter_mut()),
+        }
+    }
+}
+
 #[cfg(feature = "python")]
 #[pymethods]
 impl Token {
@@ -307,7 +361,7 @@ impl Token {
                 format!("Strikethrough({})", tokens_repr(tokens))
             }
             Token::Highlight { tokens, .. } => format!("Highlight({})", tokens_repr(tokens)),
-            Token::InlineCode { tokens, .. } => format!("InlineCode({})", tokens_repr(tokens)),
+            Token::InlineCode { code, .. } => format!("InlineCode({})", string_repr(code)),
             Token::InternalLink { link, .. } => format!("InternalLink({})", link.label()),
             Token::ExternalLink { link, .. } => format!("ExternalLink({})", link.label()),
             Token::Code { lang, code, .. } => match lang {
