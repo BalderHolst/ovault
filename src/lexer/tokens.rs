@@ -59,7 +59,9 @@ pub enum Token {
     /// %% This is a comment %%
     /// ```
     Comment {
+        /// The span of the comment in the source text.
         span: Span,
+        /// The comment content.
         comment: String
     },
 
@@ -90,7 +92,7 @@ pub enum Token {
     /// ### Third => level = 3
     /// ```
     Header {
-        /// The span of the tag in the source text.
+        /// The span of the header in the source text.
         span: Span,
         /// The level of the header, where `1` is the highest level (e.g., `#`),
         level: usize,
@@ -98,32 +100,78 @@ pub enum Token {
         heading: String
     },
 
+    /// Represents bold text in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// **This text is bold**
+    /// __This text is also bold__
+    /// ```
     Bold {
+        /// The span of the token in the source text.
         span: Span,
+        /// The marker used for bold (e.g., "**" or "__")
         marker: String,
+        /// The tokenized content of the bold text.
         tokens: Vec<Token>,
     },
 
+    /// Represents italic text in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// *This text is italicized*
+    /// _This text is also italicized_
+    /// ```
     Italic {
+        /// The span of the token in the source text.
         span: Span,
+        /// The marker used for italics (e.g., "*" or "_")
         marker: String,
+        /// The tokenized content of the italicized text.
         tokens: Vec<Token>,
     },
 
+    /// Represents strikethrough text in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// ~~This text is strikethrough~~
+    /// ```
     Strikethrough {
+        /// The span of the token in the source text.
         span: Span,
+        /// The marker used for strikethrough (e.g., "~~")
         marker: String,
+        /// The tokenized content of the strikethrough text.
         tokens: Vec<Token>,
     },
 
+    /// Represents highlighted text in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// ==This text is highlighted==
+    /// ```
     Highlight {
+        /// The span of the token in the source text.
         span: Span,
+        /// The marker used for highlighting (e.g., "==").
         marker: String,
+        /// The tokenized content of the highlighted text.
         tokens: Vec<Token>,
     },
 
+    /// Represents inline code in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// `inline code`
+    /// ```
     InlineCode {
+        /// The span of the token in the source text.
         span: Span,
+        /// The inline code content.
         code: String,
     },
 
@@ -245,6 +293,12 @@ pub enum Token {
         items: Vec<CheckListItem>,
     },
 
+    /// Represents an escaped character in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// \*This text is not italicized\*
+    /// ```
     Escaped {
         /// The span of the escaped character in the source text.
         span: Span,

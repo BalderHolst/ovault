@@ -29,8 +29,10 @@ impl From<Mark> for usize {
     }
 }
 
+/// Configuration options for the lexer.
 #[derive(Clone)]
 pub struct LexerConfig {
+    /// Whether to lex multiline tokens (like blockquotes, lists, etc.)
     pub lex_multiline_tokens: bool,
 }
 
@@ -58,6 +60,7 @@ impl Lexer {
         Self::new_with_config(text, LexerConfig::default())
     }
 
+    /// Create a new lexer with the given text and configuration.
     pub fn new_with_config<S: ToString>(text: S, config: LexerConfig) -> Self {
         let chars = text
             .to_string()
