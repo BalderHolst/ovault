@@ -172,6 +172,7 @@ impl Note {
                 | Token::InternalLink { .. }
                 | Token::ExternalLink { .. }
                 | Token::Comment { .. }
+                | Token::Escaped { .. }
                 | Token::TemplaterCommand { .. } => {
                     // These tokens do not contain nested tokens
                 }
@@ -330,6 +331,7 @@ impl Note {
                 | Token::Code { .. }
                 | Token::ExternalLink { .. }
                 | Token::Comment { .. }
+                | Token::Escaped { .. }
                 | Token::TemplaterCommand { .. } => {}
             }
         }

@@ -273,7 +273,7 @@ macro_rules! lex_inline_fn {
             let content_start = self.mark();
 
 
-            while !self.at_sequence(marker) {
+            while !self.at_sequence(marker) || self.peek(-1) == Some('\\') {
                 let c = self.consume()?;
                 if c == '\n' {
                     // Inline markers cannot span newlines
@@ -296,6 +296,12 @@ macro_rules! lex_inline_fn {
             }
 
             let content = self.extract_span(content_span);
+
+            if content.chars().all(|c| c.is_whitespace()) {
+                // Content cannot be all whitespace
+                return None;
+            }
+
             let mut tokens = Lexer::new(&content).run();
             Self::shift_tokens(&mut tokens, content_span.start as isize);
 
@@ -314,6 +320,14 @@ impl Lexer {
     lex_inline_fn!(try_lex_italic:        ["_", "*"]   => Italic);
     lex_inline_fn!(try_lex_strikethrough: ["~~"]       => Strikethrough);
     lex_inline_fn!(try_lex_highlight:     ["=="]       => Highlight);
+
+    fn try_lex_escaped_character(&mut self) -> Option<Token> {
+        let start = self.mark();
+        self.consume_expected('\\')?;
+        let character = self.consume()?;
+        let span = self.span(start);
+        Some(Token::Escaped { span, character })
+    }
 
     fn try_lex_heading(&mut self) -> Option<Token> {
         let start = self.mark();
@@ -668,6 +682,10 @@ impl Lexer {
 
         let code = self.extract(code_start);
 
+        if code.is_empty() {
+            return None;
+        }
+
         self.consume_expected('`')?;
 
         let span = self.span(start);
@@ -965,6 +983,7 @@ impl Iterator for Lexer {
                 return Some(t);
             }
 
+            please!(try_lex_escaped_character);
             please!(try_lex_heading);
             please!(try_lex_bold);
             please!(try_lex_italic);

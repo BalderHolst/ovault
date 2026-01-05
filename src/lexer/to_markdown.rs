@@ -69,6 +69,7 @@ impl ToMarkdown for Token {
                 .collect::<Vec<_>>()
                 .join(""),
             Token::Comment { span: _, comment } => format!("%%{comment}%%"),
+            Token::Escaped { span: _, character } => format!("\\{character}"),
             Token::TemplaterCommand { span: _, command } => format!("<% {command} %>"),
         }
     }

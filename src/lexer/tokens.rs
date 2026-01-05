@@ -11,7 +11,6 @@ use super::ToMarkdown;
 use super::Span;
 
 // TODO: Add footnote support
-// TODO: `\` escape character support (See "test-vaults/Obsidian Sandbox/Guides/Create your first note.md")
 // TODO: Add table support
 // TODO: Support `___` and `***` horizontal divider
 // TODO: Add "author" field support in quotes
@@ -246,6 +245,13 @@ pub enum Token {
         items: Vec<CheckListItem>,
     },
 
+    Escaped {
+        /// The span of the escaped character in the source text.
+        span: Span,
+        /// The escaped character.
+        character: char,
+    },
+
     // Represents a Templater command in the note.
     //
     /// Example:
@@ -284,6 +290,7 @@ impl fmt::Display for Token {
             Token::NumericList { .. } => "NumericList",
             Token::CheckList { .. } => "CheckList",
             Token::Comment { .. } => "Comment",
+            Token::Escaped { .. } => "Escaped",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
         write!(f, "{}", name)
@@ -433,6 +440,9 @@ impl Token {
             Token::Comment { comment, .. } => {
                 format!("Comment({})", string_repr(comment))
             }
+            Token::Escaped { character, .. } => {
+                format!("Escaped({})", character)
+            }
             Token::TemplaterCommand { command, .. } => {
                 format!("TemplaterCommand({})", string_repr(command))
             }
@@ -489,6 +499,7 @@ impl_token_span_method!(
     NumericList,
     CheckList,
     Comment,
+    Escaped,
     TemplaterCommand
 );
 
@@ -518,6 +529,7 @@ impl Token {
             | List { .. }
             | NumericList { .. }
             | CheckList { .. }
+            | Escaped { .. }
             | TemplaterCommand { .. } => false,
         }
     }
