@@ -133,9 +133,7 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
             w.write_line(f'</mark>', dedent=True)
 
         case token.InlineCode():
-            w.write_line(f'<pre>', indent=True)
-            tokens_to_html(vault, w, token.tokens)
-            w.write_line(f'</pre>', dedent=True)
+            w.write_line(f'<code>{token.code}</code>')
 
         case token.InlineMath():
             w.write_line(f'\\({token.latex}\\)')
@@ -218,6 +216,12 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
 
         case token.Divider():
             w.write_line('<hr>')
+
+        case token.Escaped():
+            w.write_line(token.character)
+
+        case token.Comment():
+            pass
 
         case other:
             raise NotImplementedError(f"Unknown token type: {type(other)}")
