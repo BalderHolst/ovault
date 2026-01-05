@@ -527,6 +527,59 @@ class Token:
         level: int
         heading: str
 
+    class Bold(Token):
+        """
+        Represents bold text in the note.
+
+        Example:
+        ```markdown
+        **This text is bold**
+        __This text is also bold__
+        ```
+        """
+        span: Span
+        marker: str
+        tokens: List["Token"]
+
+    class Italic(Token):
+        """
+        Represents italic text in the note.
+
+        Example:
+        ```markdown
+        *This text is italic*
+        _This text is also italic_
+        ```
+        """
+        span: Span
+        marker: str
+        tokens: List["Token"]
+
+    class Strikethrough(Token):
+        """
+        Represents strikethrough text in the note.
+
+        Example:
+        ```markdown
+        ~~This text is strikethrough~~
+        ```
+        """
+        span: Span
+        marker: str
+        tokens: List["Token"]
+
+    class InlineCode(Token):
+        """
+        Represents inline code in the note.
+
+        Example:
+        ```markdown
+        `inline code`
+        ```
+        """
+        span: Span
+        code: str
+
     class Code(Token):
         """
         Represents a code block in the note.
@@ -620,6 +673,23 @@ class Token:
         span: Span
         indent: int
         tokens: List["Token"]
+
+    class Escaped(Token):
+        """
+        Represents an escaped character in the note.
+
+        Example:
+        ```markdown
+        \*This text is not italicized\*
+        ```
+
+        This would yield the following tokens:
+        - `Token.Escaped { char: '*', }`
+        - `Token.Text { text: "This text is not italicized" }`
+        - `Token.Escaped { char: '*' }`
+        """
+        span: Span
+        char: str
 
     class TemplaterCommand(Token):
         """
