@@ -613,8 +613,25 @@ fn test_lex_quote() {
             span: Span { start: 0, end: 26 },
             tokens: vec![
                 Token::Text {
-                    span: Span { start: 0, end: 26 },
-                    text: "'fun quote!'\n\\- Author".to_string(),
+                    span: Span {
+                        start: 0,
+                        end: 17,
+                    },
+                    text: "'fun quote!'\n".to_string(),
+                },
+                Token::Escaped {
+                    span: Span {
+                        start: 17,
+                        end: 19,
+                    },
+                    character: '-',
+                },
+                Token::Text {
+                    span: Span {
+                        start: 19,
+                        end: 26,
+                    },
+                    text: " Author".to_string(),
                 },
             ],
         }

@@ -29,6 +29,19 @@ impl From<Mark> for usize {
     }
 }
 
+#[derive(Clone)]
+pub struct LexerConfig {
+    pub lex_multiline_tokens: bool,
+}
+
+impl Default for LexerConfig {
+    fn default() -> Self {
+        Self {
+            lex_multiline_tokens: true,
+        }
+    }
+}
+
 /// A lexer for parsing markdown into tokens.
 #[derive(Clone)]
 pub struct Lexer {
@@ -36,11 +49,16 @@ pub struct Lexer {
     slow_cursor: usize,
     chars: Vec<(usize, char, bool)>, // (position, char, skipped)
     queue: VecDeque<Token>,
+    config: LexerConfig,
 }
 
 impl Lexer {
     /// Create a new lexer with the given text.
     pub fn new<S: ToString>(text: S) -> Self {
+        Self::new_with_config(text, LexerConfig::default())
+    }
+
+    pub fn new_with_config<S: ToString>(text: S, config: LexerConfig) -> Self {
         let chars = text
             .to_string()
             .char_indices()
@@ -51,6 +69,7 @@ impl Lexer {
             slow_cursor: 0,
             chars,
             queue: Default::default(),
+            config,
         }
     }
 
@@ -302,7 +321,9 @@ macro_rules! lex_inline_fn {
                 return None;
             }
 
-            let mut tokens = Lexer::new(&content).run();
+            let mut tokens = Lexer::new_with_config(&content, LexerConfig {
+                lex_multiline_tokens: false,
+            }).run();
             Self::shift_tokens(&mut tokens, content_span.start as isize);
 
             self.consume_expected_sequence(marker).expect("We just checked for end marker");
@@ -996,13 +1017,17 @@ impl Iterator for Lexer {
             please!(try_lex_inline_math);
             please!(try_lex_internal_link);
             please!(try_lex_external_link);
-            please!(try_lex_callout);
-            please!(try_lex_quote);
+
+            if self.config.lex_multiline_tokens {
+                please!(try_lex_callout);
+                please!(try_lex_quote);
+                please!(try_lex_checklist);
+                please!(try_lex_list);
+                please!(try_lex_numeric_list);
+            }
+
             please!(try_lex_front_matter);
             please!(try_lex_divider);
-            please!(try_lex_checklist);
-            please!(try_lex_list);
-            please!(try_lex_numeric_list);
             please!(try_lex_comment);
             please!(try_lex_templater_command);
 
