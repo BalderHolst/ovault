@@ -371,7 +371,23 @@ impl Token {
             Token::CheckList { items, .. } => {
                 Box::new(items.iter().flat_map(|item| item.tokens.iter()))
             }
-            _ => Box::new([].iter()),
+            Token::Frontmatter { .. }
+            | Token::Text { .. }
+            | Token::Tag { .. }
+            | Token::Header { .. }
+            | Token::InlineCode { .. }
+            | Token::Code { .. }
+            | Token::InlineMath { .. }
+            | Token::DisplayMath { .. }
+            | Token::Divider { .. }
+            | Token::InternalLink { .. }
+            | Token::ExternalLink { .. }
+            | Token::Comment { .. }
+            | Token::Escaped { .. }
+            | Token::TemplaterCommand { .. } => {
+                // These tokens do not contain nested tokens
+                Box::new([].iter())
+            }
         }
     }
 
@@ -396,7 +412,23 @@ impl Token {
             Token::CheckList { items, .. } => {
                 Box::new(items.iter_mut().flat_map(|item| item.tokens.iter_mut()))
             }
-            _ => Box::new([].iter_mut()),
+            Token::Frontmatter { .. }
+            | Token::Text { .. }
+            | Token::Tag { .. }
+            | Token::Header { .. }
+            | Token::InlineCode { .. }
+            | Token::Code { .. }
+            | Token::InlineMath { .. }
+            | Token::DisplayMath { .. }
+            | Token::Divider { .. }
+            | Token::InternalLink { .. }
+            | Token::ExternalLink { .. }
+            | Token::Comment { .. }
+            | Token::Escaped { .. }
+            | Token::TemplaterCommand { .. } => {
+                // These tokens do not contain nested tokens
+                Box::new([].iter_mut())
+            }
         }
     }
 }

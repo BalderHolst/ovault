@@ -125,58 +125,11 @@ impl Note {
 
     /// Get an iterator of all tokens in the note, including those nested
     /// within other tokens (e.g. callouts, quotes, lists).
-    // TODO: Use `Token.iter_inner`
     pub fn all_tokens(&self) -> io::Result<impl Iterator<Item = Token>> {
         let content = self.content()?;
         Ok(Lexer::new(content).flat_map(|token| {
             let mut all_tokens = vec![token.clone()];
-            match token {
-                Token::Bold { tokens, .. }
-                | Token::Italic { tokens, .. }
-                | Token::Strikethrough { tokens, .. }
-                | Token::Highlight { tokens, .. } => {
-                    all_tokens.extend(tokens.iter().cloned());
-                }
-                Token::Callout { callout, .. } => {
-                    all_tokens.extend(callout.tokens.iter().cloned());
-                }
-                Token::Quote {
-                    tokens: qtokens, ..
-                } => {
-                    all_tokens.extend(qtokens.iter().cloned());
-                }
-                Token::List { items, .. } => {
-                    for item in items {
-                        all_tokens.extend(item.tokens.iter().cloned());
-                    }
-                }
-                Token::NumericList { items, .. } => {
-                    for item in items {
-                        all_tokens.extend(item.tokens.iter().cloned());
-                    }
-                }
-                Token::CheckList { items, .. } => {
-                    for item in items {
-                        all_tokens.extend(item.tokens.iter().cloned());
-                    }
-                }
-                Token::Frontmatter { .. }
-                | Token::Text { .. }
-                | Token::Tag { .. }
-                | Token::Header { .. }
-                | Token::InlineCode { .. }
-                | Token::Code { .. }
-                | Token::InlineMath { .. }
-                | Token::DisplayMath { .. }
-                | Token::Divider { .. }
-                | Token::InternalLink { .. }
-                | Token::ExternalLink { .. }
-                | Token::Comment { .. }
-                | Token::Escaped { .. }
-                | Token::TemplaterCommand { .. } => {
-                    // These tokens do not contain nested tokens
-                }
-            }
+            all_tokens.extend(token.iter_inner().cloned());
             all_tokens.into_iter()
         }))
     }
