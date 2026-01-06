@@ -68,6 +68,61 @@ impl ToMarkdown for Token {
                 .map(CheckListItem::to_markdown)
                 .collect::<Vec<_>>()
                 .join(""),
+            Token::Table { span: _, table } => {
+                let mut s = String::new();
+
+                let rows: Vec<Vec<String>> = table
+                    .rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|cell| tokens_to_markdown(cell))
+                            .collect::<Vec<_>>()
+                    })
+                    .collect();
+
+                let mut widths: Vec<usize> = vec![0; table.headers.len()];
+
+                // Calculate column widths
+                {
+                    for (i, heading) in table.headers.iter().enumerate() {
+                        widths[i] = widths[i].max(heading.len());
+                    }
+
+                    for row in &rows {
+                        for (i, cell) in row.iter().enumerate() {
+                            widths[i] = widths[i].max(cell.len());
+                        }
+                    }
+                }
+
+                let format_row = |row: &[String]| -> String {
+                    let mut row_str = String::new();
+                    row_str.push('|');
+                    for (i, cell) in row.iter().enumerate() {
+                        row_str.push(' ');
+                        row_str.push_str(&format!("{:width$}", cell, width = widths[i]));
+                        row_str.push(' ');
+                        row_str.push('|');
+                    }
+                    row_str.push('\n');
+                    row_str
+                };
+
+                s += &format_row(&table.headers);
+
+                s += "|";
+                for w in &widths {
+                    s += &format!(" {} |", "-".repeat(*w));
+                }
+                s.push('\n');
+
+                for row in &rows {
+                    s += &format_row(row);
+                }
+
+                s
+            }
             Token::Comment { span: _, comment } => format!("%%{comment}%%"),
             Token::Escaped { span: _, character } => format!("\\{character}"),
             Token::TemplaterCommand { span: _, command } => format!("<% {command} %>"),

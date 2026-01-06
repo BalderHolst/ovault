@@ -10,9 +10,22 @@ use super::ToMarkdown;
 
 use super::Span;
 
+/// A list of tokens.
+pub type Tokens = Vec<Token>;
+
 // TODO: Add footnote support
 // TODO: Add table support
-// TODO: Support `___` and `***` horizontal divider
+// TODO: Support `___` and `***` horizontal divider. This includes:
+//   - ***
+//   - ****
+//   - * * *
+//   - ---
+//   - ----
+//   - - - -
+//   - ___
+//   - ____
+//   - _ _ _
+// TODO: Add nested code block support
 // TODO: Add "author" field support in quotes
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
@@ -293,6 +306,24 @@ pub enum Token {
         items: Vec<CheckListItem>,
     },
 
+    // TODO: Escape vertical bars in table cells.
+    // TODO: Handle alignment markers in table headers.
+    /// Represents a table in the note.
+    ///
+    /// Example:
+    /// ```markdown
+    /// | Header 1 | Header 2 |
+    /// | -------- | -------- |
+    /// | Cell 1   | Cell 2   |
+    /// | Cell 3   | Cell 4   |
+    /// ```
+    Table { 
+        /// The span of the table in the source text.
+        span: Span,
+        /// The table object containing its data.
+        table: Table,
+    },
+
     /// Represents an escaped character in the note.
     ///
     /// Example:
@@ -343,6 +374,7 @@ impl fmt::Display for Token {
             Token::List { .. } => "List",
             Token::NumericList { .. } => "NumericList",
             Token::CheckList { .. } => "CheckList",
+            Token::Table { .. } => "Table",
             Token::Comment { .. } => "Comment",
             Token::Escaped { .. } => "Escaped",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
@@ -371,6 +403,12 @@ impl Token {
             Token::CheckList { items, .. } => {
                 Box::new(items.iter().flat_map(|item| item.tokens.iter()))
             }
+            Token::Table { table, .. } => Box::new(
+                table
+                    .rows
+                    .iter()
+                    .flat_map(|col| col.iter().flat_map(|cell| cell.iter())),
+            ),
             Token::Frontmatter { .. }
             | Token::Text { .. }
             | Token::Tag { .. }
@@ -412,6 +450,12 @@ impl Token {
             Token::CheckList { items, .. } => {
                 Box::new(items.iter_mut().flat_map(|item| item.tokens.iter_mut()))
             }
+            Token::Table { table, .. } => Box::new(
+                table
+                    .rows
+                    .iter_mut()
+                    .flat_map(|col| col.iter_mut().flat_map(|cell| cell.iter_mut())),
+            ),
             Token::Frontmatter { .. }
             | Token::Text { .. }
             | Token::Tag { .. }
@@ -523,6 +567,28 @@ impl Token {
                     .collect();
                 format!("CheckList([{}])", item_strs.join(", "))
             }
+            Token::Table { table, .. } => {
+                format!(
+                    "Table(headers: {}, rows: {})",
+                    table.headers.join(", "),
+                    table
+                        .rows
+                        .iter()
+                        .map(|row| {
+                            let cell_strs: Vec<String> = row
+                                .iter()
+                                .map(|cell| {
+                                    let content_strs: Vec<String> =
+                                        cell.iter().map(|t| t.__repr__()).collect();
+                                    format!("[{}]", content_strs.join(", "))
+                                })
+                                .collect();
+                            format!("[{}]", cell_strs.join(", "))
+                        })
+                        .collect::<Vec<String>>()
+                        .join(", ")
+                )
+            }
             Token::Comment { comment, .. } => {
                 format!("Comment({})", string_repr(comment))
             }
@@ -584,6 +650,7 @@ impl_token_span_method!(
     List,
     NumericList,
     CheckList,
+    Table,
     Comment,
     Escaped,
     TemplaterCommand
@@ -615,6 +682,7 @@ impl Token {
             | List { .. }
             | NumericList { .. }
             | CheckList { .. }
+            | Table { .. }
             | Escaped { .. }
             | TemplaterCommand { .. } => false,
         }
@@ -819,5 +887,28 @@ impl CheckListItem {
     #[pyo3(name = "to_markdown")]
     pub fn py_to_markdown(&self) -> String {
         self.to_markdown()
+    }
+}
+
+/// Contains the data of a markdown table.
+#[cfg_attr(feature = "python", pyclass(get_all))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct Table {
+    /// The headers of the table.
+    pub headers: Vec<String>,
+    /// The rows of the table, where each row is a vector of tokenized cells
+    pub rows: Vec<Vec<Tokens>>,
+}
+
+#[cfg(feature = "python")]
+#[pymethods]
+impl Table {
+    fn __repr__(&self) -> String {
+        format!("Table(headers: {})", self.headers.join(", "),)
+    }
+
+    fn __len__(&self) -> usize {
+        debug_assert!(self.rows.len() == self.headers.len());
+        self.rows.len()
     }
 }

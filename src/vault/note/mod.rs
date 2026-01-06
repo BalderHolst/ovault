@@ -275,6 +275,13 @@ impl Note {
                         self.index_tokens(item.tokens.iter().cloned());
                     }
                 }
+                Token::Table { table, .. } => {
+                    for row in &table.rows {
+                        for col in row {
+                            self.index_tokens(col.iter().cloned());
+                        }
+                    }
+                }
                 Token::Text { .. }
                 | Token::Header { .. }
                 | Token::Divider { .. }

@@ -525,6 +525,13 @@ impl Lexer {
         })
     }
 
+    fn at(&self, expect: char) -> Option<()> {
+        if self.current() != Some(expect) {
+            return None;
+        }
+        Some(())
+    }
+
     fn at_line_start(&self) -> Option<()> {
         if !matches!(self.peek(-1), None | Some('\n')) {
             return None;
@@ -941,6 +948,78 @@ impl Lexer {
         })
     }
 
+    fn try_lex_table(&mut self) -> Option<Token> {
+        self.at_line_start()?;
+
+        let start = self.mark();
+
+        self.consume_whitespace();
+        self.at('|')?;
+
+        let header_line = self.consume_until(|c| c == '\n');
+        self.consume_expected('\n')?;
+
+        let header_line = header_line.trim();
+
+        let divider_line = self.consume_until(|c| c == '\n');
+        _ = self.consume_expected('\n');
+
+        fn line_to_cells(line: &str) -> Vec<String> {
+            line.split('|')
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect()
+        }
+
+        let headers: Vec<String> = line_to_cells(header_line);
+        let row_count = headers.len();
+
+        // Make sure divider line is valid
+        let divider_cells: Vec<String> = line_to_cells(&divider_line);
+        if divider_cells.len() != row_count {
+            return None;
+        }
+        for cell in &divider_cells {
+            if !cell.chars().all(|c| c == '-') {
+                return None;
+            }
+        }
+
+        let mut rows: Vec<Vec<Tokens>> = Vec::new();
+
+        loop {
+            let line = self.consume_until(|c| c == '\n');
+            _ = self.consume_expected('\n');
+
+            let row_string: Vec<String> = line_to_cells(&line);
+
+            if row_string.len() != row_count {
+                break;
+            }
+
+            let row_tokens: Vec<Tokens> = row_string
+                .into_iter()
+                .map(|cell| {
+                    Lexer::new_with_config(
+                        cell,
+                        LexerConfig {
+                            lex_multiline_tokens: false,
+                        },
+                    )
+                    .run()
+                })
+                .collect();
+
+            rows.push(row_tokens);
+        }
+
+        let span = self.span(start);
+        Some(Token::Table {
+            span,
+            table: Table { headers, rows },
+        })
+    }
+
     fn try_lex_templater_command(&mut self) -> Option<Token> {
         let start = self.mark();
 
@@ -1029,6 +1108,7 @@ impl Iterator for Lexer {
                 please!(try_lex_numeric_list);
             }
 
+            please!(try_lex_table);
             please!(try_lex_front_matter);
             please!(try_lex_divider);
             please!(try_lex_comment);

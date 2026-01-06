@@ -1243,6 +1243,90 @@ fn test_lex_checklist() {
 }
 
 #[test]
+fn test_lex_table() {
+    test_lex_token! {
+        "
+| First name | Last name |
+| ---------- | --------- |
+| Marie      | __Curie__ |
+| *Max*      | Planck    |
+"
+        => Token::Table {
+            span: Span {
+                start: 0,
+                end: 109,
+            },
+            table: Table {
+                headers: [
+                    "First name".to_string(),
+                    "Last name".to_string(),
+                ].to_vec(),
+                rows: [
+                    [
+                        [
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 5,
+                                },
+                                text: "Marie".to_string(),
+                            },
+                        ].to_vec(),
+                        [
+                            Token::Bold {
+                                span: Span {
+                                    start: 0,
+                                    end: 9,
+                                },
+                                marker: "__".to_string(),
+                                tokens: [
+                                    Token::Text {
+                                        span: Span {
+                                            start: 2,
+                                            end: 7,
+                                        },
+                                        text: "Curie".to_string(),
+                                    },
+                                ].to_vec(),
+                            },
+                        ].to_vec(),
+                    ].to_vec(),
+                    [
+                        [
+                            Token::Italic {
+                                span: Span {
+                                    start: 0,
+                                    end: 5,
+                                },
+                                marker: "*".to_string(),
+                                tokens: [
+                                    Token::Text {
+                                        span: Span {
+                                            start: 1,
+                                            end: 4,
+                                        },
+                                        text: "Max".to_string(),
+                                    },
+                                ].to_vec(),
+                            },
+                        ].to_vec(),
+                        [
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 6,
+                                },
+                                text: "Planck".to_string(),
+                            },
+                        ].to_vec(),
+                    ].to_vec(),
+                ].to_vec(),
+            },
+        }
+    }
+}
+
+#[test]
 fn test_span_extraction() {
     let source = "This is å tæst string.";
     let mut lexer = Lexer::new(source);
