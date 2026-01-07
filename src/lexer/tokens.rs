@@ -15,7 +15,6 @@ pub type Tokens = Vec<Token>;
 
 // TODO: Add footnote support
 // TODO: Add nested code block support
-// TODO: Add "author" field support in quotes
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
 /// ## Example - Token Stream
@@ -193,13 +192,21 @@ pub enum Token {
         code: String,
     },
 
-    // TODO: Lex `\-` as author field.
     /// Represents a block quote in the note.
     Quote {
         /// The span of the quote in the source text.
         span: Span,
         /// The tokenized content of the quote.
         tokens: Vec<Token>,
+        /// The author of the quote, if specified.
+        ///
+        /// Example:
+        /// ```markdown
+        /// > "To be, or not to be, that is the question."
+        /// > \- William Shakespeare
+        /// ```
+        /// would have author set to "William Shakespeare".
+        author: Option<String>,
     },
 
     /// Represents inline mathematical expressions in the note.

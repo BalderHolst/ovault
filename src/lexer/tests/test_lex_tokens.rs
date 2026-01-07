@@ -683,30 +683,22 @@ fn test_lex_quote() {
     test_lex_token! {
         "> 'fun quote!'\n> \\- Author"
         => Token::Quote {
-            span: Span { start: 0, end: 26 },
+            span: Span {
+                start: 0,
+                end: 26,
+            },
             tokens: vec![
                 Token::Text {
                     span: Span {
                         start: 0,
-                        end: 17,
+                        end: 14,
                     },
-                    text: "'fun quote!'\n".to_string(),
-                },
-                Token::Escaped {
-                    span: Span {
-                        start: 17,
-                        end: 19,
-                    },
-                    character: '-',
-                },
-                Token::Text {
-                    span: Span {
-                        start: 19,
-                        end: 26,
-                    },
-                    text: " Author".to_string(),
+                    text: "'fun quote!'".to_string(),
                 },
             ],
+            author: Some(
+                "Author".to_string(),
+            ),
         }
     }
 }
@@ -720,6 +712,7 @@ fn test_lex_nested_quote() {
             start: 0,
             end: 46,
         },
+        author: None,
         tokens: vec![
             Token::Text {
                 span: Span {
@@ -733,6 +726,7 @@ fn test_lex_nested_quote() {
                     start: 16,
                     end: 33,
                 },
+                author: None,
                 tokens: vec![
                     Token::Text {
                         span: Span {
@@ -809,6 +803,7 @@ fn test_lex_callout() {
         "> [!broken" =>
             Token::Quote {
                 span: Span { start: 0, end: 10 },
+                author: None,
                 tokens: vec![
                     Token::Text {
                         span: Span { start: 0, end: 10 },
@@ -822,6 +817,7 @@ fn test_lex_callout() {
         "> [!info] Hello" =>
             Token::Quote {
                 span: Span { start: 0, end: 15 },
+                author: None,
                 tokens: vec![
                     Token::Text {
                         span: Span { start: 0, end: 15 },

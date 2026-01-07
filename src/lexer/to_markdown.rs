@@ -55,10 +55,22 @@ impl ToMarkdown for Token {
                 lang,
                 code,
             } => format!("```{}\n{}```\n", lang.as_deref().unwrap_or(""), code),
-            Token::Quote { span: _, tokens } => format!(
-                "> {content}\n",
-                content = tokens_to_markdown(tokens).replace('\n', "\n> ")
-            ),
+            Token::Quote {
+                span: _,
+                tokens,
+                author,
+            } => {
+                let mut s = format!(
+                    "> {content}\n",
+                    content = tokens_to_markdown(tokens).replace('\n', "\n> ")
+                );
+
+                if let Some(author) = author {
+                    s += &format!("> \\- {author}\n");
+                }
+
+                s
+            }
             Token::InlineMath { span: _, latex } => format!("${latex}$"),
             Token::DisplayMath { span: _, latex } => format!("$${latex}$$"),
             Token::Divider { span: _ } => "---\n".to_string(),

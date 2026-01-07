@@ -570,7 +570,7 @@ impl Lexer {
     }
 
     /// Extract the text contained within a block prefixed with '>'
-    fn try_extract_block(&mut self) -> Option<Vec<Token>> {
+    fn try_extract_block(&mut self) -> Option<String> {
         self.at_block_start()?;
 
         let start = self.mark();
@@ -581,6 +581,11 @@ impl Lexer {
         }
 
         let source = self.extract(start);
+
+        Some(source)
+    }
+
+    fn lex_block(source: &str, source_start: Mark) -> Vec<Token> {
         let source = source.strip_suffix('\n').unwrap_or(&source);
 
         let mut lexer = Self::new_with_skip_function(source, skip_funcs::skip_block_prefix);
@@ -588,17 +593,46 @@ impl Lexer {
         let mut tokens = lexer.run();
 
         // Shift all token spans by the start position
-        let Mark(offset) = start;
+        let Mark(offset) = source_start;
         Self::shift_tokens(&mut tokens, offset as isize);
 
-        Some(tokens)
+        tokens
     }
 
     fn try_lex_quote(&mut self) -> Option<Token> {
         let start = self.mark();
-        let tokens = self.try_extract_block()?;
+
+        let source = self.try_extract_block()?;
+        let mut source = source.trim();
+
+        let parsed_author = (|| {
+            let last_line = source.lines().last()?;
+            let src_end = source.len() - last_line.len();
+            let author = last_line
+                .trim()
+                .strip_prefix('>')?
+                .trim_start()
+                .strip_prefix(r"\-")?
+                .trim_start();
+            Some((author, src_end))
+        })();
+
+        let mut author = None;
+
+        if let Some((name, src_end)) = parsed_author {
+            source = &source[..src_end];
+            source = source.strip_suffix('\n').unwrap_or(source);
+            author = Some(name.to_string());
+        }
+
+        let tokens = Self::lex_block(source, start);
+
         let span = self.span(start);
-        Some(Token::Quote { span, tokens })
+        Some(Token::Quote {
+            span,
+            tokens,
+            author,
+        })
     }
 
     fn try_lex_callout(&mut self) -> Option<Token> {
@@ -623,7 +657,9 @@ impl Lexer {
         let title = self.consume_until(|c| c == '\n');
         self.consume_expected('\n')?;
 
-        let tokens = self.try_extract_block()?;
+        let block_start = self.mark();
+        let source = self.try_extract_block()?;
+        let tokens = Self::lex_block(&source, block_start);
 
         let span = self.span(start);
 
