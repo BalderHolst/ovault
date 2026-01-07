@@ -133,6 +133,8 @@ impl ToMarkdown for Token {
                     s += &format_row(row);
                 }
 
+                s.push('\n');
+
                 s
             }
             Token::Comment { span: _, comment } => format!("%%{comment}%%"),
