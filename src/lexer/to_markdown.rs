@@ -124,6 +124,7 @@ impl ToMarkdown for Token {
                     let mut row_str = String::new();
                     row_str.push('|');
                     for (i, cell) in row.iter().enumerate() {
+                        let cell = cell.replace('|', "\\|"); // Escape pipe characters inside cells
                         row_str.push(' ');
                         row_str.push_str(&format!("{:width$}", cell, width = widths[i]));
                         row_str.push(' ');

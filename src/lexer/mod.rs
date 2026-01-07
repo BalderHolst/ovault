@@ -586,7 +586,7 @@ impl Lexer {
     }
 
     fn lex_block(source: &str, source_start: Mark) -> Vec<Token> {
-        let source = source.strip_suffix('\n').unwrap_or(&source);
+        let source = source.strip_suffix('\n').unwrap_or(source);
 
         let mut lexer = Self::new_with_skip_function(source, skip_funcs::skip_block_prefix);
 
@@ -1027,10 +1027,39 @@ impl Lexer {
         _ = self.consume_expected('\n');
 
         fn line_to_cells(line: &str) -> Vec<String> {
-            line.split('|')
-                .map(|s| s.trim().to_string())
-                .filter(|s| !s.is_empty())
-                .collect()
+            let line_chars: Vec<char> = line.trim().chars().collect();
+
+            let line_chars = line_chars.strip_prefix(&['|']).unwrap_or(&line_chars);
+
+            let mut cells: Vec<String> = Vec::new();
+
+            let mut current_cell = String::new();
+
+            let mut iter = line_chars.iter().peekable();
+
+            loop {
+                let Some(char) = iter.next() else {
+                    break;
+                };
+
+                if *char == '\\' {
+                    if let Some('|') = iter.peek() {
+                        iter.next();
+                        current_cell.push('|');
+                        continue;
+                    }
+                }
+
+                if *char == '|' {
+                    cells.push(current_cell.trim().to_string());
+                    current_cell.clear();
+                    continue;
+                }
+
+                current_cell.push(*char);
+            }
+
+            cells
         }
 
         let headers: Vec<String> = line_to_cells(header_line);

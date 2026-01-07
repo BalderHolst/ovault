@@ -102,8 +102,7 @@ macro_rules! test_lex_token {
         };
         ($source:expr) => {
             let mut lexer = Lexer::new($source);
-            let token = lexer.next();
-            println!("\nToken: {:#?}\n", token);
+            println!("\nTokens: {:#?}\n", lexer.run());
             todo!("No token expected");
         };
     }
@@ -1452,4 +1451,82 @@ fn test_quote_span_extraction() {
 
     let extracted = lexer.extract_span(*link_spans[1]);
     assert_eq!(extracted, "[[en notææ|link]]");
+}
+
+#[test]
+fn test_lex_table_with_excaped_bar() {
+    test_lex_token! {r"
+| Website                           | Logo      |
+| --------------------------------- | --------- |
+| Obsidian                          | ![obsidian-logo\|200](https://obsidian.md/images/2023-06-logo.png) |
+| Ecological Modelling Laboratory   | ![EML-logo](https://www.ecolmod.org/media/squirrel.gif)    |
+    " => Token::Table {
+            span: Span {
+                start: 0,
+                end: 307,
+            },
+            table: Table {
+                headers: vec![
+                    "Website".to_string(),
+                    "Logo".to_string(),
+                ],
+                rows: vec![
+                    vec![
+                        vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 8,
+                                },
+                                text: "Obsidian".to_string(),
+                            },
+                        ],
+                        vec![
+                            Token::ExternalLink {
+                                span: Span {
+                                    start: 0,
+                                    end: 65,
+                                },
+                                link: ExternalLink {
+                                    render: true,
+                                    url: "https://obsidian.md/images/2023-06-logo.png".to_string(),
+                                    show_how: "obsidian-logo".to_string(),
+                                    options: Some(
+                                        "200".to_string(),
+                                    ),
+                                    position: None,
+                                },
+                            },
+                        ],
+                    ],
+                    vec![
+                        vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 31,
+                                },
+                                text: "Ecological Modelling Laboratory".to_string(),
+                            },
+                        ],
+                        vec![
+                            Token::ExternalLink {
+                                span: Span {
+                                    start: 0,
+                                    end: 55,
+                                },
+                                link: ExternalLink {
+                                    render: true,
+                                    url: "https://www.ecolmod.org/media/squirrel.gif".to_string(),
+                                    show_how: "EML-logo".to_string(),
+                                    options: None,
+                                    position: None,
+                                },
+                            },
+                        ],
+                    ],
+                ],
+            },
+        }
+    }
 }
