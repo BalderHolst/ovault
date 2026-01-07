@@ -14,16 +14,6 @@ use super::Span;
 pub type Tokens = Vec<Token>;
 
 // TODO: Add footnote support
-// TODO: Support `___` and `***` horizontal divider. This includes:
-//   - ***
-//   - ****
-//   - * * *
-//   - ---
-//   - ----
-//   - - - -
-//   - ___
-//   - ____
-//   - _ _ _
 // TODO: Add nested code block support
 // TODO: Add "author" field support in quotes
 /// Represents a part of a note, such as text, code blocks, links, etc.

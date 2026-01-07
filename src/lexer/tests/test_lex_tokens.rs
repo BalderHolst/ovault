@@ -528,18 +528,91 @@ fn test_lex_internal_link() {
 
 #[test]
 fn test_lex_divider() {
+    macro_rules! test_divider {
+        ($src:expr) => {
+            test_lex_token! {
+                $src
+                => Token::Divider {
+                    span: Span { start: 0, end: $src.len() },
+                }
+            }
+        };
+    }
+
+    test_divider!("---");
+    test_divider!("---------");
+    test_divider!("***");
+    test_divider!("****");
+    test_divider!("******");
+    test_divider!("* * *");
+    test_divider!("* * * * *");
+    test_divider!("- - -");
+    test_divider!("- - - -");
+    test_divider!("___");
+    test_divider!("____");
+    test_divider!("_______");
+    test_divider!("_ _ _");
+    test_divider!("_ _ _ _");
+    test_divider!("_ _ _ _ _ _");
+
     test_lex_token! {
-        "---"
-        => Token::Divider {
-            span: Span { start: 0, end: 3 },
+        "-- not a divider --"
+        => Token::Text {
+            span: Span { start: 0, end: 19 },
+            text: "-- not a divider --".to_string()
         }
     }
 
     test_lex_token! {
-        "---------"
-        => Token::Divider {
-            span: Span { start: 0, end: 9 },
+        "*** not a divider ***"
+        => Token::Bold {
+            span: Span {
+                start: 0,
+                end: 21,
+            },
+            marker: Some(
+                "**".to_string(),
+            ),
+            tokens: [
+                Token::Italic {
+                    span: Span {
+                        start: 2,
+                        end: 19,
+                    },
+                    marker: Some(
+                        "*".to_string(),
+                    ),
+                    tokens: [
+                        Token::Text {
+                            span: Span {
+                                start: 1,
+                                end: 16,
+                            },
+                            text: " not a divider ".to_string(),
+                        },
+                    ].to_vec(),
+                },
+            ].to_vec(),
         }
+    }
+
+    test_lex_token! {
+        "---\nnext line"
+        => [
+            Token::Divider {
+                span: Span {
+                    start: 0,
+                    end: 4,
+                },
+            },
+            Token::Text {
+                span: Span {
+                    start: 4,
+                    end: 13,
+                },
+                text: "next line".to_string(),
+            },
+        ]
     }
 }
 

@@ -539,6 +539,13 @@ impl Lexer {
         Some(())
     }
 
+    fn at_line_end(&self) -> Option<()> {
+        if !matches!(self.current(), None | Some('\n')) {
+            return None;
+        }
+        Some(())
+    }
+
     fn at_block_start(&self) -> Option<()> {
         self.at_line_start()?;
 
@@ -685,16 +692,35 @@ impl Lexer {
     }
 
     fn try_lex_divider(&mut self) -> Option<Token> {
+        const DIVIDER_CHARS: &[char] = &['-', '*', '_'];
+
         self.at_line_start()?;
 
         let start = self.mark();
 
-        self.consume_expected('-')?;
-        self.consume_expected('-')?;
-        self.consume_expected('-')?;
+        let divider_char = self.current()?;
 
-        self.consume_until(|c| c != '-');
-        self.consume_until(|c| !c.is_whitespace() || c == '\n');
+        if !DIVIDER_CHARS.contains(&divider_char) {
+            return None;
+        }
+
+        // Consume at least 3 divider characters
+        self.consume_expected(divider_char)?;
+        self.consume_if(|c| c == ' ');
+        self.consume_expected(divider_char)?;
+        self.consume_if(|c| c == ' ');
+        self.consume_expected(divider_char)?;
+        self.consume_if(|c| c == ' ');
+
+        // Consume any additional divider characters
+        while self.current() == Some(divider_char) {
+            self.consume_expected(divider_char)?;
+            self.consume_if(|c| c == ' ');
+        }
+
+        self.consume_while(|c| c.is_whitespace() && c != '\n');
+
+        self.at_line_end()?;
 
         self.consume_if(|c| c == '\n');
 
@@ -1088,6 +1114,8 @@ impl Iterator for Lexer {
 
             please!(try_lex_escaped_character);
             please!(try_lex_heading);
+            please!(try_lex_front_matter);
+            please!(try_lex_divider);
             please!(try_lex_bold);
             please!(try_lex_italic);
             please!(try_lex_strikethrough);
@@ -1109,8 +1137,6 @@ impl Iterator for Lexer {
             }
 
             please!(try_lex_table);
-            please!(try_lex_front_matter);
-            please!(try_lex_divider);
             please!(try_lex_comment);
             please!(try_lex_templater_command);
 
