@@ -30,6 +30,18 @@ impl ToMarkdown for Token {
             | Token::Italic { tokens, marker, .. }
             | Token::Strikethrough { tokens, marker, .. }
             | Token::Highlight { tokens, marker, .. } => {
+                let default_marker = match self {
+                    Token::Bold { .. } => "**",
+                    Token::Italic { .. } => "*",
+                    Token::Strikethrough { .. } => "~~",
+                    Token::Highlight { .. } => "==",
+                    _ => unreachable!(),
+                };
+
+                let marker = marker
+                    .as_ref()
+                    .map(String::as_str)
+                    .unwrap_or(default_marker);
                 format!(
                     "{marker}{content}{marker}",
                     content = tokens_to_markdown(tokens)

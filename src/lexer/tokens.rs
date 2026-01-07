@@ -52,9 +52,7 @@ pub type Tokens = Vec<Token>;
 /// ```
 #[cfg_attr(feature = "python", pyclass)]
 #[derive(Debug, Clone, PartialEq)]
-#[rustfmt::skip]
 pub enum Token {
-
     /// Represents the frontmatter of a note, which is typically YAML formatted metadata.
     ///
     /// NOTE: This can only appear as the first token in a note.
@@ -62,7 +60,7 @@ pub enum Token {
         /// The span of the frontmatter in the source text.
         span: Span,
         /// The YAML content of the frontmatter
-        yaml: String
+        yaml: String,
     },
 
     /// Represents a comment in the note.
@@ -75,7 +73,7 @@ pub enum Token {
         /// The span of the comment in the source text.
         span: Span,
         /// The comment content.
-        comment: String
+        comment: String,
     },
 
     /// Represents a block of text in the note.
@@ -83,7 +81,7 @@ pub enum Token {
         /// The span of the frontmatter in the source text.
         span: Span,
         /// The text content of the token.
-        text: String
+        text: String,
     },
 
     /// Represents a tag in the note
@@ -93,7 +91,7 @@ pub enum Token {
         /// The tag name without the leading `#`.
         ///
         /// Example: `#tag` would be represented as `tag`.
-        tag: String
+        tag: String,
     },
 
     /// Represents a header in the note, which can be of different levels.
@@ -110,7 +108,7 @@ pub enum Token {
         /// The level of the header, where `1` is the highest level (e.g., `#`),
         level: usize,
         /// The heading text of the header.
-        heading: String
+        heading: String,
     },
 
     /// Represents bold text in the note.
@@ -124,7 +122,7 @@ pub enum Token {
         /// The span of the token in the source text.
         span: Span,
         /// The marker used for bold (e.g., "**" or "__")
-        marker: String,
+        marker: Option<String>,
         /// The tokenized content of the bold text.
         tokens: Vec<Token>,
     },
@@ -140,7 +138,7 @@ pub enum Token {
         /// The span of the token in the source text.
         span: Span,
         /// The marker used for italics (e.g., "*" or "_")
-        marker: String,
+        marker: Option<String>,
         /// The tokenized content of the italicized text.
         tokens: Vec<Token>,
     },
@@ -155,7 +153,7 @@ pub enum Token {
         /// The span of the token in the source text.
         span: Span,
         /// The marker used for strikethrough (e.g., "~~")
-        marker: String,
+        marker: Option<String>,
         /// The tokenized content of the strikethrough text.
         tokens: Vec<Token>,
     },
@@ -170,7 +168,7 @@ pub enum Token {
         /// The span of the token in the source text.
         span: Span,
         /// The marker used for highlighting (e.g., "==").
-        marker: String,
+        marker: Option<String>,
         /// The tokenized content of the highlighted text.
         tokens: Vec<Token>,
     },
@@ -203,7 +201,7 @@ pub enum Token {
         /// The programming language of the code block, if specified.
         lang: Option<String>,
         /// The code content of the block.
-        code: String
+        code: String,
     },
 
     // TODO: Lex `\-` as author field.
@@ -220,7 +218,7 @@ pub enum Token {
         /// The span of the inline math in the source text.
         span: Span,
         /// The LaTeX representation of the inline math.
-        latex: String
+        latex: String,
     },
 
     /// Represents display mathematical expressions in the note.
@@ -228,13 +226,13 @@ pub enum Token {
         /// The span of the display math in the source text.
         span: Span,
         /// The LaTeX representation of the display math.
-        latex: String
+        latex: String,
     },
 
     /// Represents a horizontal divider in the note.
     Divider {
         /// The span of the divider in the source text.
-        span: Span
+        span: Span,
     },
 
     /// Represents a callout block in the note.
@@ -242,7 +240,7 @@ pub enum Token {
         /// The span of the callout in the source text.
         span: Span,
         /// The callout object containing its data.
-        callout: Callout
+        callout: Callout,
     },
 
     /// Represents an internal link to another note within the vault.
@@ -250,7 +248,7 @@ pub enum Token {
         /// The span of the internal link in the source text.
         span: Span,
         /// The internal link object containing its data.
-        link: InternalLink
+        link: InternalLink,
     },
 
     /// Represents an external link to a URL.
@@ -258,7 +256,7 @@ pub enum Token {
         /// The span of the external link in the source text.
         span: Span,
         /// The external link object containing its data.
-        link: ExternalLink
+        link: ExternalLink,
     },
 
     /// Represents a bulleted or numbered list in the note.
@@ -317,7 +315,7 @@ pub enum Token {
     /// | Cell 1   | Cell 2   |
     /// | Cell 3   | Cell 4   |
     /// ```
-    Table { 
+    Table {
         /// The span of the table in the source text.
         span: Span,
         /// The table object containing its data.

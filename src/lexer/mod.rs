@@ -333,7 +333,7 @@ macro_rules! lex_inline_fn {
 
             let span = self.span(start);
 
-            Some(Token::$output { span, marker: marker.to_string(), tokens })
+            Some(Token::$output { span, marker: Some(marker.to_string()), tokens })
         }
     };
 }
