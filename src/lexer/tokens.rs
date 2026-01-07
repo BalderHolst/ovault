@@ -14,7 +14,6 @@ use super::Span;
 pub type Tokens = Vec<Token>;
 
 // TODO: Add footnote support
-// TODO: Add table support
 // TODO: Support `___` and `***` horizontal divider. This includes:
 //   - ***
 //   - ****
