@@ -64,11 +64,7 @@ impl Attachment {
         format!("Attachment({})", self.path.display())
     }
 
-    fn __eq__(&self, other: &Attachment) -> bool {
-        self == other
-    }
-
-    fn __lt__(&self, other: &Attachment) -> bool {
-        self.path < other.path
+    fn __richcmp__(&self, other: &Self, op: pyo3::basic::CompareOp) -> bool {
+        op.matches(self.path.cmp(&other.path))
     }
 }

@@ -437,34 +437,16 @@ impl Note {
         self.py_insert_at(pos, text)
     }
 
-    /// Compare two notes for equality.
-    pub fn __eq__(&self, other: &Note) -> bool {
-        self == other
-    }
-
-    /// Compare two notes for inequality.
-    pub fn __ne__(&self, other: &Note) -> bool {
-        !self.__eq__(other)
-    }
-
-    /// Compare two notes for ordering based on their paths.
-    pub fn __lt__(&self, other: &Note) -> bool {
-        self.path < other.path
-    }
-
-    /// Compare two notes for ordering based on their paths.
-    pub fn __le__(&self, other: &Note) -> bool {
-        self.path <= other.path
-    }
-
-    /// Compare two notes for ordering based on their paths.
-    pub fn __gt__(&self, other: &Note) -> bool {
-        self.path > other.path
-    }
-
-    /// Compare two notes for ordering based on their paths.
-    pub fn __ge__(&self, other: &Note) -> bool {
-        self.path >= other.path
+    /// Compare two notes.
+    fn __richcmp__(&self, other: &Self, op: pyo3::basic::CompareOp) -> bool {
+        match op {
+            pyo3::basic::CompareOp::Eq => self == other,
+            pyo3::basic::CompareOp::Ne => self != other,
+            pyo3::basic::CompareOp::Lt => self.path < other.path,
+            pyo3::basic::CompareOp::Le => self.path <= other.path,
+            pyo3::basic::CompareOp::Gt => self.path > other.path,
+            pyo3::basic::CompareOp::Ge => self.path >= other.path,
+        }
     }
 
     /// Get the length of the note in characters.
