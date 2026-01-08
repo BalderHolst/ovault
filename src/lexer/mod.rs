@@ -1,5 +1,5 @@
 //! This module defines the `Lexer` for parsing markdown notes into tokens.
-use std::collections::VecDeque;
+use std::collections::{HashSet, VecDeque};
 
 mod span;
 mod to_markdown;
@@ -29,17 +29,35 @@ impl From<Mark> for usize {
     }
 }
 
+#[derive(Clone, Default, Hash, PartialEq, Eq)]
+pub enum TokenGroup {
+    Multiline,
+    #[default]
+    NoGroup,
+}
+
+impl TokenGroup {
+    pub fn all() -> HashSet<TokenGroup> {
+        HashSet::from([TokenGroup::Multiline, TokenGroup::NoGroup])
+    }
+
+    pub fn without(group: TokenGroup) -> HashSet<TokenGroup> {
+        let mut all = Self::all();
+        all.remove(&group);
+        all
+    }
+}
+
 /// Configuration options for the lexer.
 #[derive(Clone)]
 pub struct LexerConfig {
-    /// Whether to lex multiline tokens (like blockquotes, lists, etc.)
-    pub lex_multiline_tokens: bool,
+    pub groups: HashSet<TokenGroup>,
 }
 
 impl Default for LexerConfig {
     fn default() -> Self {
         Self {
-            lex_multiline_tokens: true,
+            groups: TokenGroup::all(),
         }
     }
 }
@@ -325,7 +343,7 @@ macro_rules! lex_inline_fn {
             }
 
             let mut tokens = Lexer::new_with_config(&content, LexerConfig {
-                lex_multiline_tokens: false,
+                groups: TokenGroup::without(TokenGroup::Multiline),
             }).run();
             Self::shift_tokens(&mut tokens, content_span.start as isize);
 
@@ -1150,7 +1168,7 @@ impl Lexer {
                     Lexer::new_with_config(
                         cell,
                         LexerConfig {
-                            lex_multiline_tokens: false,
+                            groups: TokenGroup::without(TokenGroup::Multiline),
                         },
                     )
                     .run()
@@ -1253,7 +1271,7 @@ impl Iterator for Lexer {
             please!(try_lex_internal_link);
             please!(try_lex_external_link);
 
-            if self.config.lex_multiline_tokens {
+            if self.config.groups.contains(&TokenGroup::Multiline) {
                 please!(try_lex_callout);
                 please!(try_lex_quote);
                 please!(try_lex_checklist);
