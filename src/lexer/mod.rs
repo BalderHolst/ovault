@@ -1,5 +1,5 @@
 //! This module defines the `Lexer` for parsing markdown notes into tokens.
-use std::collections::{HashSet, VecDeque};
+use std::collections::VecDeque;
 
 mod span;
 mod to_markdown;
@@ -32,18 +32,23 @@ impl From<Mark> for usize {
 
 type TokenGroupSet = EnumSet<TokenGroup>;
 
+/// Groups of tokens which can be enabled or disabled in the lexer.
 #[derive(EnumSetType, Default)]
 pub enum TokenGroup {
+    /// Tokens that can span multiple lines.
     Multiline,
+    /// Tokens that are lexed and inserted inline.
     #[default]
-    NoGroup,
+    Inline,
 }
 
 impl TokenGroup {
+    /// Get a set containing all token groups.
     pub fn all() -> TokenGroupSet {
         EnumSet::all()
     }
 
+    /// Get a set containing all token groups except the given one.
     pub fn without(group: TokenGroup) -> TokenGroupSet {
         let mut all = Self::all();
         all.remove(group);
@@ -54,13 +59,14 @@ impl TokenGroup {
 /// Configuration options for the lexer.
 #[derive(Clone)]
 pub struct LexerConfig {
-    pub groups: TokenGroupSet,
+    /// Enabled token groups.
+    pub token_groups: TokenGroupSet,
 }
 
 impl Default for LexerConfig {
     fn default() -> Self {
         Self {
-            groups: TokenGroup::all(),
+            token_groups: TokenGroup::all(),
         }
     }
 }
@@ -346,7 +352,7 @@ macro_rules! lex_inline_fn {
             }
 
             let mut tokens = Lexer::new_with_config(&content, LexerConfig {
-                groups: TokenGroup::without(TokenGroup::Multiline),
+                token_groups: TokenGroup::without(TokenGroup::Multiline),
             }).run();
             Self::shift_tokens(&mut tokens, content_span.start as isize);
 
@@ -358,6 +364,9 @@ macro_rules! lex_inline_fn {
         }
     };
 }
+
+/// Function type for token lexing functions.
+type TryLexFn = fn(&mut Lexer) -> Option<Token>;
 
 // Methods that construct tokens
 impl Lexer {
@@ -1171,7 +1180,7 @@ impl Lexer {
                     Lexer::new_with_config(
                         cell,
                         LexerConfig {
-                            groups: TokenGroup::without(TokenGroup::Multiline),
+                            token_groups: TokenGroup::without(TokenGroup::Multiline),
                         },
                     )
                     .run()
@@ -1219,30 +1228,30 @@ impl Iterator for Lexer {
         use TokenGroup::*;
 
         #[rustfmt::skip]
-        const LEXER_FUNCS: &'static[(fn(&mut Lexer) -> Option<Token>, TokenGroup)] = &[
-            (Lexer::try_lex_escaped_character, NoGroup),
-            (Lexer::try_lex_heading,           NoGroup),
-            (Lexer::try_lex_front_matter,      NoGroup),
-            (Lexer::try_lex_divider,           NoGroup),
-            (Lexer::try_lex_bold,              NoGroup),
-            (Lexer::try_lex_italic,            NoGroup),
-            (Lexer::try_lex_strikethrough,     NoGroup),
-            (Lexer::try_lex_highlight,         NoGroup),
-            (Lexer::try_lex_tag,               NoGroup),
-            (Lexer::try_lex_code,              NoGroup),
-            (Lexer::try_lex_inline_code,       NoGroup),
-            (Lexer::try_lex_display_math,      NoGroup),
-            (Lexer::try_lex_inline_math,       NoGroup),
-            (Lexer::try_lex_internal_link,     NoGroup),
-            (Lexer::try_lex_external_link,     NoGroup),
+        const LEXER_FUNCS: &[(TryLexFn, TokenGroup)] = &[
+            (Lexer::try_lex_escaped_character, Inline),
+            (Lexer::try_lex_heading,           Inline),
+            (Lexer::try_lex_front_matter,      Inline),
+            (Lexer::try_lex_divider,           Inline),
+            (Lexer::try_lex_bold,              Inline),
+            (Lexer::try_lex_italic,            Inline),
+            (Lexer::try_lex_strikethrough,     Inline),
+            (Lexer::try_lex_highlight,         Inline),
+            (Lexer::try_lex_tag,               Inline),
+            (Lexer::try_lex_code,              Inline),
+            (Lexer::try_lex_inline_code,       Inline),
+            (Lexer::try_lex_display_math,      Inline),
+            (Lexer::try_lex_inline_math,       Inline),
+            (Lexer::try_lex_internal_link,     Inline),
+            (Lexer::try_lex_external_link,     Inline),
             (Lexer::try_lex_callout,           Multiline),
             (Lexer::try_lex_quote,             Multiline),
             (Lexer::try_lex_checklist,         Multiline),
             (Lexer::try_lex_list,              Multiline),
             (Lexer::try_lex_numeric_list,      Multiline),
-            (Lexer::try_lex_table,             NoGroup),
-            (Lexer::try_lex_comment,           NoGroup),
-            (Lexer::try_lex_templater_command, NoGroup),
+            (Lexer::try_lex_table,             Inline),
+            (Lexer::try_lex_comment,           Inline),
+            (Lexer::try_lex_templater_command, Inline),
         ];
 
         'outer: loop {
@@ -1252,7 +1261,7 @@ impl Iterator for Lexer {
                     return Some(t);
                 }
 
-                if self.config.groups.contains(*group) {
+                if self.config.token_groups.contains(*group) {
                     let start = self.cursor;
                     let token = try_lex_func(self);
                     if let Some(token) = token {
