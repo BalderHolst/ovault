@@ -1071,6 +1071,9 @@ impl Lexer {
             return None;
         }
         for cell in &divider_cells {
+            if cell.len() < 2 {
+                return None;
+            }
             if !cell.chars().all(|c| c == '-') {
                 return None;
             }

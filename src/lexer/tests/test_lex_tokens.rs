@@ -1395,6 +1395,23 @@ fn test_lex_table() {
 }
 
 #[test]
+fn test_lex_invalid_table() {
+    test_lex_token! {
+        "
+| Header 1 | Header 2 |
+| - | - |
+| Row 1 Col 1 | Row 1 Col 2 |
+"   => Token::Text {
+            span: Span {
+                start: 0,
+                end: 65,
+            },
+            text: "\n| Header 1 | Header 2 |\n| - | - |\n| Row 1 Col 1 | Row 1 Col 2 |\n".to_string(),
+        }
+    }
+}
+
+#[test]
 fn test_span_extraction() {
     let source = "This is å tæst string.";
     let mut lexer = Lexer::new(source);
