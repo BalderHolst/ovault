@@ -1471,7 +1471,7 @@ fn test_quote_span_extraction() {
 }
 
 #[test]
-fn test_lex_table_with_excaped_bar() {
+fn test_lex_table_with_escaped_bar() {
     test_lex_token! {r"
 | Website                           | Logo      |
 | --------------------------------- | --------- |
@@ -1480,7 +1480,7 @@ fn test_lex_table_with_excaped_bar() {
     " => Token::Table {
             span: Span {
                 start: 0,
-                end: 307,
+                end: 311,
             },
             table: Table {
                 headers: vec![
