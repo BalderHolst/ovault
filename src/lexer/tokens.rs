@@ -300,7 +300,6 @@ pub enum Token {
         items: Vec<CheckListItem>,
     },
 
-    // TODO: Handle alignment markers in table headers.
     /// Represents a table in the note.
     ///
     /// Example:

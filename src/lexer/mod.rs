@@ -1030,7 +1030,6 @@ impl Lexer {
         _ = self.consume_expected('\n');
 
         fn line_to_cells(line: &str, walls: bool) -> Option<Vec<String>> {
-            // TODO: Option??
             let line_chars: Vec<char> = line.trim().chars().collect();
 
             if line_chars.is_empty() {
