@@ -1039,10 +1039,10 @@ impl Lexer {
 
             // Make sure walls are present if required
             if walls {
-                if !line_chars.first().is_some_and(|c| *c == '|') {
+                if line_chars.first().is_none_or(|c| *c != '|') {
                     return None;
                 }
-                if !line_chars.last().is_some_and(|c| *c == '|') {
+                if line_chars.last().is_none_or(|c| *c != '|') {
                     return None;
                 }
             }
@@ -1094,18 +1094,41 @@ impl Lexer {
             return None;
         }
 
+        let mut alignments = vec![TableAlignment::default(); row_count];
+
         // Make sure divider line is valid
         let divider_cells: Vec<String> = line_to_cells(&divider_line, walls)?;
         if divider_cells.len() != row_count {
             return None;
         }
-        for cell in &divider_cells {
+        for (cell, align) in divider_cells.iter().zip(alignments.iter_mut()) {
             if cell.len() < 2 {
                 return None;
             }
-            if !cell.chars().all(|c| c == '-') {
+
+            let first_colon = cell.starts_with(':');
+            let last_colon = cell.ends_with(':');
+
+            let mut chars = cell.chars();
+
+            // Remove colons for alignment checking
+            if first_colon {
+                chars.next();
+            }
+            if last_colon {
+                chars.next_back();
+            }
+
+            if !chars.all(|c| c == '-') {
                 return None;
             }
+
+            *align = match (first_colon, last_colon) {
+                (true, true) => TableAlignment::Center,
+                (true, false) => TableAlignment::Left,
+                (false, true) => TableAlignment::Right,
+                (false, false) => TableAlignment::None,
+            };
         }
 
         let mut rows: Vec<Vec<Tokens>> = Vec::new();
@@ -1141,7 +1164,11 @@ impl Lexer {
         let span = self.span(start);
         Some(Token::Table {
             span,
-            table: Table { headers, rows },
+            table: Table {
+                headers,
+                rows,
+                alignments,
+            },
         })
     }
 

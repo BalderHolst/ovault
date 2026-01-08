@@ -1329,6 +1329,10 @@ fn test_lex_table_walled() {
                     "First name".to_string(),
                     "Last name".to_string(),
                 ].to_vec(),
+                alignments: vec![
+                    TableAlignment::None,
+                    TableAlignment::None,
+                ],
                 rows: [
                     [
                         [
@@ -1487,6 +1491,10 @@ fn test_lex_table_with_escaped_bar() {
                     "Website".to_string(),
                     "Logo".to_string(),
                 ],
+                alignments: vec![
+                    TableAlignment::None,
+                    TableAlignment::None,
+                ],
                 rows: vec![
                     vec![
                         vec![
@@ -1564,6 +1572,10 @@ fn test_lex_table_no_walls() {
                     "First name".to_string(),
                     "Last name".to_string(),
                 ],
+                alignments: vec![
+                    TableAlignment::None,
+                    TableAlignment::None,
+                ],
                 rows: vec![
                     vec![
                         vec![
@@ -1597,6 +1609,54 @@ fn test_lex_table_alignments() {
         "Left-aligned text | Center-aligned text | Right-aligned text
 :-- | :--: | --:
 Content | Content | Content
-    "
+    " => Token::Table {
+            span: Span {
+                start: 0,
+                end: 110,
+            },
+            table: Table {
+                headers: vec![
+                    "Left-aligned text".to_string(),
+                    "Center-aligned text".to_string(),
+                    "Right-aligned text".to_string(),
+                ],
+                alignments: vec![
+                    TableAlignment::Left,
+                    TableAlignment::Center,
+                    TableAlignment::Right,
+                ],
+                rows: vec![
+                    vec![
+                        vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
+                                text: "Content".to_string(),
+                            },
+                        ],
+                        vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
+                                text: "Content".to_string(),
+                            },
+                        ],
+                        vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 7,
+                                },
+                                text: "Content".to_string(),
+                            },
+                        ],
+                    ],
+                ],
+            },
+        }
     }
 }

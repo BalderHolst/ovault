@@ -883,12 +883,29 @@ impl CheckListItem {
     }
 }
 
+/// Represents the alignment of a table column.
+#[cfg_attr(feature = "python", pyclass(get_all))]
+#[derive(Debug, Clone, PartialEq, Default)]
+pub enum TableAlignment {
+    /// Align the column to the left.
+    Left,
+    /// Align the column to the center.
+    Center,
+    /// Align the column to the right.
+    Right,
+    /// No specific alignment specified.
+    #[default]
+    None,
+}
+
 /// Contains the data of a markdown table.
 #[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Table {
     /// The headers of the table.
     pub headers: Vec<String>,
+    /// Alignment information for each column.
+    pub alignments: Vec<TableAlignment>,
     /// The rows of the table, where each row is a vector of tokenized cells
     pub rows: Vec<Vec<Tokens>>,
 }

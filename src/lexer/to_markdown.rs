@@ -137,8 +137,16 @@ impl ToMarkdown for Token {
                 s += &format_row(&table.headers);
 
                 s += "|";
-                for w in &widths {
-                    s += &format!(" {} |", "-".repeat(*w));
+                for (w, alignment) in widths.iter().zip(&table.alignments) {
+                    let w = w.max(&4); // Minimum width for separator
+                    let sep = match alignment {
+                        TableAlignment::Left => format!(":{:-<1$}", "-", *w - 1),
+                        TableAlignment::Center => format!(":{:-<1$}:", "-", *w - 2),
+                        TableAlignment::Right => format!("{:-<1$}:", "-", *w - 1),
+                        TableAlignment::None => format!("{:-<1$}", "-", *w),
+                    };
+
+                    s += &format!(" {} |", sep);
                 }
                 s.push('\n');
 
