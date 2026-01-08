@@ -220,6 +220,35 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
         case token.Escaped():
             w.write_line(token.character)
 
+        case token.Table():
+            table = token.table
+
+            w.write_line('<table>', indent=True)
+
+            # Header
+            w.write_line('<thead>', indent=True)
+            w.write_line('<tr>', indent=True)
+            for header_cell in table.headers:
+                w.write_line(f'<th>{header_cell}</th>')
+            w.write_line('</tr>', dedent=True)
+            w.write_line('</thead>', dedent=True)
+
+            # Body
+            # TODO: Use alignment
+            # TODO: Show dividers
+            w.write_line('<tbody>', indent=True)
+            for row in table.rows:
+                w.write_line('<tr>', indent=True)
+                for cell in row:
+                    w.write_line(f'<td>', indent=True)
+                    tokens_to_html(vault, w, cell)
+                    w.write_line(f'</td>', dedent=True)
+                w.write_line('</tr>', dedent=True)
+            w.write_line('</tbody>', dedent=True)
+
+            w.write_line('</table>', dedent=True)
+
+
         case token.Comment():
             pass
 

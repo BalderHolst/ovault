@@ -898,6 +898,8 @@ pub enum TableAlignment {
 }
 
 /// Contains the data of a markdown table.
+// TODO: Header should contain tokens.
+//     See note: test-vaults/BalderHolst_uni-notes/Notes/State Space Models.md.
 #[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Table {
