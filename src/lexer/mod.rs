@@ -1213,19 +1213,45 @@ impl Iterator for Lexer {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-        loop {
-            // This macro is used in the loop below and is core to the lexer logic.
-            //
-            // It attempts to lex a token using the specified method.
-            //
-            // If the method returns a token, that token is pushed to the lexer token queue.
-            //
-            // If the method does not return a token, the cursor is restored to the start position.
-            // and the loop continues to try the next lexing method.
-            macro_rules! please {
-                ($method:ident) => {
+        use TokenGroup::*;
+
+        #[rustfmt::skip]
+        const LEXER_FUNCS: &'static[(fn(&mut Lexer) -> Option<Token>, TokenGroup)] = &[
+            (Lexer::try_lex_escaped_character, NoGroup),
+            (Lexer::try_lex_heading,           NoGroup),
+            (Lexer::try_lex_front_matter,      NoGroup),
+            (Lexer::try_lex_divider,           NoGroup),
+            (Lexer::try_lex_bold,              NoGroup),
+            (Lexer::try_lex_italic,            NoGroup),
+            (Lexer::try_lex_strikethrough,     NoGroup),
+            (Lexer::try_lex_highlight,         NoGroup),
+            (Lexer::try_lex_tag,               NoGroup),
+            (Lexer::try_lex_code,              NoGroup),
+            (Lexer::try_lex_inline_code,       NoGroup),
+            (Lexer::try_lex_display_math,      NoGroup),
+            (Lexer::try_lex_inline_math,       NoGroup),
+            (Lexer::try_lex_internal_link,     NoGroup),
+            (Lexer::try_lex_external_link,     NoGroup),
+            (Lexer::try_lex_callout,           Multiline),
+            (Lexer::try_lex_quote,             Multiline),
+            (Lexer::try_lex_checklist,         Multiline),
+            (Lexer::try_lex_list,              Multiline),
+            (Lexer::try_lex_numeric_list,      Multiline),
+            (Lexer::try_lex_table,             NoGroup),
+            (Lexer::try_lex_comment,           NoGroup),
+            (Lexer::try_lex_templater_command, NoGroup),
+        ];
+
+        'outer: loop {
+            // Try all the lexer functions, to see if any can produce a token
+            for (try_lex_func, group) in LEXER_FUNCS.iter() {
+                if let Some(t) = self.queue.pop_front() {
+                    return Some(t);
+                }
+
+                if self.config.groups.contains(group) {
                     let start = self.cursor;
-                    let token = self.$method();
+                    let token = try_lex_func(self);
                     if let Some(token) = token {
                         // Add text between yielded tokens if any
                         if self.slow_cursor != start {
@@ -1242,46 +1268,14 @@ impl Iterator for Lexer {
                         self.slow_cursor = self.cursor;
 
                         // Jump to beginning of loop and try to lex all tokens again
-                        continue;
+                        continue 'outer;
                     }
 
                     // Restore the cursor to the start position if no token was found
                     // The next lexing method will be tried after this
                     self.cursor = start;
-                };
+                }
             }
-
-            if let Some(t) = self.queue.pop_front() {
-                return Some(t);
-            }
-
-            please!(try_lex_escaped_character);
-            please!(try_lex_heading);
-            please!(try_lex_front_matter);
-            please!(try_lex_divider);
-            please!(try_lex_bold);
-            please!(try_lex_italic);
-            please!(try_lex_strikethrough);
-            please!(try_lex_highlight);
-            please!(try_lex_tag);
-            please!(try_lex_code);
-            please!(try_lex_inline_code);
-            please!(try_lex_display_math);
-            please!(try_lex_inline_math);
-            please!(try_lex_internal_link);
-            please!(try_lex_external_link);
-
-            if self.config.groups.contains(&TokenGroup::Multiline) {
-                please!(try_lex_callout);
-                please!(try_lex_quote);
-                please!(try_lex_checklist);
-                please!(try_lex_list);
-                please!(try_lex_numeric_list);
-            }
-
-            please!(try_lex_table);
-            please!(try_lex_comment);
-            please!(try_lex_templater_command);
 
             // Check if we are at the end of the file
             if self.current().is_none() {
