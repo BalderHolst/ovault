@@ -26,7 +26,7 @@ mod ovault {
 
     /// Tokenize a string to a list of tokens.
     #[pyfunction]
-    fn text_to_tokens(text: &str) -> Vec<Token> {
+    fn text_to_tokens(text: &str) -> Tokens {
         lexer::Lexer::new(text).collect()
     }
 

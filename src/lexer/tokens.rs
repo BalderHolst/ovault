@@ -112,7 +112,7 @@ pub enum Token {
         /// The marker used for bold (e.g., "**" or "__")
         marker: Option<String>,
         /// The tokenized content of the bold text.
-        tokens: Vec<Token>,
+        tokens: Tokens,
     },
 
     /// Represents italic text in the note.
@@ -128,7 +128,7 @@ pub enum Token {
         /// The marker used for italics (e.g., "*" or "_")
         marker: Option<String>,
         /// The tokenized content of the italicized text.
-        tokens: Vec<Token>,
+        tokens: Tokens,
     },
 
     /// Represents strikethrough text in the note.
@@ -143,7 +143,7 @@ pub enum Token {
         /// The marker used for strikethrough (e.g., "~~")
         marker: Option<String>,
         /// The tokenized content of the strikethrough text.
-        tokens: Vec<Token>,
+        tokens: Tokens,
     },
 
     /// Represents highlighted text in the note.
@@ -158,7 +158,7 @@ pub enum Token {
         /// The marker used for highlighting (e.g., "==").
         marker: Option<String>,
         /// The tokenized content of the highlighted text.
-        tokens: Vec<Token>,
+        tokens: Tokens,
     },
 
     /// Represents inline code in the note.
@@ -197,7 +197,7 @@ pub enum Token {
         /// The span of the quote in the source text.
         span: Span,
         /// The tokenized content of the quote.
-        tokens: Vec<Token>,
+        tokens: Tokens,
         /// The author of the quote, if specified.
         ///
         /// Example:
@@ -790,7 +790,7 @@ pub struct Callout {
     /// The title of the callout.
     pub title: String,
     /// The tokenized content of the callout, which can include text, code blocks, links, etc.
-    pub tokens: Vec<Token>,
+    pub tokens: Tokens,
     /// Whether the callout can be folded or collapsed.
     pub foldable: bool,
 }
@@ -821,7 +821,7 @@ pub struct ListItem {
     /// The indentation level of the list item, which indicates its nesting level.
     pub indent: usize,
     /// The tokenized content of the list item
-    pub tokens: Vec<Token>,
+    pub tokens: Tokens,
 }
 
 #[cfg(feature = "python")]
@@ -845,7 +845,7 @@ pub struct NumericListItem {
     /// The indentation level of the list item, which indicates its nesting level.
     pub indent: usize,
     /// The tokenized content of the list item
-    pub tokens: Vec<Token>,
+    pub tokens: Tokens,
 }
 
 #[cfg(feature = "python")]
@@ -869,7 +869,7 @@ pub struct CheckListItem {
     /// The indentation level of the checklist item, which indicates its nesting level.
     pub indent: usize,
     /// The tokenized content of the checklist item
-    pub tokens: Vec<Token>,
+    pub tokens: Tokens,
 }
 
 #[cfg(feature = "python")]

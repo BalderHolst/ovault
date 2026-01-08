@@ -90,7 +90,7 @@ impl Lexer {
     }
 
     /// Run the lexer and return all tokens.
-    pub fn run(&mut self) -> Vec<Token> {
+    pub fn run(&mut self) -> Tokens {
         Vec::from_iter(self)
     }
 
@@ -585,7 +585,7 @@ impl Lexer {
         Some(source)
     }
 
-    fn lex_block(source: &str, source_start: Mark) -> Vec<Token> {
+    fn lex_block(source: &str, source_start: Mark) -> Tokens {
         let source = source.strip_suffix('\n').unwrap_or(source);
 
         let mut lexer = Self::new_with_skip_function(source, skip_funcs::skip_block_prefix);
