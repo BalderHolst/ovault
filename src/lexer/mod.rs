@@ -1016,20 +1016,40 @@ impl Lexer {
         let start = self.mark();
 
         self.consume_whitespace();
-        self.at('|')?;
 
+        let walls = self.at('|').is_some();
+
+        // First we get the header line
         let header_line = self.consume_until(|c| c == '\n');
         self.consume_expected('\n')?;
 
         let header_line = header_line.trim();
 
+        // ... and the divider line. e.g. "----|----|----" or "| ---- | ---- | ---- |"
         let divider_line = self.consume_until(|c| c == '\n');
         _ = self.consume_expected('\n');
 
-        fn line_to_cells(line: &str) -> Vec<String> {
+        fn line_to_cells(line: &str, walls: bool) -> Option<Vec<String>> {
+            // TODO: Option??
             let line_chars: Vec<char> = line.trim().chars().collect();
 
+            if line_chars.is_empty() {
+                return None;
+            }
+
+            // Make sure walls are present if required
+            if walls {
+                if !line_chars.first().is_some_and(|c| *c == '|') {
+                    return None;
+                }
+                if !line_chars.last().is_some_and(|c| *c == '|') {
+                    return None;
+                }
+            }
+
+            // Remove leading and trailing '|' if present
             let line_chars = line_chars.strip_prefix(&['|']).unwrap_or(&line_chars);
+            let line_chars = line_chars.strip_suffix(&['|']).unwrap_or(line_chars);
 
             let mut cells: Vec<String> = Vec::new();
 
@@ -1039,6 +1059,7 @@ impl Lexer {
 
             loop {
                 let Some(char) = iter.next() else {
+                    cells.push(current_cell.trim().to_string());
                     break;
                 };
 
@@ -1059,14 +1080,22 @@ impl Lexer {
                 current_cell.push(*char);
             }
 
-            cells
+            Some(cells)
         }
 
-        let headers: Vec<String> = line_to_cells(header_line);
+        let headers: Vec<String> = line_to_cells(header_line, walls)?;
         let row_count = headers.len();
 
+        if row_count == 0 {
+            return None;
+        }
+
+        if !walls && row_count < 2 {
+            return None;
+        }
+
         // Make sure divider line is valid
-        let divider_cells: Vec<String> = line_to_cells(&divider_line);
+        let divider_cells: Vec<String> = line_to_cells(&divider_line, walls)?;
         if divider_cells.len() != row_count {
             return None;
         }
@@ -1085,7 +1114,9 @@ impl Lexer {
             let line = self.consume_until(|c| c == '\n');
             _ = self.consume_expected('\n');
 
-            let row_string: Vec<String> = line_to_cells(&line);
+            let Some(row_string) = line_to_cells(&line, walls) else {
+                break;
+            };
 
             if row_string.len() != row_count {
                 break;

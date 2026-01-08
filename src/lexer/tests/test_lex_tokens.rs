@@ -1311,7 +1311,7 @@ fn test_lex_checklist() {
 }
 
 #[test]
-fn test_lex_table() {
+fn test_lex_table_walled() {
     test_lex_token! {
         "
 | First name | Last name |
@@ -1545,5 +1545,58 @@ fn test_lex_table_with_escaped_bar() {
                 ],
             },
         }
+    }
+}
+
+#[test]
+fn test_lex_table_no_walls() {
+    test_lex_token! {
+        "First name | Last name
+        -- | --
+        1 | 2
+        " => Token::Table {
+            span: Span {
+                start: 0,
+                end: 61,
+            },
+            table: Table {
+                headers: vec![
+                    "First name".to_string(),
+                    "Last name".to_string(),
+                ],
+                rows: vec![
+                    vec![
+                        vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 1,
+                                },
+                                text: "1".to_string(),
+                            },
+                        ],
+                        vec![
+                            Token::Text {
+                                span: Span {
+                                    start: 0,
+                                    end: 1,
+                                },
+                                text: "2".to_string(),
+                            },
+                        ],
+                    ],
+                ],
+            },
+        }
+    }
+}
+
+#[test]
+fn test_lex_table_alignments() {
+    test_lex_token! {
+        "Left-aligned text | Center-aligned text | Right-aligned text
+:-- | :--: | --:
+Content | Content | Content
+    "
     }
 }
