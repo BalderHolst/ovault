@@ -8,6 +8,7 @@ pub mod tokens;
 #[cfg(test)]
 mod tests;
 
+use enumset::{EnumSet, EnumSetType};
 pub use span::Span;
 pub use to_markdown::ToMarkdown;
 use tokens::*;
@@ -29,7 +30,9 @@ impl From<Mark> for usize {
     }
 }
 
-#[derive(Clone, Default, Hash, PartialEq, Eq)]
+type TokenGroupSet = EnumSet<TokenGroup>;
+
+#[derive(EnumSetType, Default)]
 pub enum TokenGroup {
     Multiline,
     #[default]
@@ -37,13 +40,13 @@ pub enum TokenGroup {
 }
 
 impl TokenGroup {
-    pub fn all() -> HashSet<TokenGroup> {
-        HashSet::from([TokenGroup::Multiline, TokenGroup::NoGroup])
+    pub fn all() -> TokenGroupSet {
+        EnumSet::all()
     }
 
-    pub fn without(group: TokenGroup) -> HashSet<TokenGroup> {
+    pub fn without(group: TokenGroup) -> TokenGroupSet {
         let mut all = Self::all();
-        all.remove(&group);
+        all.remove(group);
         all
     }
 }
@@ -51,7 +54,7 @@ impl TokenGroup {
 /// Configuration options for the lexer.
 #[derive(Clone)]
 pub struct LexerConfig {
-    pub groups: HashSet<TokenGroup>,
+    pub groups: TokenGroupSet,
 }
 
 impl Default for LexerConfig {
@@ -1249,7 +1252,7 @@ impl Iterator for Lexer {
                     return Some(t);
                 }
 
-                if self.config.groups.contains(group) {
+                if self.config.groups.contains(*group) {
                     let start = self.cursor;
                     let token = try_lex_func(self);
                     if let Some(token) = token {
