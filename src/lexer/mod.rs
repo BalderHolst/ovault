@@ -61,12 +61,15 @@ impl TokenGroup {
 pub struct LexerConfig {
     /// Enabled token groups.
     pub token_groups: TokenGroupSet,
+    /// Offset added to all tokens what the lexer produces
+    pub offset: usize,
 }
 
 impl Default for LexerConfig {
     fn default() -> Self {
         Self {
             token_groups: TokenGroup::all(),
+            offset: 0,
         }
     }
 }
@@ -85,6 +88,15 @@ impl Lexer {
     /// Create a new lexer with the given text.
     pub fn new<S: ToString>(text: S) -> Self {
         Self::new_with_config(text, LexerConfig::default())
+    }
+
+    /// Set the offset of spans generated with this lexer
+    pub fn with_offset(self, offset: usize) -> Self {
+        let config = LexerConfig {
+            offset,
+            ..self.config
+        };
+        Self { config, ..self }
     }
 
     /// Create a new lexer with the given text and configuration.
@@ -351,10 +363,10 @@ macro_rules! lex_inline_fn {
                 return None;
             }
 
-            let mut tokens = Lexer::new_with_config(&content, LexerConfig {
+            let tokens = Lexer::new_with_config(&content, LexerConfig {
                 token_groups: TokenGroup::without(TokenGroup::Multiline),
+                offset: content_span.start,
             }).run();
-            Self::shift_tokens(&mut tokens, content_span.start as isize);
 
             self.consume_expected_sequence(marker).expect("We just checked for end marker");
 
@@ -592,13 +604,6 @@ impl Lexer {
         Some(())
     }
 
-    /// Shift the spans of an array of tokens by an offset
-    fn shift_tokens(tokens: &mut [Token], offset: isize) {
-        for token in tokens {
-            token.span_mut().shift(offset);
-        }
-    }
-
     /// Extract the text contained within a block prefixed with '>'
     fn try_extract_block(&mut self) -> Option<String> {
         self.at_block_start()?;
@@ -617,16 +622,10 @@ impl Lexer {
 
     fn lex_block(source: &str, source_start: Mark) -> Tokens {
         let source = source.strip_suffix('\n').unwrap_or(source);
-
-        let mut lexer = Self::new_with_skip_function(source, skip_funcs::skip_block_prefix);
-
-        let mut tokens = lexer.run();
-
-        // Shift all token spans by the start position
         let Mark(offset) = source_start;
-        Self::shift_tokens(&mut tokens, offset as isize);
-
-        tokens
+        let mut lexer =
+            Self::new_with_skip_function(source, skip_funcs::skip_block_prefix).with_offset(offset);
+        lexer.run()
     }
 
     fn try_lex_quote(&mut self) -> Option<Token> {
@@ -1181,6 +1180,7 @@ impl Lexer {
                         cell,
                         LexerConfig {
                             token_groups: TokenGroup::without(TokenGroup::Multiline),
+                            offset: 0,
                         },
                     )
                     .run()
@@ -1254,10 +1254,16 @@ impl Iterator for Lexer {
             (Lexer::try_lex_templater_command, Inline),
         ];
 
-        'outer: loop {
+        'restart: loop {
             // Try all the lexer functions, to see if any can produce a token
             for (try_lex_func, group) in LEXER_FUNCS.iter() {
-                if let Some(t) = self.queue.pop_front() {
+                if let Some(mut t) = self.queue.pop_front() {
+                    // Shift the token span by the offset specified in the configuration
+                    //
+                    // This is done at the very latest moment, as the span is used internally
+                    // to access text within the lexer source code.
+                    t.span_mut().shift(self.config.offset as isize);
+
                     return Some(t);
                 }
 
@@ -1280,7 +1286,9 @@ impl Iterator for Lexer {
                         self.slow_cursor = self.cursor;
 
                         // Jump to beginning of loop and try to lex all tokens again
-                        continue 'outer;
+                        //
+                        // This will pop the parsed token from the queue and return it
+                        continue 'restart;
                     }
 
                     // Restore the cursor to the start position if no token was found
