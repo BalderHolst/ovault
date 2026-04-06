@@ -38,7 +38,7 @@ pub type Tokens = Vec<Token>;
 /// ```python
 #[doc = include_str!("../../examples/3_find_headings.py")]
 /// ```
-#[cfg_attr(feature = "python", pyclass)]
+#[cfg_attr(feature = "python", pyclass(from_py_object))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
     /// Represents the frontmatter of a note, which is typically YAML formatted metadata.
@@ -688,7 +688,7 @@ impl Token {
 /// ![alt text](https://imageimage--link.domain)
 /// [show_how](https://github.com/BalderHolst)
 /// ```
-#[cfg_attr(feature = "python", pyclass(get_all, set_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExternalLink {
     /// Whether the link should be rendered as an image or video.
@@ -736,7 +736,7 @@ impl ExternalLink {
 /// ```markdown
 /// ![[note_name#position|display text]]
 /// ```
-#[cfg_attr(feature = "python", pyclass(get_all, set_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalLink {
     /// The destination of the link, which is the name of the note.
@@ -782,7 +782,7 @@ impl InternalLink {
 /// > [!note]- Title
 /// > This is a note callout.
 /// ```
-#[cfg_attr(feature = "python", pyclass(get_all, set_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all, set_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Callout {
     /// The kind of callout, such as "note", "tip", "warning", etc.
@@ -814,7 +814,7 @@ impl Callout {
 
 /// Represents a single item in a list.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 pub struct ListItem {
     /// The span of the list item in the source text.
     pub span: Span,
@@ -836,7 +836,7 @@ impl ListItem {
 
 /// Represents a single item in a numerated list.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 pub struct NumericListItem {
     /// The span of the list item in the source text.
     pub span: Span,
@@ -860,7 +860,7 @@ impl NumericListItem {
 
 /// Represents a single item in a checklist.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 pub struct CheckListItem {
     /// Whether the checklist item is checked or not.
     pub checked: bool,
@@ -883,7 +883,7 @@ impl CheckListItem {
 }
 
 /// Represents the alignment of a table column.
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum TableAlignment {
     /// Align the column to the left.
@@ -900,7 +900,7 @@ pub enum TableAlignment {
 /// Contains the data of a markdown table.
 // TODO: Header should contain tokens.
 //     See note: test-vaults/BalderHolst_uni-notes/Notes/State Space Models.md.
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Table {
     /// The headers of the table.

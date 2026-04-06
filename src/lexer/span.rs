@@ -2,7 +2,7 @@
 use pyo3::{pyclass, pymethods};
 
 /// Represents a span in the source text.
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Span {
     /// The starting index of the span in the source text.

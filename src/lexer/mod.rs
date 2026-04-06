@@ -11,7 +11,10 @@ mod tests;
 use enumset::{EnumSet, EnumSetType};
 pub use span::Span;
 pub use to_markdown::ToMarkdown;
-use tokens::*;
+use tokens::{
+    Callout, CheckListItem, ExternalLink, InternalLink, ListItem, NumericListItem, Table,
+    TableAlignment, Token, Tokens,
+};
 
 #[cfg(feature = "python")]
 pub use to_markdown::py_to_markdown;

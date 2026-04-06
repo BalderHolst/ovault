@@ -8,7 +8,7 @@ use pyo3::prelude::*;
 /// An attachment in an Obsidian vault. An attachment is any
 /// file that is not a markdown file.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 pub struct Attachment {
     /// Absolute path to the vault root.
     pub vault_path: PathBuf,

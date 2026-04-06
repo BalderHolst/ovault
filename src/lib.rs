@@ -13,7 +13,8 @@ mod logging;
 #[cfg(test)]
 mod tests;
 
-pub use lexer::{tokens::*, Span};
+pub use lexer::tokens::{Callout, ExternalLink, InternalLink, Token, Tokens};
+pub use lexer::Span;
 pub use vault::{attachment::Attachment, note::Note, Vault, VaultItem};
 
 #[doc = include_str!("../docs/documentation.md")]

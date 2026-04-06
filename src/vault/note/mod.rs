@@ -29,7 +29,7 @@ pub(crate) fn note_name_from_path(path: &Path) -> String {
 
 /// A note in an Obsidian vault.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, get_all))]
 pub struct Note {
     /// Path to the vault
     pub vault_path: PathBuf,

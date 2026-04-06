@@ -1,7 +1,10 @@
 #[cfg(feature = "python")]
 use pyo3::{pyfunction, Bound, PyAny, PyResult};
 
-use super::tokens::*;
+use super::tokens::{
+    Callout, CheckListItem, ExternalLink, InternalLink, ListItem, NumericListItem, TableAlignment,
+    Token,
+};
 
 /// Trait for converting an item into a Markdown string representation.
 ///
@@ -302,31 +305,29 @@ pub fn py_to_markdown<'py>(obj: &Bound<'py, PyAny>) -> PyResult<String> {
 
     match obj {
         obj if obj.is_instance_of::<PyString>() => {
-            let s = obj.downcast::<PyString>()?;
+            let s = obj.cast::<PyString>()?;
             Ok(s.to_string())
         }
-        obj if obj.is_instance_of::<Token>() => Ok(obj.downcast::<Token>()?.borrow().to_markdown()),
+        obj if obj.is_instance_of::<Token>() => Ok(obj.cast::<Token>()?.borrow().to_markdown()),
         obj if obj.is_instance_of::<InternalLink>() => {
-            Ok(obj.downcast::<InternalLink>()?.borrow().to_markdown())
+            Ok(obj.cast::<InternalLink>()?.borrow().to_markdown())
         }
         obj if obj.is_instance_of::<ExternalLink>() => {
-            Ok(obj.downcast::<ExternalLink>()?.borrow().to_markdown())
+            Ok(obj.cast::<ExternalLink>()?.borrow().to_markdown())
         }
-        obj if obj.is_instance_of::<Callout>() => {
-            Ok(obj.downcast::<Callout>()?.borrow().to_markdown())
-        }
+        obj if obj.is_instance_of::<Callout>() => Ok(obj.cast::<Callout>()?.borrow().to_markdown()),
         obj if obj.is_instance_of::<ListItem>() => {
-            Ok(obj.downcast::<ListItem>()?.borrow().to_markdown())
+            Ok(obj.cast::<ListItem>()?.borrow().to_markdown())
         }
         obj if obj.is_instance_of::<NumericListItem>() => {
-            Ok(obj.downcast::<NumericListItem>()?.borrow().to_markdown())
+            Ok(obj.cast::<NumericListItem>()?.borrow().to_markdown())
         }
         obj if obj.is_instance_of::<CheckListItem>() => {
-            Ok(obj.downcast::<CheckListItem>()?.borrow().to_markdown())
+            Ok(obj.cast::<CheckListItem>()?.borrow().to_markdown())
         }
         obj if obj.is_instance_of::<PyList>() => {
             let list = obj
-                .downcast::<PyList>()?
+                .cast::<PyList>()?
                 .iter()
                 .map(|item| py_to_markdown(&item))
                 .collect::<Result<Vec<_>, pyo3::PyErr>>()?;

@@ -103,8 +103,10 @@ impl From<Yaml> for FrontmatterItem {
 }
 
 #[cfg(feature = "python")]
-impl<'py> FromPyObject<'py> for FrontmatterItem {
-    fn extract_bound(obj: &Bound<'py, PyAny>) -> PyResult<Self> {
+impl<'a, 'py> FromPyObject<'a, 'py> for FrontmatterItem {
+    type Error = PyErr;
+
+    fn extract(obj: Borrowed<'a, 'py, PyAny>) -> PyResult<Self> {
         match obj {
             obj if obj.is_instance_of::<PyFloat>() => Ok(FrontmatterItem::Real(obj.extract()?)),
             obj if obj.is_instance_of::<PyInt>() => Ok(FrontmatterItem::Integer(obj.extract()?)),
@@ -112,7 +114,7 @@ impl<'py> FromPyObject<'py> for FrontmatterItem {
             obj if obj.is_instance_of::<PyBool>() => Ok(FrontmatterItem::Boolean(obj.extract()?)),
             obj if obj.is_instance_of::<PyList>() => {
                 let list: Vec<FrontmatterItem> = obj
-                    .downcast::<PyList>()?
+                    .cast::<PyList>()?
                     .iter()
                     .map(|item| item.extract())
                     .collect::<PyResult<Vec<_>>>()?;
@@ -120,7 +122,7 @@ impl<'py> FromPyObject<'py> for FrontmatterItem {
             }
             obj if obj.is_instance_of::<PyDict>() => {
                 let mut map = Frontmatter::default();
-                for (k, v) in obj.downcast::<PyDict>()?.iter() {
+                for (k, v) in obj.cast::<PyDict>()?.iter() {
                     let key: String = k.extract()?;
                     let value: FrontmatterItem = v.extract()?;
                     map.items.push((key, value));
@@ -146,7 +148,7 @@ impl<'py> FromPyObject<'py> for FrontmatterItem {
 ///
 /// The main difference from a standard dictionary is that the order of items is preserved
 #[derive(Debug, Default, Clone)]
-#[cfg_attr(feature = "python", pyclass(name = "Frontmatter"))]
+#[cfg_attr(feature = "python", pyclass(from_py_object, name = "Frontmatter"))]
 pub struct Frontmatter {
     items: Vec<(String, FrontmatterItem)>,
 }

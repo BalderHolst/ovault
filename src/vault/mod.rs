@@ -25,7 +25,7 @@ pub use note::{frontmatter::Frontmatter, Note};
 
 /// An item in an Obsidian vault can be either a note or an attachment.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "python", pyclass)]
+#[cfg_attr(feature = "python", pyclass(from_py_object))]
 pub enum VaultItem {
     /// A note in the vault (markdown file)
     Note {
@@ -112,7 +112,7 @@ pub struct Vault {
 
 #[cfg(feature = "python")]
 #[derive(Debug, Clone, PartialEq)]
-#[pyclass]
+#[pyclass(from_py_object)]
 /// An Obsidian vault containing notes and attachments. The vault is indexed
 /// on creation and can be re-indexed with the `index` method.
 pub struct Vault {
