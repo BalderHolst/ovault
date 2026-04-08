@@ -27,7 +27,6 @@ mod ovault {
 
     /// Tokenize a string to a list of tokens.
     #[pyfunction]
-    #[pyo3(signature = (text: "str") -> "list[Token]")]
     fn text_to_tokens(text: &str) -> Tokens {
         lexer::Lexer::new(text).collect()
     }
@@ -44,15 +43,9 @@ mod ovault {
     #[pymodule_export]
     use Callout;
     #[pymodule_export]
-    use CheckListItem;
-    #[pymodule_export]
     use ExternalLink;
     #[pymodule_export]
     use InternalLink;
-    #[pymodule_export]
-    use ListItem;
-    #[pymodule_export]
-    use NumericListItem;
     #[pymodule_export]
     use Token;
 
