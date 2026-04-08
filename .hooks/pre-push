@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+ROOT=$(git rev-parse --show-toplevel)
+
 # Check that the code does not contain "dbg!' statements
 if grep -rn --include="*.rs" "dbg!(" src/ ;
 then
@@ -31,6 +33,9 @@ RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features || {
   echo "Documntation issues found. Please fix them before committing."
   exit 1
 }
+
+# Generate stub file
+bash "$ROOT/scripts/generate-stubs.sh"
 
 # Check for uncomitted changes
 if [[ -n $(git status --porcelain) ]]; then
