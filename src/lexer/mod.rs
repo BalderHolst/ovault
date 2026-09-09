@@ -439,7 +439,8 @@ impl Lexer {
 
         self.consume_expected('#')?;
 
-        let tag = self.consume_while(|c| c.is_alphabetic() || c.is_ascii_digit());
+        let tag = self
+            .consume_while(|c| c.is_alphabetic() || c.is_ascii_digit() || matches!(c, '_' | '-'));
 
         if tag.is_empty() {
             return None;
