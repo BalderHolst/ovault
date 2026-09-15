@@ -118,6 +118,16 @@ impl Lexer {
         }
     }
 
+    pub fn new_inline<S: ToString, I: Into<usize>>(text: S, offset: I) -> Self {
+        Lexer::new_with_config(
+            text,
+            LexerConfig {
+                token_groups: TokenGroup::without(TokenGroup::Multiline),
+                offset: offset.into(),
+            },
+        )
+    }
+
     /// Create a new lexer with the given text and a function to skip characters.
     pub fn new_with_skip_function<S: ToString>(text: S, skip_function: fn(&mut Self)) -> Self {
         let mut lexer = Self::new(text);
@@ -230,11 +240,13 @@ impl Lexer {
         Some(())
     }
 
-    fn consume_until_sequence(&mut self, seq: &str) -> Option<()> {
+    fn consume_until_sequence(&mut self, seq: &str) -> Option<String> {
+        let mut s = String::new();
         while !self.at_sequence(seq) {
-            self.consume()?;
+            let c = self.consume()?;
+            s.push(c)
         }
-        Some(())
+        Some(s)
     }
 
     fn consume_while(&mut self, cond: impl Fn(char) -> bool) -> String {
@@ -571,6 +583,88 @@ impl Lexer {
         })
     }
 
+    fn try_lex_footnote_def(&mut self) -> Option<Token> {
+        self.at_line_start()?;
+
+        let start = self.mark();
+
+        self.consume_expected('[')?;
+        self.consume_expected('^')?;
+
+        let name = self.consume_until(|c| c == ']');
+
+        self.consume_expected(']')?;
+        self.consume_expected(':')?;
+        self.consume_whitespace();
+
+        let line_start = self.mark();
+
+        const SEQS: &[&str] = &["\n\n", "\n[^"];
+
+        'outer: loop {
+            for seq in SEQS {
+                if self.at_sequence(seq)
+                    || (self.at('\n').is_some() && self.peek(1) == None) // Edge case of "...\nEOF"
+                    || self.at_file_end()
+                {
+                    break 'outer;
+                }
+            }
+            self.consume();
+        }
+
+        let line = self.extract(line_start);
+
+        self.consume_if(|c| c == '\n');
+
+        let tokens = Lexer::new_with_config(
+            line,
+            LexerConfig {
+                token_groups: TokenGroup::without(TokenGroup::Multiline),
+                offset: line_start.into(),
+            },
+        )
+        .run();
+
+        let span = self.span(start);
+
+        Some(Token::FootnoteDef { span, name, tokens })
+    }
+
+    fn try_lex_footnote_ref(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        self.consume_expected('[')?;
+        self.consume_expected('^')?;
+
+        let name = self.consume_until(|c| c == ']');
+
+        self.consume_expected(']')?;
+
+        let span = self.span(start);
+
+        Some(Token::FootnoteRef { span, name })
+    }
+
+    fn try_lex_footnote_inline(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        self.consume_expected('^')?;
+        self.consume_expected('[')?;
+
+        let text_start = self.mark();
+
+        let text = self.consume_until(|c| c == ']');
+
+        let tokens = Lexer::new_inline(text, text_start).run();
+
+        self.consume_expected(']')?;
+
+        let span = self.span(start);
+
+        Some(Token::FootnoteInline { span, tokens })
+    }
+
     fn at(&self, expect: char) -> Option<()> {
         if self.current() != Some(expect) {
             return None;
@@ -590,6 +684,10 @@ impl Lexer {
             return None;
         }
         Some(())
+    }
+
+    fn at_file_end(&self) -> bool {
+        self.current() == None
     }
 
     fn at_block_start(&self) -> Option<()> {
@@ -1256,6 +1354,9 @@ impl Iterator for Lexer {
             (Lexer::try_lex_table,             Inline),
             (Lexer::try_lex_comment,           Inline),
             (Lexer::try_lex_templater_command, Inline),
+            (Lexer::try_lex_footnote_inline,   Inline),
+            (Lexer::try_lex_footnote_def,      Multiline),
+            (Lexer::try_lex_footnote_ref,      Inline),
         ];
 
         'restart: loop {

@@ -316,6 +316,25 @@ pub enum Token {
         table: Table,
     },
 
+    // TODO: Docs
+    FootnoteDef {
+        span: Span,
+        name: String,
+        tokens: Tokens,
+    },
+
+    // TODO: Docs
+    FootnoteRef {
+        span: Span,
+        name: String,
+    },
+
+    // TODO: Docs
+    FootnoteInline {
+        span: Span,
+        tokens: Tokens,
+    },
+
     /// Represents an escaped character in the note.
     ///
     /// Example:
@@ -368,6 +387,9 @@ impl fmt::Display for Token {
             Token::CheckList { .. } => "CheckList",
             Token::Table { .. } => "Table",
             Token::Comment { .. } => "Comment",
+            Token::FootnoteDef { .. } => "FootnoteDef",
+            Token::FootnoteRef { .. } => "FootnoteRef",
+            Token::FootnoteInline { .. } => "FootnoteInline",
             Token::Escaped { .. } => "Escaped",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
@@ -384,6 +406,8 @@ impl Token {
             | Token::Strikethrough { tokens, .. }
             | Token::Highlight { tokens, .. }
             | Token::Quote { tokens, .. }
+            | Token::FootnoteDef { tokens, .. }
+            | Token::FootnoteInline { tokens, .. }
             | Token::Callout {
                 callout: Callout { tokens, .. },
                 ..
@@ -413,6 +437,7 @@ impl Token {
             | Token::InternalLink { .. }
             | Token::ExternalLink { .. }
             | Token::Comment { .. }
+            | Token::FootnoteRef { .. }
             | Token::Escaped { .. }
             | Token::TemplaterCommand { .. } => {
                 // These tokens do not contain nested tokens
@@ -429,6 +454,8 @@ impl Token {
             | Token::Strikethrough { tokens, .. }
             | Token::Highlight { tokens, .. }
             | Token::Quote { tokens, .. }
+            | Token::FootnoteDef { tokens, .. }
+            | Token::FootnoteInline { tokens, .. }
             | Token::Callout {
                 callout: Callout { tokens, .. },
                 ..
@@ -460,6 +487,7 @@ impl Token {
             | Token::InternalLink { .. }
             | Token::ExternalLink { .. }
             | Token::Comment { .. }
+            | Token::FootnoteRef { .. }
             | Token::Escaped { .. }
             | Token::TemplaterCommand { .. } => {
                 // These tokens do not contain nested tokens
@@ -601,7 +629,7 @@ impl Token {
 }
 
 macro_rules! impl_token_span_method {
-    [$($variant:ident),*] => {
+    [$($variant:ident),*$(,)?] => {
         impl Token {
             /// Get the span of the token.
             pub fn span(&self) -> &Span {
@@ -645,7 +673,10 @@ impl_token_span_method!(
     Table,
     Comment,
     Escaped,
-    TemplaterCommand
+    TemplaterCommand,
+    FootnoteDef,
+    FootnoteRef,
+    FootnoteInline,
 );
 
 impl Token {
@@ -654,7 +685,9 @@ impl Token {
         use Token::*;
         match self {
             Text { text, .. } => text.chars().all(char::is_whitespace),
-            Comment { .. } => true,
+            Comment { .. } | FootnoteDef { .. } | FootnoteRef { .. } | FootnoteInline { .. } => {
+                true
+            }
             Tag { .. }
             | Bold { .. }
             | Italic { .. }

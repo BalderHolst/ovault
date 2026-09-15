@@ -162,6 +162,15 @@ impl ToMarkdown for Token {
                 s
             }
             Token::Comment { span: _, comment } => format!("%%{comment}%%"),
+            Token::FootnoteDef {
+                span: _,
+                name,
+                tokens,
+            } => format!("[^{name}]: {content}", content = tokens_to_markdown(tokens)),
+            Token::FootnoteInline { span: _, tokens } => {
+                format!("^[{content}]", content = tokens_to_markdown(tokens))
+            }
+            Token::FootnoteRef { span: _, name } => format!("[^{name}]"),
             Token::Escaped { span: _, character } => format!("\\{character}"),
             Token::TemplaterCommand { span: _, command } => format!("<% {command} %>"),
         }

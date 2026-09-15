@@ -292,6 +292,9 @@ impl Note {
                 | Token::ExternalLink { .. }
                 | Token::Comment { .. }
                 | Token::Escaped { .. }
+                | Token::FootnoteDef { .. }
+                | Token::FootnoteRef { .. }
+                | Token::FootnoteInline { .. }
                 | Token::TemplaterCommand { .. } => {}
             }
         }
