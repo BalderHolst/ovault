@@ -12,12 +12,12 @@ tags        : ['tags']
 :b shell 66
 python3 examples/1_overview.py "test-vaults/BalderHolst_uni-notes"
 :i returncode 0
-:b stdout 731
+:b stdout 757
 
 path        : test-vaults/BalderHolst_uni-notes
 notes       : 509
 attachments : 369
-tags        : ['TCP', 'ai', 'algorithms', 'approximation', 'c', 'computerarchitecture', 'controlsystems', 'cpp', 'datacommunication', 'differentialer', 'differentialligninger', 'distribution', 'elektronik', 'embedded', 'excalidraw', 'filter', 'forstærker', 'funktionafflerevariable', 'funktioner', 'fysik', 'integraler', 'intelligent', 'kinematics', 'komponent', 'linearalgebra', 'linux', 'matematik', 'matricer', 'microcontrolers', 'multivariablemath', 'notag', 'numerical', 'partialdiffequations', 'python', 'signalprocessing', 'signals', 'softwaredevelopment', 'sorting', 'statistics', 'subject', 'underactuated', 'vectorfields', 'vektorer']
+tags        : ['TCP-IP', 'ai', 'algorithms', 'approximation', 'c', 'computerarchitecture', 'controlsystems', 'cpp', 'datacommunication', 'differentialer', 'differentialligninger', 'distribution', 'elektronik', 'embedded', 'excalidraw', 'filter', 'forstærker', 'funktionafflerevariable', 'funktioner', 'fysik', 'integraler', 'intelligent-systems', 'kinematics', 'komponent', 'linearalgebra', 'linux', 'matematik', 'matricer', 'microcontrolers', 'multivariablemath', 'notag', 'numerical-methods', 'partialdiffequations', 'python', 'signalprocessing', 'signals', 'softwaredevelopment', 'sorting', 'statistics', 'subject', 'underactuated-robots', 'vectorfields', 'vektorer']
 
 :b shell 57
 python3 examples/1_overview.py "test-vaults/simple_vault"
@@ -42,12 +42,12 @@ tags        : ['dashboard', 'excalidraw', 'notes']
 :b shell 62
 python3 examples/1_overview.py "test-vaults/TheJoboReal_Noter"
 :i returncode 0
-:b stdout 556
+:b stdout 592
 
 path        : test-vaults/TheJoboReal_Noter
 notes       : 1058
 attachments : 2358
-tags        : ['Arbejde', 'ArcCos', 'ArcSin', 'ArcTan', 'Centripidalkraften', 'Faseforskydning', 'Fjeder', 'Friktion', 'Heap', 'Hooks', 'Inverterende', 'Lavplasfilter', 'Masseinertimoment', 'Parrallel', 'Phasor', 'SharedMemory', 'Split', 'Stacks', 'Terminalhastighed', 'algorithms', 'assignment', 'control/examples', 'course', 'define', 'effekt', 'excalidraw', 'exercise', 'guide', 'ikke', 'lecture-note', 'lecture-slide', 'semester', 'uni', 'uni/7th_semester', 'uni/CAS']
+tags        : ['Arbejde', 'ArcCos', 'ArcSin', 'ArcTan', 'Centripidalkraften', 'Faseforskydning', 'Fjeder-kobling', 'Friktion', 'Heap', 'Hooks', 'Inverterende', 'Lavplasfilter', 'Masseinertimoment', 'Parrallel-kobling', 'Phasor', 'SharedMemory', 'Split-supply', 'Stacks', 'Terminalhastighed', 'algorithms', 'assignment', 'control/examples', 'course', 'define', 'effekt', 'excalidraw', 'exercise', 'guide', 'ikke-Inverterende', 'lecture-note', 'lecture-slide', 'semester', 'uni', 'uni/7th_semester', 'uni/CAS']
 
 :b shell 66
 python3 examples/2_find_tag.py "test-vaults/Obsidian Sandbox" math
