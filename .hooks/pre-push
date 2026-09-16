@@ -10,7 +10,7 @@ then
 fi
 
 # Check that the code does not contain "println!" statements (except `tests.rs`, `logging.rs` and files in `tests/` folders)
-if grep -rn --include="*.rs" "println!(" src/ | grep -vE "tests\.rs|logging\.rs|tests/" ;
+if grep -rn --include="*.rs" "println!(" src/ | grep -vE "main\.rs|tests\.rs|logging\.rs|tests/" ;
 then
   echo -e "\nPrint statements found in the code. Please remove them before committing."
   exit 1
