@@ -609,6 +609,14 @@ impl Token {
                         .join(", ")
                 )
             }
+            Token::FootnoteDef { name, tokens, .. } => format!(
+                "FootnoteDef({name}: {content})",
+                content = tokens_repr(tokens)
+            ),
+            Token::FootnoteRef { name, .. } => format!("FootnoteRef({name})"),
+            Token::InlineFootnote { tokens, .. } => {
+                format!("InlineFootnote({content})", content = tokens_repr(tokens))
+            }
             Token::Comment { comment, .. } => {
                 format!("Comment({})", string_repr(comment))
             }
