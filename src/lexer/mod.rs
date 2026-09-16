@@ -10,6 +10,7 @@ mod tests;
 
 use enumset::{EnumSet, EnumSetType};
 pub use span::Span;
+pub use to_markdown::tokens_to_markdown;
 pub use to_markdown::ToMarkdown;
 use tokens::{
     Callout, CheckListItem, ExternalLink, InternalLink, ListItem, NumericListItem, Table,
@@ -618,6 +619,7 @@ impl Lexer {
         }
 
         let content = self.extract(content_start);
+        let content = content.trim_end();
 
         let mut lexer = Lexer::new_with_skip_function(content, skip_funcs::skip_whitespace_prefix)
             .with_offset(content_start.into());

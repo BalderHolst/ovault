@@ -1720,9 +1720,9 @@ This[^this] is a footnote[^10]
                     Text {
                         span: Span {
                             start: 40,
-                            end: 96,
+                            end: 95,
                         },
-                        text: "Example of a footnote\nwith a loooong description...\n".to_string(),
+                        text: "Example of a footnote\nwith a loooong description...".to_string(),
                     },
                 ].to_vec(),
             },
@@ -1736,9 +1736,9 @@ This[^this] is a footnote[^10]
                     Text {
                         span: Span {
                             start: 105,
-                            end: 116,
+                            end: 115,
                         },
-                        text: "First word\n".to_string(),
+                        text: "First word".to_string(),
                     },
                 ].to_vec(),
             },

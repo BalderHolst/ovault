@@ -14,7 +14,8 @@ pub trait ToMarkdown {
     fn to_markdown(&self) -> String;
 }
 
-fn tokens_to_markdown(tokens: &[Token]) -> String {
+/// Convert a list of tokens to a markdown string
+pub fn tokens_to_markdown(tokens: &[Token]) -> String {
     tokens.iter().map(ToMarkdown::to_markdown).collect()
 }
 
@@ -166,7 +167,14 @@ impl ToMarkdown for Token {
                 span: _,
                 name,
                 tokens,
-            } => format!("[^{name}]: {content}", content = tokens_to_markdown(tokens)),
+            } => format!(
+                "[^{name}]: {content}",
+                content = tokens_to_markdown(tokens)
+                    .replace("\n", "\n    ")
+                    .trim_end()
+                    .to_owned()
+                    + "\n\n"
+            ),
             Token::FootnoteInline { span: _, tokens } => {
                 format!("^[{content}]", content = tokens_to_markdown(tokens))
             }
