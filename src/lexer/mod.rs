@@ -134,9 +134,8 @@ impl Lexer {
 
         lexer.mark_skipped(skip_function);
 
-        // Skip initial '> ' prefix to prevent infinite recursion
-        skip_funcs::skip_block_prefix(&mut lexer);
-        lexer.mark_skipped_chunk(Mark::START);
+        // Skip initial prefix (if any) to prevent infinite recursion
+        skip_function(&mut lexer);
 
         lexer
     }
@@ -328,6 +327,14 @@ mod skip_funcs {
             lexer.consume_while(|c| c == ' ');
             lexer.consume(); // Consume '>'
             lexer.consume_if(|c| c == ' ');
+            Some(())
+        })();
+    }
+
+    pub fn skip_whitespace_prefix(lexer: &mut Lexer) {
+        (|| {
+            lexer.at_line_start()?;
+            lexer.consume_while(|c| c.is_whitespace() && c != '\n');
             Some(())
         })();
     }
@@ -597,34 +604,27 @@ impl Lexer {
         self.consume_expected(':')?;
         self.consume_whitespace();
 
-        let line_start = self.mark();
+        let content_start = self.mark();
 
-        const SEQS: &[&str] = &["\n\n", "\n[^"];
-
-        'outer: loop {
-            for seq in SEQS {
-                if self.at_sequence(seq)
-                    || (self.at('\n').is_some() && self.peek(1) == None) // Edge case of "...\nEOF"
-                    || self.at_file_end()
-                {
-                    break 'outer;
-                }
+        loop {
+            self.consume_until(|c| c == '\n');
+            self.consume(); // Consume '\n'
+            match self.current() {
+                None => break,
+                Some('\n') => break,
+                Some(c) if c.is_whitespace() => {}
+                Some(_) => break,
             }
-            self.consume();
         }
 
-        let line = self.extract(line_start);
+        let content = self.extract(content_start);
+
+        let mut lexer = Lexer::new_with_skip_function(content, skip_funcs::skip_whitespace_prefix)
+            .with_offset(content_start.into());
+
+        let tokens = lexer.run();
 
         self.consume_if(|c| c == '\n');
-
-        let tokens = Lexer::new_with_config(
-            line,
-            LexerConfig {
-                token_groups: TokenGroup::without(TokenGroup::Multiline),
-                offset: line_start.into(),
-            },
-        )
-        .run();
 
         let span = self.span(start);
 

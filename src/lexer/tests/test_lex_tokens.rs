@@ -1671,8 +1671,9 @@ fn test_lex_footnote() {
             "
 This[^this] is a footnote[^10]
 
-[^this]: First word
 [^10]: Example of a footnote
+    with a loooong description...
+[^this]: First word
 "   => [
             Text {
                 span: Span {
@@ -1712,34 +1713,34 @@ This[^this] is a footnote[^10]
             FootnoteDef {
                 span: Span {
                     start: 33,
-                    end: 53,
+                    end: 96,
                 },
-                name: "this".to_string(),
-                tokens: vec![
+                name: "10".to_string(),
+                tokens: [
                     Text {
                         span: Span {
-                            start: 42,
-                            end: 52,
+                            start: 40,
+                            end: 96,
                         },
-                        text: "First word".to_string(),
+                        text: "Example of a footnote\nwith a loooong description...\n".to_string(),
                     },
-                ],
+                ].to_vec(),
             },
             FootnoteDef {
                 span: Span {
-                    start: 53,
-                    end: 82,
+                    start: 96,
+                    end: 116,
                 },
-                name: "10".to_string(),
-                tokens: vec![
+                name: "this".to_string(),
+                tokens: [
                     Text {
                         span: Span {
-                            start: 60,
-                            end: 81,
+                            start: 105,
+                            end: 116,
                         },
-                        text: "Example of a footnote".to_string(),
+                        text: "First word\n".to_string(),
                     },
-                ],
+                ].to_vec(),
             },
         ]
     }
