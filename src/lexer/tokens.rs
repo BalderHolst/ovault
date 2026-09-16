@@ -316,6 +316,48 @@ pub enum Token {
         table: Table,
     },
 
+    // Represents a reference to a citation
+    //
+    /// Example:
+    /// ```markdown
+    /// This is a profound statement [^label]
+    /// ```
+    FootnoteRef {
+        /// The span of the reference in the source text.
+        span: Span,
+        /// Label of the citation. This should have a corresponding definition.
+        label: String,
+    },
+
+    // Represents a definition to a citation
+    //
+    /// Example:
+    /// ```markdown
+    /// [^label]: This is a place to put a source or describe something in detail
+    /// ```
+    FootnoteDef {
+        /// The span of the definition in the source text.
+        span: Span,
+        /// Label of the citation. This should be referred to within the note.
+        label: String,
+        /// The content of the citation description.
+        tokens: Tokens,
+    },
+
+    // Represents an inline footnote
+    //
+    /// Example:
+    /// ```markdown
+    /// There is a little thing^[Here i will elaborate a little bit about it...]
+    /// that i don't want to elaborate.
+    /// ```
+    InlineFootnote {
+        /// The span of the inline footnote in the source text.
+        span: Span,
+        /// The content of the citation.
+        tokens: Tokens,
+    },
+
     /// Represents an escaped character in the note.
     ///
     /// Example:
@@ -368,6 +410,9 @@ impl fmt::Display for Token {
             Token::CheckList { .. } => "CheckList",
             Token::Table { .. } => "Table",
             Token::Comment { .. } => "Comment",
+            Token::FootnoteDef { .. } => "FootnoteDef",
+            Token::FootnoteRef { .. } => "FootnoteRef",
+            Token::InlineFootnote { .. } => "FootnoteInline",
             Token::Escaped { .. } => "Escaped",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
@@ -384,6 +429,8 @@ impl Token {
             | Token::Strikethrough { tokens, .. }
             | Token::Highlight { tokens, .. }
             | Token::Quote { tokens, .. }
+            | Token::FootnoteDef { tokens, .. }
+            | Token::InlineFootnote { tokens, .. }
             | Token::Callout {
                 callout: Callout { tokens, .. },
                 ..
@@ -413,6 +460,7 @@ impl Token {
             | Token::InternalLink { .. }
             | Token::ExternalLink { .. }
             | Token::Comment { .. }
+            | Token::FootnoteRef { .. }
             | Token::Escaped { .. }
             | Token::TemplaterCommand { .. } => {
                 // These tokens do not contain nested tokens
@@ -429,6 +477,8 @@ impl Token {
             | Token::Strikethrough { tokens, .. }
             | Token::Highlight { tokens, .. }
             | Token::Quote { tokens, .. }
+            | Token::FootnoteDef { tokens, .. }
+            | Token::InlineFootnote { tokens, .. }
             | Token::Callout {
                 callout: Callout { tokens, .. },
                 ..
@@ -460,6 +510,7 @@ impl Token {
             | Token::InternalLink { .. }
             | Token::ExternalLink { .. }
             | Token::Comment { .. }
+            | Token::FootnoteRef { .. }
             | Token::Escaped { .. }
             | Token::TemplaterCommand { .. } => {
                 // These tokens do not contain nested tokens
@@ -581,6 +632,14 @@ impl Token {
                         .join(", ")
                 )
             }
+            Token::FootnoteDef { label, tokens, .. } => format!(
+                "FootnoteDef({label}: {content})",
+                content = tokens_repr(tokens)
+            ),
+            Token::FootnoteRef { label, .. } => format!("FootnoteRef({label})"),
+            Token::InlineFootnote { tokens, .. } => {
+                format!("InlineFootnote({content})", content = tokens_repr(tokens))
+            }
             Token::Comment { comment, .. } => {
                 format!("Comment({})", string_repr(comment))
             }
@@ -601,7 +660,7 @@ impl Token {
 }
 
 macro_rules! impl_token_span_method {
-    [$($variant:ident),*] => {
+    [$($variant:ident),*$(,)?] => {
         impl Token {
             /// Get the span of the token.
             pub fn span(&self) -> &Span {
@@ -645,7 +704,10 @@ impl_token_span_method!(
     Table,
     Comment,
     Escaped,
-    TemplaterCommand
+    TemplaterCommand,
+    FootnoteDef,
+    FootnoteRef,
+    InlineFootnote,
 );
 
 impl Token {
@@ -654,7 +716,9 @@ impl Token {
         use Token::*;
         match self {
             Text { text, .. } => text.chars().all(char::is_whitespace),
-            Comment { .. } => true,
+            Comment { .. } | FootnoteDef { .. } | FootnoteRef { .. } | InlineFootnote { .. } => {
+                true
+            }
             Tag { .. }
             | Bold { .. }
             | Italic { .. }

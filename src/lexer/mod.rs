@@ -10,6 +10,7 @@ mod tests;
 
 use enumset::{EnumSet, EnumSetType};
 pub use span::Span;
+pub use to_markdown::tokens_to_markdown;
 pub use to_markdown::ToMarkdown;
 use tokens::{
     Callout, CheckListItem, ExternalLink, InternalLink, ListItem, NumericListItem, Table,
@@ -22,10 +23,6 @@ pub use to_markdown::py_to_markdown;
 #[derive(Debug, Clone, PartialEq)]
 struct Mark(usize);
 impl Copy for Mark {}
-
-impl Mark {
-    const START: Self = Mark(0);
-}
 
 impl From<Mark> for usize {
     fn from(val: Mark) -> Self {
@@ -94,9 +91,9 @@ impl Lexer {
     }
 
     /// Set the offset of spans generated with this lexer
-    pub fn with_offset(self, offset: usize) -> Self {
+    pub fn with_offset<I: Into<usize>>(self, offset: I) -> Self {
         let config = LexerConfig {
-            offset,
+            offset: offset.into(),
             ..self.config
         };
         Self { config, ..self }
@@ -118,15 +115,25 @@ impl Lexer {
         }
     }
 
+    /// Create a new parser that only parses inline tokens.
+    pub fn new_inline<S: ToString>(text: S) -> Self {
+        Lexer::new_with_config(
+            text,
+            LexerConfig {
+                token_groups: TokenGroup::without(TokenGroup::Multiline),
+                ..Default::default()
+            },
+        )
+    }
+
     /// Create a new lexer with the given text and a function to skip characters.
     pub fn new_with_skip_function<S: ToString>(text: S, skip_function: fn(&mut Self)) -> Self {
         let mut lexer = Self::new(text);
 
         lexer.mark_skipped(skip_function);
 
-        // Skip initial '> ' prefix to prevent infinite recursion
-        skip_funcs::skip_block_prefix(&mut lexer);
-        lexer.mark_skipped_chunk(Mark::START);
+        // Skip initial prefix (if any) to prevent infinite recursion
+        skip_function(&mut lexer);
 
         lexer
     }
@@ -230,11 +237,13 @@ impl Lexer {
         Some(())
     }
 
-    fn consume_until_sequence(&mut self, seq: &str) -> Option<()> {
+    fn consume_until_sequence(&mut self, seq: &str) -> Option<String> {
+        let mut s = String::new();
         while !self.at_sequence(seq) {
-            self.consume()?;
+            let c = self.consume()?;
+            s.push(c)
         }
-        Some(())
+        Some(s)
     }
 
     fn consume_while(&mut self, cond: impl Fn(char) -> bool) -> String {
@@ -316,6 +325,14 @@ mod skip_funcs {
             lexer.consume_while(|c| c == ' ');
             lexer.consume(); // Consume '>'
             lexer.consume_if(|c| c == ' ');
+            Some(())
+        })();
+    }
+
+    pub fn skip_whitespace_prefix(lexer: &mut Lexer) {
+        (|| {
+            lexer.at_line_start()?;
+            lexer.consume_while(|c| c.is_whitespace() && c != '\n');
             Some(())
         })();
     }
@@ -569,6 +586,86 @@ impl Lexer {
                 render,
             },
         })
+    }
+
+    fn try_lex_footnote_def(&mut self) -> Option<Token> {
+        self.at_line_start()?;
+
+        let start = self.mark();
+
+        self.consume_expected('[')?;
+        self.consume_expected('^')?;
+
+        let name = self.consume_until(|c| c == ']');
+
+        self.consume_expected(']')?;
+        self.consume_expected(':')?;
+        self.consume_whitespace();
+
+        let content_start = self.mark();
+
+        loop {
+            self.consume_until(|c| c == '\n');
+            self.consume(); // Consume '\n'
+            match self.current() {
+                None => break,
+                Some('\n') => break,
+                Some(c) if c.is_whitespace() => {}
+                Some(_) => break,
+            }
+        }
+
+        let content = self.extract(content_start);
+        let content = content.trim_end();
+
+        let mut lexer = Lexer::new_with_skip_function(content, skip_funcs::skip_whitespace_prefix)
+            .with_offset(content_start);
+
+        let tokens = lexer.run();
+
+        self.consume_if(|c| c == '\n');
+
+        let span = self.span(start);
+
+        Some(Token::FootnoteDef {
+            span,
+            label: name,
+            tokens,
+        })
+    }
+
+    fn try_lex_footnote_ref(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        self.consume_expected('[')?;
+        self.consume_expected('^')?;
+
+        let name = self.consume_until(|c| c == ']');
+
+        self.consume_expected(']')?;
+
+        let span = self.span(start);
+
+        Some(Token::FootnoteRef { span, label: name })
+    }
+
+    fn try_lex_footnote_inline(&mut self) -> Option<Token> {
+        let start = self.mark();
+
+        self.consume_expected('^')?;
+        self.consume_expected('[')?;
+
+        let text_start = self.mark();
+
+        let text = self.consume_until(|c| c == ']');
+
+        let tokens = Lexer::new_inline(text).with_offset(text_start).run();
+
+        self.consume_expected(']')?;
+
+        let span = self.span(start);
+
+        Some(Token::InlineFootnote { span, tokens })
     }
 
     fn at(&self, expect: char) -> Option<()> {
@@ -1256,6 +1353,9 @@ impl Iterator for Lexer {
             (Lexer::try_lex_table,             Inline),
             (Lexer::try_lex_comment,           Inline),
             (Lexer::try_lex_templater_command, Inline),
+            (Lexer::try_lex_footnote_inline,   Inline),
+            (Lexer::try_lex_footnote_def,      Multiline),
+            (Lexer::try_lex_footnote_ref,      Inline),
         ];
 
         'restart: loop {

@@ -102,6 +102,9 @@ macro_rules! test_lex_token {
         };
         ($source:expr) => {
             let mut lexer = Lexer::new($source);
+            println!("\nRaw Source:\n{:?}", $source);
+            println!("\nSource:\n{}", $source);
+            println!("\nSourch Length: {}", $source.len());
             println!("\nTokens: {:#?}\n", lexer.run());
             todo!("No token expected");
         };
@@ -1658,5 +1661,119 @@ Content | Content | Content
                 ],
             },
         }
+    }
+}
+
+#[test]
+fn test_lex_footnote() {
+    use Token::*;
+    test_lex_token! {
+            "
+This[^this] is a footnote[^10]
+
+[^10]: Example of a footnote
+    with a loooong description...
+[^this]: First word
+"   => [
+            Text {
+                span: Span {
+                    start: 0,
+                    end: 5,
+                },
+                text: "\nThis".to_string(),
+            },
+            FootnoteRef {
+                span: Span {
+                    start: 5,
+                    end: 12,
+                },
+                label: "this".to_string(),
+            },
+            Text {
+                span: Span {
+                    start: 12,
+                    end: 26,
+                },
+                text: " is a footnote".to_string(),
+            },
+            FootnoteRef {
+                span: Span {
+                    start: 26,
+                    end: 31,
+                },
+                label: "10".to_string(),
+            },
+            Text {
+                span: Span {
+                    start: 31,
+                    end: 33,
+                },
+                text: "\n\n".to_string(),
+            },
+            FootnoteDef {
+                span: Span {
+                    start: 33,
+                    end: 96,
+                },
+                label: "10".to_string(),
+                tokens: [
+                    Text {
+                        span: Span {
+                            start: 40,
+                            end: 95,
+                        },
+                        text: "Example of a footnote\nwith a loooong description...".to_string(),
+                    },
+                ].to_vec(),
+            },
+            FootnoteDef {
+                span: Span {
+                    start: 96,
+                    end: 116,
+                },
+                label: "this".to_string(),
+                tokens: [
+                    Text {
+                        span: Span {
+                            start: 105,
+                            end: 115,
+                        },
+                        text: "First word".to_string(),
+                    },
+                ].to_vec(),
+            },
+        ]
+    }
+}
+
+#[test]
+fn test_lex_inline_footnote() {
+    use Token::*;
+    test_lex_token! {
+        "Text! ^[This is in inline footnote!]"
+        => [
+            Text {
+                span: Span {
+                    start: 0,
+                    end: 6,
+                },
+                text: "Text! ".to_string(),
+            },
+            InlineFootnote {
+                span: Span {
+                    start: 6,
+                    end: 36,
+                },
+                tokens: [
+                    Text {
+                        span: Span {
+                            start: 8,
+                            end: 35,
+                        },
+                        text: "This is in inline footnote!".to_string(),
+                    },
+                ].to_vec(),
+            }
+        ]
     }
 }
