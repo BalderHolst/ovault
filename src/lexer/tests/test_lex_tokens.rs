@@ -1759,7 +1759,7 @@ fn test_lex_inline_footnote() {
                 },
                 text: "Text! ".to_string(),
             },
-            FootnoteInline {
+            InlineFootnote {
                 span: Span {
                     start: 6,
                     end: 36,

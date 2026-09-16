@@ -330,7 +330,7 @@ pub enum Token {
     },
 
     // TODO: Docs
-    FootnoteInline {
+    InlineFootnote {
         span: Span,
         tokens: Tokens,
     },
@@ -389,7 +389,7 @@ impl fmt::Display for Token {
             Token::Comment { .. } => "Comment",
             Token::FootnoteDef { .. } => "FootnoteDef",
             Token::FootnoteRef { .. } => "FootnoteRef",
-            Token::FootnoteInline { .. } => "FootnoteInline",
+            Token::InlineFootnote { .. } => "FootnoteInline",
             Token::Escaped { .. } => "Escaped",
             Token::TemplaterCommand { .. } => "TemplaterCommand",
         };
@@ -407,7 +407,7 @@ impl Token {
             | Token::Highlight { tokens, .. }
             | Token::Quote { tokens, .. }
             | Token::FootnoteDef { tokens, .. }
-            | Token::FootnoteInline { tokens, .. }
+            | Token::InlineFootnote { tokens, .. }
             | Token::Callout {
                 callout: Callout { tokens, .. },
                 ..
@@ -455,7 +455,7 @@ impl Token {
             | Token::Highlight { tokens, .. }
             | Token::Quote { tokens, .. }
             | Token::FootnoteDef { tokens, .. }
-            | Token::FootnoteInline { tokens, .. }
+            | Token::InlineFootnote { tokens, .. }
             | Token::Callout {
                 callout: Callout { tokens, .. },
                 ..
@@ -676,7 +676,7 @@ impl_token_span_method!(
     TemplaterCommand,
     FootnoteDef,
     FootnoteRef,
-    FootnoteInline,
+    InlineFootnote,
 );
 
 impl Token {
@@ -685,7 +685,7 @@ impl Token {
         use Token::*;
         match self {
             Text { text, .. } => text.chars().all(char::is_whitespace),
-            Comment { .. } | FootnoteDef { .. } | FootnoteRef { .. } | FootnoteInline { .. } => {
+            Comment { .. } | FootnoteDef { .. } | FootnoteRef { .. } | InlineFootnote { .. } => {
                 true
             }
             Tag { .. }

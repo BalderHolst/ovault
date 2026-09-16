@@ -175,7 +175,7 @@ impl ToMarkdown for Token {
                     .to_owned()
                     + "\n\n"
             ),
-            Token::FootnoteInline { span: _, tokens } => {
+            Token::InlineFootnote { span: _, tokens } => {
                 format!("^[{content}]", content = tokens_to_markdown(tokens))
             }
             Token::FootnoteRef { span: _, name } => format!("[^{name}]"),

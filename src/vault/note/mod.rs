@@ -294,7 +294,7 @@ impl Note {
                 | Token::Escaped { .. }
                 | Token::FootnoteDef { .. }
                 | Token::FootnoteRef { .. }
-                | Token::FootnoteInline { .. }
+                | Token::InlineFootnote { .. }
                 | Token::TemplaterCommand { .. } => {}
             }
         }

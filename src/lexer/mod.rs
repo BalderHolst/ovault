@@ -664,7 +664,7 @@ impl Lexer {
 
         let span = self.span(start);
 
-        Some(Token::FootnoteInline { span, tokens })
+        Some(Token::InlineFootnote { span, tokens })
     }
 
     fn at(&self, expect: char) -> Option<()> {
