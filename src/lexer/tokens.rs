@@ -316,22 +316,45 @@ pub enum Token {
         table: Table,
     },
 
-    // TODO: Docs
-    FootnoteDef {
+    // Represents a reference to a citation
+    //
+    /// Example:
+    /// ```markdown
+    /// This is a profound statement [^label]
+    /// ```
+    FootnoteRef {
+        /// The span of the reference in the source text.
         span: Span,
-        name: String,
+        /// Label of the citation. This should have a corresponding definition.
+        label: String,
+    },
+
+    // Represents a definition to a citation
+    //
+    /// Example:
+    /// ```markdown
+    /// [^label]: This is a place to put a source or describe something in detail
+    /// ```
+    FootnoteDef {
+        /// The span of the definition in the source text.
+        span: Span,
+        /// Label of the citation. This should be referred to within the note.
+        label: String,
+        /// The content of the citation description.
         tokens: Tokens,
     },
 
-    // TODO: Docs
-    FootnoteRef {
-        span: Span,
-        name: String,
-    },
-
-    // TODO: Docs
+    // Represents an inline footnote
+    //
+    /// Example:
+    /// ```markdown
+    /// There is a little thing^[Here i will elaborate a little bit about it...]
+    /// that i don't want to elaborate.
+    /// ```
     InlineFootnote {
+        /// The span of the inline footnote in the source text.
         span: Span,
+        /// The content of the citation.
         tokens: Tokens,
     },
 
@@ -609,11 +632,11 @@ impl Token {
                         .join(", ")
                 )
             }
-            Token::FootnoteDef { name, tokens, .. } => format!(
-                "FootnoteDef({name}: {content})",
+            Token::FootnoteDef { label, tokens, .. } => format!(
+                "FootnoteDef({label}: {content})",
                 content = tokens_repr(tokens)
             ),
-            Token::FootnoteRef { name, .. } => format!("FootnoteRef({name})"),
+            Token::FootnoteRef { label, .. } => format!("FootnoteRef({label})"),
             Token::InlineFootnote { tokens, .. } => {
                 format!("InlineFootnote({content})", content = tokens_repr(tokens))
             }

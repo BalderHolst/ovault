@@ -1,5 +1,7 @@
 // This binary implementation is only meant to be for debugging
 
+#![allow(unused)]
+
 mod lexer;
 
 fn main() {

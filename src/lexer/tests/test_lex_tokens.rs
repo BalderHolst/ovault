@@ -1687,7 +1687,7 @@ This[^this] is a footnote[^10]
                     start: 5,
                     end: 12,
                 },
-                name: "this".to_string(),
+                label: "this".to_string(),
             },
             Text {
                 span: Span {
@@ -1701,7 +1701,7 @@ This[^this] is a footnote[^10]
                     start: 26,
                     end: 31,
                 },
-                name: "10".to_string(),
+                label: "10".to_string(),
             },
             Text {
                 span: Span {
@@ -1715,7 +1715,7 @@ This[^this] is a footnote[^10]
                     start: 33,
                     end: 96,
                 },
-                name: "10".to_string(),
+                label: "10".to_string(),
                 tokens: [
                     Text {
                         span: Span {
@@ -1731,7 +1731,7 @@ This[^this] is a footnote[^10]
                     start: 96,
                     end: 116,
                 },
-                name: "this".to_string(),
+                label: "this".to_string(),
                 tokens: [
                     Text {
                         span: Span {

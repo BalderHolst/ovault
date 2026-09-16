@@ -24,10 +24,6 @@ pub use to_markdown::py_to_markdown;
 struct Mark(usize);
 impl Copy for Mark {}
 
-impl Mark {
-    const START: Self = Mark(0);
-}
-
 impl From<Mark> for usize {
     fn from(val: Mark) -> Self {
         val.0
@@ -95,9 +91,9 @@ impl Lexer {
     }
 
     /// Set the offset of spans generated with this lexer
-    pub fn with_offset(self, offset: usize) -> Self {
+    pub fn with_offset<I: Into<usize>>(self, offset: I) -> Self {
         let config = LexerConfig {
-            offset,
+            offset: offset.into(),
             ..self.config
         };
         Self { config, ..self }
@@ -119,12 +115,13 @@ impl Lexer {
         }
     }
 
-    pub fn new_inline<S: ToString, I: Into<usize>>(text: S, offset: I) -> Self {
+    /// Create a new parser that only parses inline tokens.
+    pub fn new_inline<S: ToString>(text: S) -> Self {
         Lexer::new_with_config(
             text,
             LexerConfig {
                 token_groups: TokenGroup::without(TokenGroup::Multiline),
-                offset: offset.into(),
+                ..Default::default()
             },
         )
     }
@@ -622,7 +619,7 @@ impl Lexer {
         let content = content.trim_end();
 
         let mut lexer = Lexer::new_with_skip_function(content, skip_funcs::skip_whitespace_prefix)
-            .with_offset(content_start.into());
+            .with_offset(content_start);
 
         let tokens = lexer.run();
 
@@ -630,7 +627,11 @@ impl Lexer {
 
         let span = self.span(start);
 
-        Some(Token::FootnoteDef { span, name, tokens })
+        Some(Token::FootnoteDef {
+            span,
+            label: name,
+            tokens,
+        })
     }
 
     fn try_lex_footnote_ref(&mut self) -> Option<Token> {
@@ -645,7 +646,7 @@ impl Lexer {
 
         let span = self.span(start);
 
-        Some(Token::FootnoteRef { span, name })
+        Some(Token::FootnoteRef { span, label: name })
     }
 
     fn try_lex_footnote_inline(&mut self) -> Option<Token> {
@@ -658,7 +659,7 @@ impl Lexer {
 
         let text = self.consume_until(|c| c == ']');
 
-        let tokens = Lexer::new_inline(text, text_start).run();
+        let tokens = Lexer::new_inline(text).with_offset(text_start).run();
 
         self.consume_expected(']')?;
 
@@ -686,10 +687,6 @@ impl Lexer {
             return None;
         }
         Some(())
-    }
-
-    fn at_file_end(&self) -> bool {
-        self.current() == None
     }
 
     fn at_block_start(&self) -> Option<()> {
