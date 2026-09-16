@@ -13,7 +13,6 @@ use super::Span;
 /// A list of tokens.
 pub type Tokens = Vec<Token>;
 
-// TODO: Add footnote support
 // TODO: Add nested code block support
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
