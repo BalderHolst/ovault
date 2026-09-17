@@ -191,6 +191,9 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token, 
             w.write_line('</ol>', dedent=True)
 
         case token.Callout():
+            # TODO: Show category if no title
+            # TODO: Make non-foldable
+
             clases = ["callout", f'callout-kind-{token.callout.kind}']
 
             if token.callout.foldable: clases.append("foldable")
