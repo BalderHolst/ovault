@@ -42,7 +42,10 @@ Note Tokens : [Header(# FIRST NOTE!), Text(Wuhuuuuuuuuuuu!Thi...), InternalLink(
 ```
 
 ## Included Utilities
-OVault includes runnable modules for common tasks. Get an overview by running the `ovault` module:
+OVault includes runnable modules which can be run directly from the terminal. They also serve as larger examples of how this library can be used. Their source code can be found in [./python/ovault](./python/ovault/).
+
+Get an overview by running the `ovault` module:
+
 ```bash
 python -m ovault
 ```
