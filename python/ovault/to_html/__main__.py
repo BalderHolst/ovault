@@ -27,13 +27,16 @@ def emded_note(w: html.HtmlWriter, vault: ovault.Vault, note: ovault.Note) -> st
     w.write_line('</a>', dedent=True)
 
     w.write_line('<div class="embedded-note-content">', indent=True)
-    tokens_to_html(vault, w, note.tokens())
-    w.write_line('</div>', dedent=True)
+    footnotes = []
+    tokens_to_html(vault, w, note.tokens(), footnotes)
+    show_footnotes(vault, w, footnotes)
 
     w.write_line('</div>', dedent=True)
 
+    w.write_line('</div>', dedent=True)
 
-def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) -> str:
+
+def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token, footnotes: list) -> str:
     match token:
         case token.Frontmatter():
             pass
@@ -114,22 +117,22 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
 
         case token.Bold():
             w.write_line(f'<strong>', indent=True)
-            tokens_to_html(vault, w, token.tokens)
+            tokens_to_html(vault, w, token.tokens, footnotes)
             w.write_line(f'</strong>', dedent=True)
 
         case token.Italic():
             w.write_line(f'<i>', indent=True)
-            tokens_to_html(vault, w, token.tokens)
+            tokens_to_html(vault, w, token.tokens, footnotes)
             w.write_line(f'</i>', dedent=True)
 
         case token.Strikethrough():
             w.write_line(f'<s>', indent=True)
-            tokens_to_html(vault, w, token.tokens)
+            tokens_to_html(vault, w, token.tokens, footnotes)
             w.write_line(f'</s>', dedent=True)
 
         case token.Highlight():
             w.write_line(f'<mark>', indent=True)
-            tokens_to_html(vault, w, token.tokens)
+            tokens_to_html(vault, w, token.tokens, footnotes)
             w.write_line(f'</mark>', dedent=True)
 
         case token.InlineCode():
@@ -150,7 +153,7 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                     print("WARNING: Nested lists not implemented yet.")
 
                 w.write_line('<li>', indent=True)
-                tokens_to_html(vault, w, item.tokens)
+                tokens_to_html(vault, w, item.tokens, footnotes)
                 w.write_line('</li>', dedent=True)
 
 
@@ -168,7 +171,7 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                 w.write_line(f'<input type="checkbox" onclick="return false;" {extra}>');
 
                 w.write_line('<label>', indent=True)
-                tokens_to_html(vault, w, item.tokens)
+                tokens_to_html(vault, w, item.tokens, footnotes)
                 w.write_line('</label><br>', dedent=True)
 
             w.write_line('</div>', dedent=True)
@@ -182,7 +185,7 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                     print("WARNING: Nested numeric lists not implemented yet.")
 
                 w.write_line('<li>', indent=True)
-                tokens_to_html(vault, w, item.tokens)
+                tokens_to_html(vault, w, item.tokens, footnotes)
                 w.write_line('</li>', dedent=True)
 
             w.write_line('</ol>', dedent=True)
@@ -196,14 +199,14 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
             w.write_line(f'<summary class="callout-title">{token.callout.title}</summary>')
 
             w.write_line('<div class="callout-content">', indent=True)
-            tokens_to_html(vault, w, token.callout.tokens)
+            tokens_to_html(vault, w, token.callout.tokens, footnotes)
             w.write_line('</div>', dedent=True)
 
             w.write_line('</details>', dedent=True)
 
         case token.Quote():
             w.write_line('<blockquote>', indent=True)
-            tokens_to_html(vault, w, token.tokens)
+            tokens_to_html(vault, w, token.tokens, footnotes)
             w.write_line('</blockquote>', dedent=True)
 
         case token.Code():
@@ -241,23 +244,46 @@ def token_to_html(vault: ovault.Vault, w: html.HtmlWriter, token: ovault.Token) 
                 w.write_line('<tr>', indent=True)
                 for cell in row:
                     w.write_line(f'<td>', indent=True)
-                    tokens_to_html(vault, w, cell)
+                    tokens_to_html(vault, w, cell, footnotes)
                     w.write_line(f'</td>', dedent=True)
                 w.write_line('</tr>', dedent=True)
             w.write_line('</tbody>', dedent=True)
 
             w.write_line('</table>', dedent=True)
 
-
         case token.Comment():
             pass
+
+        case token.FootnoteRef():
+            id = f"footnote-{token.label}"
+            footnotes.append((id, None))
+            w.write_line(f'<sup><a href="#{id}">[{len(footnotes)}]</a></sup>')
+
+        case token.FootnoteDef():
+            id = f"footnote-{token.label}"
+            for i, (label, content) in enumerate(footnotes):
+                if label != id: continue
+                footnotes[i] = (label, token.tokens)
+
+        case token.InlineFootnote():
+            id = f"footnote-inline-{len(footnotes)+1}"
+            footnotes.append((id, token.tokens))
+            w.write_line(f'<sup><a href="#{id}">[{len(footnotes)}]</a></sup>')
 
         case other:
             raise NotImplementedError(f"Unknown token type: {type(other)}")
 
-def tokens_to_html(vault: ovault.Vault, w: html.HtmlWriter, tokens: list[ovault.Token]) -> None:
+def tokens_to_html(vault: ovault.Vault, w: html.HtmlWriter, tokens: list[ovault.Token], footnotes: list) -> list:
     for token in tokens:
-        token_to_html(vault, w, token)
+        token_to_html(vault, w, token, footnotes)
+
+def show_footnotes(vault: ovault.Vault, w: html.HtmlWriter, footnotes: list):
+    w.write_line('<hr>')
+    for i, (label, tokens) in enumerate(footnotes):
+        if tokens == None: continue
+        w.write_line(f'<p id="{label}"><span class="footnote-number">{i+1}. </span>', indent=True)
+        tokens_to_html(vault, w, tokens, [])
+        w.write_line(f'</p>', dedent=True)
 
 def html_head(w: html.HtmlWriter, title: str) -> None:
     w.write_line("<head>", indent=True)
@@ -325,6 +351,7 @@ def create_sidebar(w: html.HtmlWriter, vault: ovault.Vault, note: ovault.Note) -
     w.write_line('</ul>')
     w.write_line('</aside>')
 
+
 def convert_note_to_html(vault: ovault.Vault, note: ovault.Note, site_dir: str, filename_title=False) -> str:
     output_path = vault_path_to_site_path(note.path, site_dir)
 
@@ -338,7 +365,9 @@ def convert_note_to_html(vault: ovault.Vault, note: ovault.Note, site_dir: str, 
 
     if filename_title: w.write_line(f"<h1>{note.name}</h1>")
 
-    tokens_to_html(vault, w, note.tokens())
+    footnotes = []
+    tokens_to_html(vault, w, note.tokens(), footnotes)
+    show_footnotes(vault, w, footnotes)
 
     create_sidebar(w, vault, note)
 
