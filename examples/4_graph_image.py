@@ -1,4 +1,4 @@
-# Example 4: Generates `dot` code for a connection graph of of the vault
+# Example 4: Generates `dot` code for a connection graph of a vault
 
 # Usage: `python3 examples/4_graph_image.py <vault> | neato -Tpng > graph.png`
 
