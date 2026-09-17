@@ -625,7 +625,8 @@ fn test_lex_code() {
         => Token::Code {
             span: Span { start: 0, end: 28 },
             lang: Some("rust".to_string()),
-            code: "this is some code".to_string()
+            code: "this is some code".to_string(),
+            ticks: 3,
         }
     }
 
@@ -634,7 +635,30 @@ fn test_lex_code() {
         => Token::Code {
             span: Span { start: 0, end: 15 },
             lang: Some("language".to_string()),
-            code: "".to_string()
+            code: "".to_string(),
+            ticks: 3,
+        }
+    }
+}
+
+#[test]
+fn test_lex_nested_code() {
+    test_lex_token! {
+        "````text
+This is a python code block:
+```python
+print(\"Hello from python!\")
+```
+````" => Token::Code {
+            span: Span {
+                start: 0,
+                end: 84,
+            },
+            lang: Some(
+                "text".to_string(),
+            ),
+            code: "This is a python code block:\n```python\nprint(\"Hello from python!\")\n```\n".to_string(),
+            ticks: 4,
         }
     }
 }
@@ -942,6 +966,7 @@ fn test_nested_callout_with_code() {
                                         "dataviewjs".to_string(),
                                     ),
                                     code: "".to_string(),
+                                    ticks: 3,
                                 },
                             ],
                             foldable: false,

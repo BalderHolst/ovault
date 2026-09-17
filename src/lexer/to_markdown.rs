@@ -57,8 +57,15 @@ impl ToMarkdown for Token {
             Token::Code {
                 span: _,
                 lang,
+                ticks,
                 code,
-            } => format!("```{}\n{}```\n", lang.as_deref().unwrap_or(""), code),
+            } => {
+                format!(
+                    "{ticks}{lang}\n{code}{ticks}\n",
+                    lang = lang.as_deref().unwrap_or(""),
+                    ticks = "`".repeat(*ticks),
+                )
+            }
             Token::Quote {
                 span: _,
                 tokens,

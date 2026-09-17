@@ -919,28 +919,41 @@ impl Lexer {
     fn try_lex_code(&mut self) -> Option<Token> {
         let start = self.mark();
 
-        self.consume_expected_sequence("```")?;
+        let ticks = self.consume_while(|c| c == '`').len();
+
+        if ticks < 3 {
+            return None;
+        }
 
         let lang = self.consume_until(|c| c == '\n');
         self.consume()?; // consume newline
 
+        let lang = lang.trim();
+
         let lang = match lang.is_empty() {
             true => None,
-            false => Some(lang),
+            false => Some(lang.to_string()),
         };
 
         let code_start = self.mark();
-        self.consume_until_sequence("```")?;
+
+        let end_seq = "`".repeat(ticks);
+        self.consume_until_sequence(&end_seq)?;
 
         let code = self.extract(code_start);
 
-        self.consume_expected_sequence("```")
-            .expect("We just checked for '```'");
+        self.consume_expected_sequence(&end_seq)
+            .expect("We just checked for `end_seq`");
         self.consume_if(|c| c == '\n');
 
         let span = self.span(start);
 
-        Some(Token::Code { span, lang, code })
+        Some(Token::Code {
+            span,
+            lang,
+            code,
+            ticks,
+        })
     }
 
     fn try_lex_display_math(&mut self) -> Option<Token> {

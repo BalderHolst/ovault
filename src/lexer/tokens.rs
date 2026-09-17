@@ -13,7 +13,6 @@ use super::Span;
 /// A list of tokens.
 pub type Tokens = Vec<Token>;
 
-// TODO: Add nested code block support
 /// Represents a part of a note, such as text, code blocks, links, etc.
 ///
 /// ## Example - Token Stream
@@ -189,6 +188,9 @@ pub enum Token {
         lang: Option<String>,
         /// The code content of the block.
         code: String,
+        /// Number of ticks (`) used to mark the code block.
+        /// Use more than three to nest a code block within another.
+        ticks: usize,
     },
 
     /// Represents a block quote in the note.
